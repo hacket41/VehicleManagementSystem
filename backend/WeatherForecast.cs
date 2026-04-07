@@ -1,4 +1,4 @@
-namespace VechileManagementBackend;
+namespace backend;
 
 public class WeatherForecast
 {
