@@ -16,7 +16,8 @@ todos.json
 node_modules/
 /.pnp
 .pnp.js
-
+.vscode/
+/.vscode/*
 # Testing
 /coverage
 
