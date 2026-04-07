@@ -1,3 +1,6 @@
+using backend.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,9 +11,9 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// builder.Services.AddDbContext<AppDbContext>(options =>
-//     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
-// );
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
+);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
