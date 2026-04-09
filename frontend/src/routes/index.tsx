@@ -13,7 +13,7 @@ export const Route = createFileRoute('/')({
 function App() {
   const TestResponse = Route.useLoaderData()
   return (
-    <main className="page-wrap px-4 pb-8 pt-14">
+    <main className="">
       <h1>{TestResponse.message}</h1>
     </main>
   )
