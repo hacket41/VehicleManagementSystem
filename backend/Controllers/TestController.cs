@@ -10,6 +10,6 @@ public class TestController : ControllerBase
     [HttpGet]
     public  IActionResult Test ()
     {
-        return Ok(new { Message = "Hello World" });
+        return Ok(new { Message = "Api is Healthy"});
     }
 }
