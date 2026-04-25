@@ -14,4 +14,13 @@ public class AuthController(IAuthService authService) : ControllerBase
         var result  = await authService.RegisterCustomer(user);
         return Ok(result);
     }
+
+    [HttpPost("register-admin")]
+    public async Task<IActionResult> RegisterAdmin(RegisterUserDto user)
+    {
+        var result  = await authService.RegisterAdmin(user);
+        return Ok(result);
+    }
+
+
 }

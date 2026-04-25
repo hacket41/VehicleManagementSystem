@@ -12,7 +12,44 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
 
     public async Task<AuthResponseDto> RegisterAdmin(RegisterUserDto user)
     {
-        throw new NotImplementedException();
+
+        var newUser = new User
+        {
+            UserName = (user.FirstName + user.LastName).ToLower(),
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            Phone = user.Phone,
+        };
+
+        var result = await userManager.CreateAsync(newUser, user.Password);
+
+        if (!result.Succeeded)
+        {
+            return new AuthResponseDto
+            {
+                Errors = result.Errors.Select(x => x.Description).ToList(),
+                Success = false,
+
+            };
+        }
+        var addAdminRole = await userManager.AddToRoleAsync(newUser, "Admin");
+        if (!addAdminRole.Succeeded)
+        {
+            return new AuthResponseDto
+            {
+                Errors = addAdminRole.Errors.Select(x => x.Description).ToList(),
+                Success = false,
+            };
+        }
+
+        return new AuthResponseDto
+        {
+            Success = true,
+            Errors = null,
+
+        };
+
     }
 
     public async Task<AuthResponseDto> RegisterStaff(RegisterUserDto user)
