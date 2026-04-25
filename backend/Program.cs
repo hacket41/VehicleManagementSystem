@@ -1,4 +1,8 @@
 using backend.Data;
+using backend.Data.Entities;
+using backend.Services.Implementation;
+using backend.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -24,6 +28,13 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
 );
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+
 
 var app = builder.Build();
 

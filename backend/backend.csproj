@@ -25,4 +25,8 @@
         <PackageReference Include="Scalar.AspNetCore" Version="2.13.20" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Middlewares\" />
+    </ItemGroup>
+
 </Project>
