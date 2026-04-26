@@ -32,22 +32,3 @@ public class PurchaseOrder
     public ICollection<PurchaseItem> Items { get; set; } = new List<PurchaseItem>();
 }
 
-public class PurchaseItem
-{
-    [Key]
-    public int Id { get; set; }
-
-    public int PurchaseOrderId { get; set; }
-    public PurchaseOrder PurchaseOrder { get; set; } = null!;
-
-    public int PartId { get; set; }
-    // public Part Part { get; set; } = null!;
-
-    public int Quantity { get; set; }
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal UnitCost { get; set; }
-
-    [Column(TypeName = "decimal(18,2)")]
-    public decimal LineTotal { get; set; }
-}
