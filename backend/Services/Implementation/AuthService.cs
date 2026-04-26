@@ -23,7 +23,7 @@ public class AuthService(
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email,
-            Phone = user.Phone,
+            PhoneNumber = user.Phone,
         };
 
         var result = await userManager.CreateAsync(newUser, user.Password);
@@ -73,7 +73,7 @@ public class AuthService(
             return new AuthResponseDto
             {
                 Success = false,
-                Errors = ["Invalid Credentials"],
+                Errors = ["Invalid Credentials", "TestEmail"],
             };
 
         var isPasswordValid = await userManager.CheckPasswordAsync(userEmail, user.Password);
@@ -81,7 +81,7 @@ public class AuthService(
             return new AuthResponseDto
             {
                 Success = false,
-                Errors = ["Invalid Credentials"]
+                Errors = ["Invalid Credentials", "TestPassword"]
             };
 
         var token = await jwtTokenService.GenerateUserToken(userEmail);
