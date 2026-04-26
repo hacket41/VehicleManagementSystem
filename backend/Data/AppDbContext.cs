@@ -19,6 +19,7 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
         builder.Entity<User>().ToTable("Users");
         builder.Entity<IdentityRole<Guid>>().ToTable("Roles");
         builder.Entity<FinancialReport>().ToTable("FinancialReports");
+        builder.Entity<Vendor>().ToTable("Vendors");
         SeedRoles(builder);
     }
 
