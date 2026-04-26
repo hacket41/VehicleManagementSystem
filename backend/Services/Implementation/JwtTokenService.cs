@@ -10,7 +10,7 @@ namespace backend.Services.Implementation;
 
 public class JwtTokenService(IOptions<JwtOptions> jwtoptions, UserManager<User> userManager)
 {
-    public readonly JwtOptions JwtOptions = jwtoptions.Value;
+    private readonly JwtOptions _jwtOptions = jwtoptions.Value;
 
     public async Task<string> GenerateToken(User user)
     {
@@ -32,13 +32,13 @@ public class JwtTokenService(IOptions<JwtOptions> jwtoptions, UserManager<User> 
 
     private string GenerateToken(IEnumerable<Claim> claims)
     {
-        var cred = new SigningCredentials(JwtOptions.SymmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+        var cred = new SigningCredentials(_jwtOptions.SymmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: JwtOptions.Issuer,
-            audience: JwtOptions.Audience,
+            issuer: _jwtOptions.Issuer,
+            audience: _jwtOptions.Audience,
             claims: claims,
-            expires: JwtOptions.ExpiryDate,
+            expires: _jwtOptions.ExpiryDate,
             signingCredentials: cred
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
