@@ -6,8 +6,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace backend.Services.Implementation;
 
-public class AuthService(UserManager<User> userManager, SignInManager<User> signInManager,
-    RoleManager<IdentityRole<Guid>> roleManager) :IAuthService
+public class AuthService(
+    UserManager<User> userManager,
+    SignInManager<User> signInManager,
+    RoleManager<IdentityRole<Guid>> roleManager,
+    IJwtTokenService jwtTokenService
+    ) :IAuthService
 {
 
     public async Task<AuthResponseDto> RegisterAdmin(RegisterUserDto user)
@@ -60,5 +64,32 @@ public class AuthService(UserManager<User> userManager, SignInManager<User> sign
     public async Task<AuthResponseDto> RegisterCustomer(RegisterUserDto user)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<AuthResponseDto> Login(LoginRequest user)
+    {
+        var userEmail = await userManager.FindByEmailAsync(user.Email);
+        if (userEmail == null)
+            return new AuthResponseDto
+            {
+                Success = false,
+                Errors = ["Invalid Credentials"],
+            };
+
+        var isPasswordValid = await userManager.CheckPasswordAsync(userEmail, user.Password);
+        if (!isPasswordValid)
+            return new AuthResponseDto
+            {
+                Success = false,
+                Errors = ["Invalid Credentials"]
+            };
+
+        var token = await jwtTokenService.GenerateUserToken(userEmail);
+
+        return new AuthResponseDto
+        {
+            Success = true,
+            Token = token,
+        };
     }
 }

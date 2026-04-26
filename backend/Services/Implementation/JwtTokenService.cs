@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using backend.Data.Entities;
+using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -8,11 +9,11 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace backend.Services.Implementation;
 
-public class JwtTokenService(IOptions<JwtOptions> jwtoptions, UserManager<User> userManager)
+public class JwtTokenService(IOptions<JwtOptions> jwtoptions, UserManager<User> userManager) :IJwtTokenService
 {
     private readonly JwtOptions _jwtOptions = jwtoptions.Value;
 
-    public async Task<string> GenerateToken(User user)
+    public async Task<string> GenerateUserToken(User user)
     {
         var claims = new List<Claim>
         {
@@ -22,10 +23,8 @@ public class JwtTokenService(IOptions<JwtOptions> jwtoptions, UserManager<User> 
         };
 
         var roles = await userManager.GetRolesAsync(user);
-        foreach (var r in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, r));
-        }
+
+        claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
         return GenerateToken(claims);
     }

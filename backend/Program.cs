@@ -38,14 +38,20 @@ builder.Services.AddOptions<JwtOptions>()
     .ValidateDataAnnotations();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication()
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = "Bearer";
+        options.DefaultChallengeScheme = "Bearer";
+    })
+    .AddJwtBearer("Bearer", options =>
     {
         var jwtOptions = jwtConfig.Get<JwtOptions>();
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -54,13 +60,14 @@ builder.Services.AddAuthentication()
             ValidateAudience = true,
             ValidAudience = jwtOptions?.Audience,
 
-            ValidateIssuerSigningKey =  true,
+            ValidateIssuerSigningKey = true,
             IssuerSigningKey = jwtOptions?.SymmetricSecurityKey,
 
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
         };
     });
+
 builder.Services.AddAuthorization();
 
 

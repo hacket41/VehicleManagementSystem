@@ -9,4 +9,6 @@ public interface IAuthService
     public Task<AuthResponseDto> RegisterStaff(RegisterUserDto user);
     public Task<AuthResponseDto> RegisterCustomer(RegisterUserDto user);
 
+    public Task<AuthResponseDto> Login(LoginRequest user);
+
 }
