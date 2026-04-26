@@ -3,6 +3,7 @@ using backend.Data.DTO.Response;
 using backend.Data.Entities;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography.X509Certificates;
 
 namespace backend.Services.Implementation;
 
@@ -58,7 +59,44 @@ public class AuthService(
 
     public async Task<AuthResponseDto> RegisterStaff(RegisterUserDto user)
     {
-        throw new NotImplementedException();
+
+        var newUser = new User
+        {
+            UserName = (user.FirstName + user.LastName).ToLower(),
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            PhoneNumber = user.Phone,
+        };
+
+        var result = await userManager.CreateAsync(newUser, user.Password);
+
+        if (!result.Succeeded)
+        {
+            return new AuthResponseDto
+            {
+                Errors = result.Errors.Select(x => x.Description).ToList(),
+                Success = false,
+
+            };
+        }
+        var addStaffRole = await userManager.AddToRoleAsync(newUser, "Staff");
+        if (!addStaffRole.Succeeded)
+        {
+            return new AuthResponseDto
+            {
+                Errors = addStaffRole.Errors.Select(x => x.Description).ToList(),
+                Success = false,
+            };
+        }
+
+        return new AuthResponseDto
+        {
+            Success = true,
+            Errors = null,
+
+        };
+
     }
 
     public async Task<AuthResponseDto> RegisterCustomer(RegisterUserDto user)
@@ -91,5 +129,7 @@ public class AuthService(
             Success = true,
             Token = token,
         };
+
+
     }
 }
