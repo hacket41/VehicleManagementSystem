@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using backend;
 using backend.Data;
 using backend.Data.Entities;
@@ -39,6 +41,7 @@ builder.Services.AddOptions<JwtOptions>()
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
@@ -64,7 +67,10 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = jwtOptions?.SymmetricSecurityKey,
 
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
+            
+            RoleClaimType = ClaimTypes.Role,
+            NameClaimType = JwtRegisteredClaimNames.Sub
         };
     });
 
