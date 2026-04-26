@@ -29,7 +29,6 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Ok(result);
     }
 
-
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest user)
     {
@@ -38,6 +37,5 @@ public class AuthController(IAuthService authService) : ControllerBase
         if(!result.Success) return BadRequest(result);
         return Ok(result);
     }
-
 
 }

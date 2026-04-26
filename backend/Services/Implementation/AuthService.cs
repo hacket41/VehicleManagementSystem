@@ -101,7 +101,43 @@ public class AuthService(
 
     public async Task<AuthResponseDto> RegisterCustomer(RegisterUserDto user)
     {
-        throw new NotImplementedException();
+        var newUser = new User
+        {
+            UserName = (user.FirstName + user.LastName).ToLower(),
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            PhoneNumber = user.Phone,
+        };
+
+        var result = await userManager.CreateAsync(newUser, user.Password);
+
+        if (!result.Succeeded)
+        {
+            return new AuthResponseDto
+            {
+                Errors = result.Errors.Select(x => x.Description).ToList(),
+                Success = false,
+
+            };
+        }
+        var addCustomerRole = await userManager.AddToRoleAsync(newUser, "Customer");
+        if (!addCustomerRole.Succeeded)
+        {
+            return new AuthResponseDto
+            {
+                Errors = addCustomerRole.Errors.Select(x => x.Description).ToList(),
+                Success = false,
+            };
+        }
+
+        return new AuthResponseDto
+        {
+            Success = true,
+            Errors = null,
+
+        };
+
     }
 
     public async Task<AuthResponseDto> Login(LoginRequest user)
