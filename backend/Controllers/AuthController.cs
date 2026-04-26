@@ -15,13 +15,19 @@ public class AuthController(IAuthService authService) : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("register-staff")]
+    public async Task<IActionResult> RegisterStaff(RegisterUserDto user)
+    {
+        var result = await authService.RegisterStaff(user);
+        return Ok(result);
+    }
+
     [HttpPost("register-admin")]
     public async Task<IActionResult> RegisterAdmin(RegisterUserDto user)
     {
         var result  = await authService.RegisterAdmin(user);
         return Ok(result);
     }
-
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest user)
@@ -31,6 +37,5 @@ public class AuthController(IAuthService authService) : ControllerBase
         if(!result.Success) return BadRequest(result);
         return Ok(result);
     }
-
 
 }
