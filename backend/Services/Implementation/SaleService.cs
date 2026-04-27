@@ -12,6 +12,8 @@ public class SaleService(AppDbContext db, INotificationService notificationServi
     private const decimal LoyaltyThreshold   = 5000m;
     private const decimal LoyaltyDiscountPct = 10m;
 
+    
+    //THIS METHOD MA PARTS VALIDATION HUNCHA PART CHAN KI CHAINA CHECK GARNE AND STOCK CHECK GARNE 
     public async Task<SaleResponseDto> CreateSaleAsync(CreateSaleRequest request, Guid staffId)
     {
         // Validate parts exist and have enough stock
@@ -43,7 +45,7 @@ public class SaleService(AppDbContext db, INotificationService notificationServi
             });
         }
 
-        // Loyalty discount: 10% if subtotal > 5000
+        //MERO 4. Loaylty claculate garne kaam
         bool loyaltyApplied    = subTotal > LoyaltyThreshold;
         decimal discountPct    = loyaltyApplied ? LoyaltyDiscountPct : 0m;
         decimal discountAmount = loyaltyApplied ? Math.Round(subTotal * discountPct / 100, 2) : 0m;
@@ -71,7 +73,7 @@ public class SaleService(AppDbContext db, INotificationService notificationServi
             Items                 = saleItems,
         };
 
-        // Deduct stock
+        //SALE INCREASE AND STOCK QUNATITY UPDATE HUDAI JHANCHA
         foreach (var itemReq in request.Items)
         {
             var part = parts.First(p => p.Id == itemReq.PartId);
@@ -82,9 +84,9 @@ public class SaleService(AppDbContext db, INotificationService notificationServi
         db.Sales.Add(sale);
         await db.SaveChangesAsync();
 
-        // Trigger low-stock check after sale (non-blocking, best-effort)
+        //SALE PACHI LOW STOCK CHA BHANE TRIGGER GARNE
         try { await notificationService.CheckLowStockAsync(); }
-        catch { /* log but don't fail the sale */ }
+        catch { }
 
         return await MapToDto(sale, saleItems, parts);
     }

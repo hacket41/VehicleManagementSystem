@@ -1,10 +1,11 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using backend;
 using backend.Data;
 using backend.Data.Entities;
 using backend.Services.Implementation;
 using backend.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -30,8 +31,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
 );
 
-var jwtConfig = builder.Configuration.GetSection("Jwt");
+// Read JWT settings directly
+var jwtSecret   = builder.Configuration["Jwt:Secret"]!;
+var jwtIssuer   = builder.Configuration["Jwt:Issuer"]!;
+var jwtAudience = builder.Configuration["Jwt:Audience"]!;
 
+var jwtConfig = builder.Configuration.GetSection("Jwt");
 builder.Services.AddOptions<JwtOptions>()
     .Bind(jwtConfig)
     .ValidateDataAnnotations();
@@ -39,40 +44,75 @@ builder.Services.AddOptions<JwtOptions>()
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
+builder.Services.AddScoped<ICustomerReportService, CustomerReportService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ISaleService, SaleService>();
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
+Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogCompleteSecurityArtifact = true;
+// Use AddIdentityCore instead of AddIdentity so it does NOT override auth schemes
+builder.Services.AddIdentityCore<User>(options =>
+{
+    options.Password.RequireDigit           = true;
+    options.Password.RequiredLength         = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase       = false;
+})
+.AddRoles<IdentityRole<Guid>>()
+.AddEntityFrameworkStores<AppDbContext>()
+.AddSignInManager()
+.AddDefaultTokenProviders();
 
+var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
-builder.Services.AddIdentity<User, IdentityRole<Guid>>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
-
+// AddAuthentication is now in full control — Identity won't override it
 builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme             = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.UseSecurityTokenValidators = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultAuthenticateScheme = "Bearer";
-        options.DefaultChallengeScheme = "Bearer";
-    })
-    .AddJwtBearer("Bearer", options =>
+        ValidateIssuer           = true,
+        ValidIssuer              = jwtIssuer,
+        ValidateAudience         = true,
+        ValidAudience            = jwtAudience,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey         = signingKey,
+        ValidateLifetime         = true,
+        ClockSkew                = TimeSpan.Zero,
+        NameClaimType            = ClaimTypes.NameIdentifier,
+        RoleClaimType            = ClaimTypes.Role,
+    };
+
+    options.Events = new JwtBearerEvents
     {
-        var jwtOptions = jwtConfig.Get<JwtOptions>();
-        options.TokenValidationParameters = new TokenValidationParameters
+        OnAuthenticationFailed = ctx =>
         {
-            ValidateIssuer = true,
-            ValidIssuer = jwtOptions?.Issuer,
-            ValidateAudience = true,
-            ValidAudience = jwtOptions?.Audience,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = jwtOptions?.SymmetricSecurityKey,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            NameClaimType = ClaimTypes.NameIdentifier,
-            RoleClaimType = ClaimTypes.Role,
-        };
-    });
+            Console.WriteLine($"[JWT FAIL] {ctx.Exception.GetType().Name}: {ctx.Exception.Message}");
+            Console.WriteLine($"[JWT FAIL] Token: {ctx.Request.Headers["Authorization"]}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = ctx =>
+        {
+            Console.WriteLine($"[JWT OK] User: {ctx.Principal?.Identity?.Name}");
+            return Task.CompletedTask;
+        },
+        OnChallenge = ctx =>
+        {
+            Console.WriteLine($"[JWT CHALLENGE] Error: {ctx.Error}, Desc: {ctx.ErrorDescription}");
+            return Task.CompletedTask;
+        }
+    };
+});
 
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Auto-migrate and seed on startup
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -85,7 +125,7 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Startup migration/seed error: {Message}", ex.Message);
+        logger.LogError(ex, "Startup error: {Message}", ex.Message);
     }
 }
 

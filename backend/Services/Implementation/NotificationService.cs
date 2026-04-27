@@ -51,9 +51,7 @@ public class NotificationService(AppDbContext db, ILogger<NotificationService> l
 
         return summary;
     }
-
-
-
+    
     public async Task<NotificationSummaryDto> SendCreditRemindersAsync()
     {
         var summary = new NotificationSummaryDto();

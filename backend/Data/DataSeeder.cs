@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data;
 
-
+//ALL SEEDED DATA BANAKO CHU MAILE MERO MA TEST GARNA TIMI HARULE EDIT GARHUNCHA HAI
 public static class DataSeeder
 {
 
@@ -24,9 +24,7 @@ public static class DataSeeder
         await SeedParts(db);
         await SeedSales(db);
     }
-
-    // ── Users ──────────────────────────────────────────────────────────────────
-
+    
     private static async Task SeedUsers(UserManager<User> userManager)
     {
         await EnsureUser(userManager, AdminId,    "admin@vehicle.com",    "Admin",   "User",    "Admin1234!", "Admin");
@@ -58,15 +56,13 @@ public static class DataSeeder
             await userManager.AddToRoleAsync(user, role);
     }
 
-    // ── Parts ──────────────────────────────────────────────────────────────────
-
     private static async Task SeedParts(AppDbContext db)
     {
         if (await db.Parts.AnyAsync()) return;
 
         var parts = new List<Part>
         {
-            // Low stock (triggers Feature 3 - low stock alert)
+            // Low stock
             new() { Name="Brake Pad Set",      PartNumber="BP-001", Category="Brakes",   CostPrice=800,  SellingPrice=1200, StockQuantity=3,  LowStockThreshold=10, CompatibleVehicles="Toyota,Honda",     Description="Front brake pads" },
             new() { Name="Oil Filter",         PartNumber="OF-002", Category="Engine",   CostPrice=150,  SellingPrice=250,  StockQuantity=5,  LowStockThreshold=10, CompatibleVehicles="All",              Description="Standard oil filter" },
             // Normal stock
@@ -82,8 +78,7 @@ public static class DataSeeder
         await db.SaveChangesAsync();
     }
 
-    // ── Sales ──────────────────────────────────────────────────────────────────
-
+   
     private static async Task SeedSales(AppDbContext db)
     {
         if (await db.Sales.AnyAsync()) return;

@@ -18,8 +18,6 @@ public class SaleItemRequest
     public int Quantity { get; set; }
 }
 
-
-
 public class SaleItemResponseDto
 {
     public int PartId { get; set; }
