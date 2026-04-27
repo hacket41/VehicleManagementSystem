@@ -3,7 +3,6 @@ import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
