@@ -1,15 +1,7 @@
-using backend.Data.Entities;
+
 using backend.Data.Enums;
 
 namespace backend.Data.DTO.Request;
-
-public class GenerateFinancialReportRequest
-{
-    public ReportType Type { get; set; }
-    public DateTime Date { get; set; }
-}
-
-
 
 public class FinancialReportDto
 {

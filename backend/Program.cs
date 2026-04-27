@@ -63,7 +63,6 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = jwtOptions?.SymmetricSecurityKey,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
-            // Fix: map "sub" → NameIdentifier so controllers resolve user ID correctly
             NameClaimType = ClaimTypes.NameIdentifier,
             RoleClaimType = ClaimTypes.Role,
         };

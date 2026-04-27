@@ -5,13 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data;
 
-/// <summary>
-/// Seeds test data so all 4 features can be exercised immediately.
-/// Safe to run repeatedly — it checks existence before inserting.
-/// </summary>
+
 public static class DataSeeder
 {
-    // Stable GUIDs so re-runs don't duplicate
+
     private static readonly Guid AdminId    = new("aaaaaaaa-0000-0000-0000-000000000001");
     private static readonly Guid StaffId    = new("bbbbbbbb-0000-0000-0000-000000000001");
     private static readonly Guid Customer1Id = new("cccccccc-0000-0000-0000-000000000001");
@@ -103,9 +100,6 @@ public static class DataSeeder
 
         var sales = new List<Sale>
         {
-            // ── Feature 1 seed: daily/monthly/yearly report data ──────────────
-
-            // Today — paid cash
             MakeSale("INV-TODAY-001", Customer1Id, StaffId, now,
                 PaymentMethod.Cash, PaymentStatus.Paid, false, new[]
                 {
@@ -113,14 +107,13 @@ public static class DataSeeder
                     (sparkPlug, 1),
                 }),
 
-            // This month — paid cash — subtotal > 5000 → loyalty discount applied
+   
             MakeSale("INV-MONTH-001", Customer2Id, StaffId, now.AddDays(-10),
                 PaymentMethod.Cash, PaymentStatus.Paid, true, new[]
                 {
                     (shockAbs, 2),   // 2 × 3500 = 7000 → loyalty 10% → total 6300
                 }),
 
-            // This year — paid cash
             MakeSale("INV-YEAR-001", Customer3Id, StaffId, now.AddDays(-60),
                 PaymentMethod.Cash, PaymentStatus.Paid, false, new[]
                 {
@@ -128,7 +121,7 @@ public static class DataSeeder
                     (battery, 1),
                 }),
 
-            // ── Feature 2 seed: regular customer (multiple purchases) ─────────
+     
 
             MakeSale("INV-REG-001", Customer1Id, StaffId, now.AddDays(-5),
                 PaymentMethod.Cash, PaymentStatus.Paid, false, new[]
@@ -142,8 +135,7 @@ public static class DataSeeder
                     (sparkPlug, 2),
                 }),
 
-            // ── Feature 3 seed: overdue credit (>1 month) for Customer2 & 3 ──
-
+       
             MakeSale("INV-CREDIT-001", Customer2Id, StaffId, now.AddMonths(-2),
                 PaymentMethod.Credit, PaymentStatus.Pending, false, new[]
                 {
