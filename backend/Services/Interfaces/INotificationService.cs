@@ -3,5 +3,5 @@ using backend.Data.DTO.Request;
 public interface INotificationService
 {
     Task<NotificationSummaryDto> CheckLowStockAsync();
-    Task<NotificationSummaryDto>  SendCreditReminderAsync();
+    Task<NotificationSummaryDto> SendCreditRemindersAsync();
 }

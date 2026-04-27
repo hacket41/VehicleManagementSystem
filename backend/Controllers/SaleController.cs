@@ -11,9 +11,7 @@ namespace backend.Controllers;
 [Authorize(Roles = "Staff,Admin")]
 public class SaleController(ISaleService saleService) : ControllerBase
 {
-    /// <summary>
-    /// Create a sale. Automatically applies 10% loyalty discount when SubTotal &gt; 5000.
-    /// </summary>
+
     [HttpPost]
     public async Task<IActionResult> CreateSale([FromBody] CreateSaleRequest request)
     {

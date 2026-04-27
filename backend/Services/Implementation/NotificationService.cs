@@ -3,13 +3,13 @@ using backend.Data.Entities;
 using backend.Data.Enums;
 using backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using backend.Data.DTO.Request;
 
 namespace backend.Services.Implementation;
 
 public class NotificationService(AppDbContext db, ILogger<NotificationService> logger) : INotificationService
 {
-    // ── Low Stock ──────────────────────────────────────────────────────────────
-
+    
     public async Task<NotificationSummaryDto> CheckLowStockAsync()
     {
         var summary = new NotificationSummaryDto();
@@ -36,7 +36,7 @@ public class NotificationService(AppDbContext db, ILogger<NotificationService> l
             {
                 PartId             = part.Id,
                 StockAtTimeOfAlert = part.StockQuantity,
-                Status             = NotificationStatus.Sent,   // "Sent" = logged/emailed
+                Status             = NotificationStatus.Sent,  
                 SentAt             = DateTime.UtcNow,
             };
 
@@ -52,7 +52,7 @@ public class NotificationService(AppDbContext db, ILogger<NotificationService> l
         return summary;
     }
 
-    // ── Credit Reminders ───────────────────────────────────────────────────────
+
 
     public async Task<NotificationSummaryDto> SendCreditRemindersAsync()
     {
