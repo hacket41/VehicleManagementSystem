@@ -12,8 +12,6 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -26,7 +24,6 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -42,6 +39,8 @@ builder.Services.AddOptions<JwtOptions>()
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
+
+
 builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
@@ -54,44 +53,52 @@ builder.Services.AddAuthentication(options =>
     .AddJwtBearer("Bearer", options =>
     {
         var jwtOptions = jwtConfig.Get<JwtOptions>();
-
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = jwtOptions?.Issuer,
-
             ValidateAudience = true,
             ValidAudience = jwtOptions?.Audience,
-
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = jwtOptions?.SymmetricSecurityKey,
-
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
-            
+            // Fix: map "sub" → NameIdentifier so controllers resolve user ID correctly
+            NameClaimType = ClaimTypes.NameIdentifier,
             RoleClaimType = ClaimTypes.Role,
-            NameClaimType = JwtRegisteredClaimNames.Sub
         };
     });
 
 builder.Services.AddAuthorization();
 
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Auto-migrate and seed on startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var db = services.GetRequiredService<AppDbContext>();
+        db.Database.Migrate();
+        await DataSeeder.SeedAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Startup migration/seed error: {Message}", ex.Message);
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
