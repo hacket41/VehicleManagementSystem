@@ -63,7 +63,6 @@ public class CustomerReportService(AppDbContext db) : ICustomerReportService
         }).ToList();
     }
 
-    // ── Queries ────────────────────────────────────────────────────────────────
 
     private async Task<List<CustomerReportRowDto>> GetTopSpenders(GenerateCustomerReportRequest req)
     {
