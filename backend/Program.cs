@@ -49,7 +49,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
 Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogCompleteSecurityArtifact = true;
-// Use AddIdentityCore instead of AddIdentity so it does NOT override auth schemes
+
 builder.Services.AddIdentityCore<User>(options =>
 {
     options.Password.RequireDigit           = true;
@@ -64,7 +64,7 @@ builder.Services.AddIdentityCore<User>(options =>
 
 var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
-// AddAuthentication is now in full control — Identity won't override it
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -87,7 +87,8 @@ builder.Services.AddAuthentication(options =>
         NameClaimType            = ClaimTypes.NameIdentifier,
         RoleClaimType            = ClaimTypes.Role,
     };
-
+    
+    //DEBUG MESSAGES
     options.Events = new JwtBearerEvents
     {
         OnAuthenticationFailed = ctx =>

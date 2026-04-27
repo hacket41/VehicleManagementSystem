@@ -18,7 +18,7 @@ public class NotificationService(AppDbContext db, ILogger<NotificationService> l
             .Where(p => p.IsActive && p.StockQuantity < p.LowStockThreshold)
             .ToListAsync();
 
-        // Only create a new notification if there isn't already a Pending one for this part
+        //new noti si created only if not pending
         var alreadyPending = await db.LowStockNotifications
             .Where(n => n.Status == NotificationStatus.Pending)
             .Select(n => n.PartId)

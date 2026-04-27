@@ -1,6 +1,3 @@
-
-using backend.Data.Enums;
-
 namespace backend.Data.DTO.Request;
 
 public class FinancialReportDto
