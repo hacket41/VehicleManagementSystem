@@ -1,11 +1,13 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace backend.Data.Entities;
 
+[PrimaryKey(nameof(Id))] 
 public class Vendor
 {
-    [Key]
+    //[Key]
     public int Id { get; set; }
 
     [Required, MaxLength(150)]
