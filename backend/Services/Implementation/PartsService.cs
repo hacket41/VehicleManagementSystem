@@ -3,7 +3,6 @@ using backend.Data.DTO.Request;
 using backend.Data.DTO.Response;
 using backend.Data.Entities;
 using backend.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -130,8 +129,12 @@ public class PartsService(AppDbContext db) : IPartsService
         };
     }
 
-    public async Task<IActionResult> DeletePart(int id)
+    public async Task<bool> DeletePart(int id)
     {
-        throw new NotImplementedException();
+        var result = await db.Parts
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync();
+
+        return result > 0;
     }
 }

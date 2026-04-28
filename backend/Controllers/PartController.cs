@@ -1,5 +1,6 @@
 using backend.Data.DTO.Request;
 using backend.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -26,6 +27,7 @@ public class PartController(IPartsService parts) : ControllerBase
     }
 
 
+    [Authorize(Roles="Admin")]
     [HttpPost]
     [Route("add")]
     public async Task<IActionResult> PurchasePart([FromBody] PartsPurchaseRequest part)
@@ -41,14 +43,21 @@ public class PartController(IPartsService parts) : ControllerBase
         }
     }
 
+    [Authorize(Roles="Admin")]
     [HttpPut]
     [Route("{id:int}")]
     public async Task<IActionResult> EditPart(int id, [FromBody] PartsPurchaseRequest part)
     {
-
         var result = await parts.EditPart(id, part);
         return result == null ? NotFound() : Ok(result);
     }
 
-
+    [Authorize(Roles="Admin")]
+    [HttpDelete]
+    [Route("{id:int}")]
+    public async Task<IActionResult> DeletePart(int id)
+    {
+        var partToDelete = await parts.DeletePart(id);
+        return !partToDelete ? NoContent() : Ok(partToDelete);
+    }
 }
