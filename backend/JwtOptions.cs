@@ -9,13 +9,13 @@ public class JwtOptions
     public const string SectionName = "Jwt";
 
     [Required]
-    public string Issuer { get; set; }
+    public required string Issuer { get; set; }
     [Required]
-    public string Audience { get; set; }
+    public required string Audience { get; set; }
 
     [Required]
     [MinLength(32)]
-    public string Secret { get; init; }
+    public required string Secret { get; init; }
     public SymmetricSecurityKey SymmetricSecurityKey => new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secret));
 
     [Range(1, int.MaxValue)]

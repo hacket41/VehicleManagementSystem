@@ -99,6 +99,7 @@ public class AuthService(
 
     }
 
+
     public async Task<AuthResponseDto> RegisterCustomer(RegisterUserDto user)
     {
         var newUser = new User

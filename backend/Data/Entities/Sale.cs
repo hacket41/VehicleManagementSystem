@@ -1,8 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using backend.Data.Enums;
 
 namespace backend.Data.Entities;
+
 
 public class Sale
 {
@@ -12,16 +14,19 @@ public class Sale
     [Required, MaxLength(30)]
     public string InvoiceNumber { get; set; } = string.Empty;
 
+    [ForeignKey(nameof(Customer))]
     public Guid CustomerId { get; set; }
-    public User Customer { get; set; } = null!;
+    public User? Customer { get; set; }
 
+    [ForeignKey(nameof(Staff))]
     public Guid StaffId { get; set; }
-    public User Staff { get; set; } = null!;
+    public User? Staff { get; set; }
 
+    [ForeignKey(nameof(Vehicle))]
     public int? VehicleId { get; set; }
     public Vehicle? Vehicle { get; set; }
 
-    public DateTime SaleDate { get; set; } = DateTime.UtcNow;
+    public DateTime SaleDate { get; set; } = DateTime.UtcNow.Date;
 
     [Column(TypeName = "decimal(18,2)")]
     public decimal SubTotal { get; set; }
@@ -40,14 +45,16 @@ public class Sale
 
     public DateTime? CreditDueDate { get; set; }
 
-    public bool LoyaltyDiscountApplied { get; set; } = false;
+    public bool LoyaltyDiscountApplied { get; set; }
 
     [MaxLength(500)]
-    public string Notes { get; set; } = string.Empty;
+    public string? Notes { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    // public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public ICollection<SaleItem> Items { get; set; } = new List<SaleItem>();
-    public ICollection<CreditReminder> CreditReminders { get; set; } = new List<CreditReminder>();
+    [JsonIgnore]
+    public List<SaleItem> Items { get; set; } = [];
+
+    [JsonIgnore]
+    public List<CreditReminder> CreditReminders { get; set; } = [];
 }
-

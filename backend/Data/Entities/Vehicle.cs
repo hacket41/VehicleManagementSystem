@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Data.Entities;
 
@@ -7,8 +8,9 @@ public class Vehicle
     [Key]
     public int Id { get; set; }
 
+    [ForeignKey(nameof(Customer))]
     public Guid CustomerId { get; set; }
-    public User Customer { get; set; } = null!;
+    public User? Customer { get; set; }
 
     [Required, MaxLength(20)]
     public string VehicleNumber { get; set; } = string.Empty;  

@@ -5,33 +5,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data;
 
-public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
+public class AppDbContext(DbContextOptions<AppDbContext> options)
+    : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-   
-    public DbSet<Part> Parts => Set<Part>();
-    public DbSet<Vendor> Vendors => Set<Vendor>();
-    public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
-    public DbSet<PurchaseItem> PurchaseItems => Set<PurchaseItem>();
+    public DbSet<PartCategory> PartCategories { get; set; }
+    public DbSet<Part> Parts { get; set; }
+    public DbSet<Vendor> Vendors { get; set; }
+    public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+    public DbSet<PurchaseItem> PurchaseItems { get; set; }
 
   
-    public DbSet<Sale> Sales => Set<Sale>();
-    public DbSet<SaleItem> SaleItems => Set<SaleItem>();
+    public DbSet<Sale> Sales { get; set; }
+    public DbSet<SaleItem> SaleItems { get; set; }
 
   
-    public DbSet<Vehicle> Vehicles => Set<Vehicle>();
-    public DbSet<ServiceAppointment> ServiceAppointments => Set<ServiceAppointment>();
-    public DbSet<PartRequest> PartRequests => Set<PartRequest>();
-    public DbSet<CustomerReview> CustomerReviews => Set<CustomerReview>();
+    public DbSet<Vehicle> Vehicles { get; set; }
+    public DbSet<ServiceAppointment> ServiceAppointments { get; set; }
+    public DbSet<PartRequest> PartRequests { get; set; }
+    public DbSet<CustomerReview> CustomerReviews { get; set; }
 
  
-    public DbSet<FinancialReport> FinancialReports => Set<FinancialReport>();
-    public DbSet<CustomerReport> CustomerReports => Set<CustomerReport>();
+    public DbSet<FinancialReport> FinancialReports { get; set; }
+    public DbSet<CustomerReport> CustomerReports { get; set; }
 
  
-    public DbSet<LowStockNotification> LowStockNotifications => Set<LowStockNotification>();
-    public DbSet<CreditReminder> CreditReminders => Set<CreditReminder>();
+    public DbSet<LowStockNotification> LowStockNotifications { get; set; }
+    public DbSet<CreditReminder> CreditReminders { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -40,140 +39,6 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
       
         builder.Entity<User>().ToTable("Users");
         builder.Entity<IdentityRole<Guid>>().ToTable("Roles");
-
-     
-        builder.Entity<Sale>()
-            .HasOne(s => s.Customer)
-            .WithMany()
-            .HasForeignKey(s => s.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<Sale>()
-            .HasOne(s => s.Staff)
-            .WithMany()
-            .HasForeignKey(s => s.StaffId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<SaleItem>()
-            .HasOne(si => si.Sale)
-            .WithMany(s => s.Items)
-            .HasForeignKey(si => si.SaleId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Entity<SaleItem>()
-            .HasOne(si => si.Part)
-            .WithMany(p => p.SaleItems)
-            .HasForeignKey(si => si.PartId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-     
-        builder.Entity<PurchaseOrder>()
-            .HasOne(po => po.CreatedByAdmin)
-            .WithMany()
-            .HasForeignKey(po => po.CreatedByAdminId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<PurchaseOrder>()
-            .HasOne(po => po.Vendor)
-            .WithMany(v => v.PurchaseOrders)
-            .HasForeignKey(po => po.VendorId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<PurchaseItem>()
-            .HasOne(pi => pi.PurchaseOrder)
-            .WithMany(po => po.Items)
-            .HasForeignKey(pi => pi.PurchaseOrderId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Entity<PurchaseItem>()
-            .HasOne(pi => pi.Part)
-            .WithMany(p => p.PurchaseItems)
-            .HasForeignKey(pi => pi.PartId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-    
-        builder.Entity<Vehicle>()
-            .HasOne(v => v.Customer)
-            .WithMany()
-            .HasForeignKey(v => v.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<Sale>()
-            .HasOne(s => s.Vehicle)
-            .WithMany(v => v.Sales)
-            .HasForeignKey(s => s.VehicleId)
-            .OnDelete(DeleteBehavior.SetNull);
-
-        builder.Entity<ServiceAppointment>()
-            .HasOne(a => a.Customer)
-            .WithMany()
-            .HasForeignKey(a => a.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<ServiceAppointment>()
-            .HasOne(a => a.Vehicle)
-            .WithMany(v => v.ServiceAppointments)
-            .HasForeignKey(a => a.VehicleId)
-            .OnDelete(DeleteBehavior.Restrict);
-        
-        builder.Entity<PartRequest>()
-            .HasOne(pr => pr.Customer)
-            .WithMany()
-            .HasForeignKey(pr => pr.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<PartRequest>()
-            .HasOne(pr => pr.Part)
-            .WithMany(p => p.PartRequests)
-            .HasForeignKey(pr => pr.PartId)
-            .OnDelete(DeleteBehavior.SetNull);
-
-    
-        builder.Entity<CustomerReview>()
-            .HasOne(r => r.Customer)
-            .WithMany()
-            .HasForeignKey(r => r.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-       
-        builder.Entity<FinancialReport>()
-            .HasOne(r => r.GeneratedByUser)
-            .WithMany()
-            .HasForeignKey(r => r.GeneratedByUserId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<CustomerReport>()
-            .HasOne(r => r.GeneratedByStaff)
-            .WithMany()
-            .HasForeignKey(r => r.GeneratedByStaffId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-  
-        builder.Entity<LowStockNotification>()
-            .HasOne(n => n.Part)
-            .WithMany(p => p.LowStockNotifications)
-            .HasForeignKey(n => n.PartId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<CreditReminder>()
-            .HasOne(cr => cr.Customer)
-            .WithMany()
-            .HasForeignKey(cr => cr.CustomerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<CreditReminder>()
-            .HasOne(cr => cr.Sale)
-            .WithMany(s => s.CreditReminders)
-            .HasForeignKey(cr => cr.SaleId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<Sale>().HasIndex(s => s.InvoiceNumber).IsUnique();
-        builder.Entity<Sale>().HasIndex(s => s.PaymentStatus);
-        builder.Entity<Sale>().HasIndex(s => s.SaleDate);
-        builder.Entity<Part>().HasIndex(p => p.PartNumber).IsUnique();
-        builder.Entity<Part>().HasIndex(p => p.StockQuantity);
-        builder.Entity<Vehicle>().HasIndex(v => v.VehicleNumber);
-        builder.Entity<PurchaseOrder>().HasIndex(po => po.PurchaseOrderNumber).IsUnique();
 
         SeedRoles(builder);
     }

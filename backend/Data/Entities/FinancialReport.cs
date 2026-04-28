@@ -34,6 +34,7 @@ public class FinancialReport
 
     public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
 
+    [ForeignKey(nameof(User))]
     public Guid GeneratedByUserId { get; set; }
-    public User GeneratedByUser { get; set; } = null!;
+    public User User { get; set; } = null!;
 }
