@@ -43,6 +43,7 @@ builder.Services.AddOptions<JwtOptions>()
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IPartsService, PartsService>();
 builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddScoped<ICustomerReportService, CustomerReportService>();
