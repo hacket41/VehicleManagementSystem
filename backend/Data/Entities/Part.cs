@@ -7,7 +7,7 @@ namespace backend.Data.Entities;
 public class Part
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     [Required, MaxLength(100)]
     public string Name { get; set; } = string.Empty;
@@ -17,6 +17,10 @@ public class Part
 
     [MaxLength(500)]
     public string Description { get; set; } = string.Empty;
+
+    [ForeignKey(nameof(Vendor))]
+    public int VendorId { get; set; }
+    public Vendor? Vendor { get; set; }
 
     [ForeignKey(nameof(Category))]
     public int CategoryId { get; set; }
