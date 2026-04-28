@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace backend.Data.Entities;
 
 public class Part
 {
     [Key]
-    public int Id { get; set; }
+    public int Id { get; init; }
 
     [Required, MaxLength(100)]
     public string Name { get; set; } = string.Empty;
@@ -17,8 +18,13 @@ public class Part
     [MaxLength(500)]
     public string Description { get; set; } = string.Empty;
 
-    [MaxLength(100)]
-    public string Category { get; set; } = string.Empty;
+    [ForeignKey(nameof(Vendor))]
+    public int VendorId { get; set; }
+    public Vendor? Vendor { get; set; }
+
+    [ForeignKey(nameof(Category))]
+    public int CategoryId { get; set; }
+    public PartCategory? Category { get; set; }
     
     [MaxLength(500)]
     public string CompatibleVehicles { get; set; } = string.Empty;
@@ -39,8 +45,15 @@ public class Part
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
 
-    public ICollection<SaleItem> SaleItems { get; set; } = new List<SaleItem>();
-    public ICollection<PurchaseItem> PurchaseItems { get; set; } = new List<PurchaseItem>();
-    public ICollection<PartRequest> PartRequests { get; set; } = new List<PartRequest>();
-    public ICollection<LowStockNotification> LowStockNotifications { get; set; } = new List<LowStockNotification>();
+    [JsonIgnore]
+    public List<SaleItem>? SaleItems { get; set; }
+
+    [JsonIgnore]
+    public List<PurchaseItem>? PurchaseItems { get; set; }
+
+    [JsonIgnore]
+    public List<PartRequest>? PartRequests { get; set; }
+
+    [JsonIgnore]
+    public List<LowStockNotification>? LowStockNotifications { get; set; }
 }

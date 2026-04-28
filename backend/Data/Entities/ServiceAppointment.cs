@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using backend.Data.Enums;
 
 namespace backend.Data.Entities;
@@ -8,9 +9,11 @@ public class ServiceAppointment
     [Key]
     public int Id { get; set; }
 
+    [ForeignKey(nameof(User))]
     public Guid CustomerId { get; set; }
-    public User Customer { get; set; } = null!;
+    public User? User { get; set; }
 
+    [ForeignKey(nameof(Vehicle))]
     public int VehicleId { get; set; }
     public Vehicle Vehicle { get; set; } = null!;
 
@@ -26,5 +29,3 @@ public class ServiceAppointment
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
-
-

@@ -10,11 +10,14 @@ public class CreditReminder
     [Key]
     public int Id { get; set; }
 
+    [ForeignKey(nameof(Sale))]
     public int SaleId { get; set; }
-    public Sale Sale { get; set; } = null!;
+    public Sale? Sale { get; set; }
 
+    [ForeignKey(nameof(User))]
     public Guid CustomerId { get; set; }
-    public User Customer { get; set; } = null!;
+
+    public User? User { get; set; }
 
     [MaxLength(50)]
     public string InvoiceNumber { get; set; } = string.Empty;

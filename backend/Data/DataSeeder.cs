@@ -21,6 +21,8 @@ public static class DataSeeder
         var db          = services.GetRequiredService<AppDbContext>();
 
         await SeedUsers(userManager);
+        await SeedVendors(db);
+        await SeedCategory(db);
         await SeedParts(db);
         await SeedSales(db);
     }
@@ -56,28 +58,156 @@ public static class DataSeeder
             await userManager.AddToRoleAsync(user, role);
     }
 
-    private static async Task SeedParts(AppDbContext db)
+    private static async Task SeedVendors(AppDbContext db)
     {
-        if (await db.Parts.AnyAsync()) return;
+        if (await db.Vendors.AnyAsync()) return;
 
-        var parts = new List<Part>
+        var vendors = new List<Vendor>
         {
-            // Low stock
-            new() { Name="Brake Pad Set",      PartNumber="BP-001", Category="Brakes",   CostPrice=800,  SellingPrice=1200, StockQuantity=3,  LowStockThreshold=10, CompatibleVehicles="Toyota,Honda",     Description="Front brake pads" },
-            new() { Name="Oil Filter",         PartNumber="OF-002", Category="Engine",   CostPrice=150,  SellingPrice=250,  StockQuantity=5,  LowStockThreshold=10, CompatibleVehicles="All",              Description="Standard oil filter" },
-            // Normal stock
-            new() { Name="Air Filter",         PartNumber="AF-003", Category="Engine",   CostPrice=200,  SellingPrice=400,  StockQuantity=50, LowStockThreshold=10, CompatibleVehicles="All",              Description="Engine air filter" },
-            new() { Name="Spark Plug (set 4)", PartNumber="SP-004", Category="Engine",   CostPrice=500,  SellingPrice=900,  StockQuantity=30, LowStockThreshold=10, CompatibleVehicles="Petrol engines",   Description="NGK spark plugs" },
-            new() { Name="Shock Absorber",     PartNumber="SA-005", Category="Suspension",CostPrice=2000, SellingPrice=3500, StockQuantity=20, LowStockThreshold=10, CompatibleVehicles="Sedans",           Description="Front shock absorber" },
-            new() { Name="Timing Belt",        PartNumber="TB-006", Category="Engine",   CostPrice=600,  SellingPrice=1100, StockQuantity=15, LowStockThreshold=10, CompatibleVehicles="Honda,Suzuki",     Description="Timing belt kit" },
-            new() { Name="Radiator",           PartNumber="RD-007", Category="Cooling",  CostPrice=3500, SellingPrice=5500, StockQuantity=8,  LowStockThreshold=10, CompatibleVehicles="Toyota",           Description="Aluminium radiator" },
-            new() { Name="Battery 12V",        PartNumber="BT-008", Category="Electrical",CostPrice=2500, SellingPrice=4000, StockQuantity=12, LowStockThreshold=10, CompatibleVehicles="All",              Description="Maintenance-free battery" },
+            new()
+            {
+                Id = 1,
+                Name = "AutoParts Nepal Pvt. Ltd.",
+                ContactPerson = "Ramesh Shrestha",
+                Phone = "9801000001",
+                Email = "autoparts@nepal.com",
+                Address = "Kathmandu",
+            },
+            new()
+            {
+                Id = 2,
+                Name = "Himalayan Spares",
+                ContactPerson = "Sita Gurung",
+                Phone = "9801000002",
+                Email = "himalayan@spares.com",
+                Address = "Pokhara",
+            },
+            new()
+            {
+                Id = 3,
+                Name = "Everest Auto Supplies",
+                ContactPerson = "Kiran Rai",
+                Phone = "9801000003",
+                Email = "everest@auto.com",
+                Address = "Lalitpur",
+            },
+            new()
+            {
+                Id = 4,
+                Name = "Global Vehicle Parts",
+                ContactPerson = "Amit Shah",
+                Phone = "9801000004",
+                Email = "global@vehicle.com",
+                Address = "Biratnagar",
+            },
         };
 
-        db.Parts.AddRange(parts);
+        await db.Vendors.AddRangeAsync(vendors);
         await db.SaveChangesAsync();
     }
 
+
+    private static async Task SeedCategory(AppDbContext db)
+    {
+        if (await db.PartCategories.AnyAsync()) return;
+
+        var category = new List<PartCategory>
+        {
+            new() { Id = 1, Name = "Engine" },
+            new() { Id = 2, Name = "Cooling" },
+            new() { Id = 3, Name = "Electrical" },
+            new() { Id = 4, Name = "Suspension" },
+            new() { Id = 5, Name = "Tyres" },
+        };
+
+        await db.PartCategories.AddRangeAsync(category);
+        await db.SaveChangesAsync();
+    }
+
+        private static async Task SeedParts(AppDbContext db)
+        {
+            if (await db.Parts.AnyAsync()) return;
+
+            var parts = new List<Part>
+            {
+                // Low stock
+                new() {
+                    Name="Brake Pad Set", PartNumber="BP-001",
+                    CategoryId = 1, VendorId = 1,
+                    CostPrice=800, SellingPrice=1200,
+                    StockQuantity=3, LowStockThreshold=10,
+                    CompatibleVehicles="Toyota,Honda",
+                    Description="Front brake pads"
+                },
+
+                new() {
+                    Name="Oil Filter", PartNumber="OF-002",
+                    CategoryId = 2, VendorId = 2,
+                    CostPrice=150, SellingPrice=250,
+                    StockQuantity=5, LowStockThreshold=10,
+                    CompatibleVehicles="All",
+                    Description="Standard oil filter"
+                },
+
+                // Normal stock
+                new() {
+                    Name="Air Filter", PartNumber="AF-003",
+                    CategoryId = 1, VendorId = 2,
+                    CostPrice=200, SellingPrice=400,
+                    StockQuantity=50, LowStockThreshold=10,
+                    CompatibleVehicles="All",
+                    Description="Engine air filter"
+                },
+
+                new() {
+                    Name="Spark Plug (set 4)", PartNumber="SP-004",
+                    CategoryId = 1, VendorId = 3,
+                    CostPrice=500, SellingPrice=900,
+                    StockQuantity=30, LowStockThreshold=10,
+                    CompatibleVehicles="Petrol engines",
+                    Description="NGK spark plugs"
+                },
+
+                new() {
+                    Name="Shock Absorber", PartNumber="SA-005",
+                    CategoryId = 4, VendorId = 4,
+                    CostPrice=2000, SellingPrice=3500,
+                    StockQuantity=20, LowStockThreshold=10,
+                    CompatibleVehicles="Sedans",
+                    Description="Front shock absorber"
+                },
+
+                new() {
+                    Name="Timing Belt", PartNumber="TB-006",
+                    CategoryId = 1, VendorId = 1,
+                    CostPrice=600, SellingPrice=1100,
+                    StockQuantity=15, LowStockThreshold=10,
+                    CompatibleVehicles="Honda,Suzuki",
+                    Description="Timing belt kit"
+                },
+
+                new() {
+                    Name="Radiator", PartNumber="RD-007",
+                    CategoryId = 2, VendorId = 3,
+                    CostPrice=3500, SellingPrice=5500,
+                    StockQuantity=8, LowStockThreshold=10,
+                    CompatibleVehicles="Toyota",
+                    Description="Aluminium radiator"
+                },
+
+                new() {
+                    Name="Battery 12V", PartNumber="BT-008",
+                    CategoryId = 3, VendorId = 4,
+                    CostPrice=2500, SellingPrice=4000,
+                    StockQuantity=12, LowStockThreshold=10,
+                    CompatibleVehicles="All",
+                    Description="Maintenance-free battery"
+                },
+            };
+
+            await db.Parts.AddRangeAsync(parts);
+            await db.SaveChangesAsync();
+        }
    
     private static async Task SeedSales(AppDbContext db)
     {
@@ -171,7 +301,6 @@ public static class DataSeeder
             CustomerId             = customerId,
             StaffId                = staffId,
             SaleDate               = saleDate,
-            CreatedAt              = saleDate,
             PaymentMethod          = method,
             PaymentStatus          = status,
             CreditDueDate          = creditDue,

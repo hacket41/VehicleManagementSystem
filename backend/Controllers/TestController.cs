@@ -6,7 +6,6 @@ namespace backend.Controllers;
 [Route("[controller]")]
 public class TestController : ControllerBase
 {
-    // GET
     [HttpGet]
     public  IActionResult Test ()
     {

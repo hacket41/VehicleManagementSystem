@@ -19,70 +19,64 @@ public class FinancialReportService(AppDbContext db) : IFinancialReportService
             .Include(s => s.Items)
             .ToListAsync();
 
-     
         var purchases = await db.PurchaseOrders
             .Where(po => po.OrderDate >= start && po.OrderDate <= end
-                         && po.Status == PurchaseStatus.Received)
+                      && po.Status == PurchaseStatus.Received)
             .ToListAsync();
 
-        
         var outstandingCredit = await db.Sales
             .Where(s => s.PaymentMethod == PaymentMethod.Credit
-                        && s.PaymentStatus != PaymentStatus.Paid)
+                     && s.PaymentStatus != PaymentStatus.Paid)
             .SumAsync(s => s.TotalAmount);
 
         var report = new FinancialReport
         {
-            Type = request.Type,
-            PeriodStart = start,
-            PeriodEnd = end,
-            TotalSalesRevenue = sales.Sum(s => s.TotalAmount),
-            TotalPurchaseCost = purchases.Sum(p => p.TotalCost),
-            TotalDiscountsGiven = sales.Sum(s => s.DiscountAmount),
-            GrossProfit = sales.Sum(s => s.TotalAmount) - purchases.Sum(p => p.TotalCost),
+            Type                   = request.Type,
+            PeriodStart            = start,
+            PeriodEnd              = end,
+            TotalSalesRevenue      = sales.Sum(s => s.TotalAmount),
+            TotalPurchaseCost      = purchases.Sum(p => p.TotalCost),
+            TotalDiscountsGiven    = sales.Sum(s => s.DiscountAmount),
+            GrossProfit            = sales.Sum(s => s.TotalAmount) - purchases.Sum(p => p.TotalCost),
             TotalCreditOutstanding = outstandingCredit,
-            TotalTransactions = sales.Count,
-            TotalUnitsSold = sales.SelectMany(s => s.Items).Sum(i => i.Quantity),
-            GeneratedByUserId = adminId,
+            TotalTransactions      = sales.Count,
+            TotalUnitsSold         = sales.SelectMany(s => s.Items).Sum(i => i.Quantity),
+            GeneratedByUserId      = adminId,
         };
 
         db.FinancialReports.Add(report);
         await db.SaveChangesAsync();
 
-        return await MapToDto(report);
+        // ✅ Eagerly load User after insert so MapToDto has the name
+        await db.Entry(report).Reference(r => r.User).LoadAsync();
+
+        return MapToDto(report);
     }
 
     public async Task<FinancialReportDto?> GetReportByIdAsync(int reportId)
     {
         var report = await db.FinancialReports
-            .Include(r => r.GeneratedByUser)
+            .Include(r => r.User)
             .FirstOrDefaultAsync(r => r.Id == reportId);
 
-        return report is null ? null : await MapToDto(report);
+        return report is null ? null : MapToDto(report);
     }
 
     public async Task<List<FinancialReportDto>> GetAllReportsAsync(ReportType? type = null)
     {
         var query = db.FinancialReports
-            .Include(r => r.GeneratedByUser)
+            .Include(r => r.User)
             .AsQueryable();
 
-        if (type.HasValue)
-            query = query.Where(r => r.Type == type.Value);
+        if (type.HasValue) query = query.Where(r => r.Type == type.Value);
 
         var reports = await query.OrderByDescending(r => r.GeneratedAt).ToListAsync();
-        var dtos = new List<FinancialReportDto>();
 
-        foreach (var r in reports)
-            dtos.Add(await MapToDto(r));
-
-        return dtos;
+        return reports.Select(MapToDto).ToList();
     }
-    
 
-    private static (DateTime start, DateTime end) GetPeriodBounds(ReportType type, DateTime date)
-    {
-        return type switch
+    private static (DateTime start, DateTime end) GetPeriodBounds(ReportType type, DateTime date) =>
+        type switch
         {
             ReportType.Daily => (
                 date.Date,
@@ -98,27 +92,23 @@ public class FinancialReportService(AppDbContext db) : IFinancialReportService
             ),
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
-    }
 
-    private static Task<FinancialReportDto> MapToDto(FinancialReport r)
+    private static FinancialReportDto MapToDto(FinancialReport r) => new()
     {
-        return Task.FromResult(new FinancialReportDto
-        {
-            Id = r.Id,
-            Type = r.Type.ToString(),
-            PeriodStart = r.PeriodStart,
-            PeriodEnd = r.PeriodEnd,
-            TotalSalesRevenue = r.TotalSalesRevenue,
-            TotalPurchaseCost = r.TotalPurchaseCost,
-            TotalDiscountsGiven = r.TotalDiscountsGiven,
-            GrossProfit = r.GrossProfit,
-            TotalCreditOutstanding = r.TotalCreditOutstanding,
-            TotalTransactions = r.TotalTransactions,
-            TotalUnitsSold = r.TotalUnitsSold,
-            GeneratedAt = r.GeneratedAt,
-            GeneratedBy = r.GeneratedByUser is null
-                ? "Unknown"
-                : $"{r.GeneratedByUser.FirstName} {r.GeneratedByUser.LastName}",
-        });
-    }
+        Id                     = r.Id,
+        Type                   = r.Type.ToString(),
+        PeriodStart            = r.PeriodStart,
+        PeriodEnd              = r.PeriodEnd,
+        TotalSalesRevenue      = r.TotalSalesRevenue,
+        TotalPurchaseCost      = r.TotalPurchaseCost,
+        TotalDiscountsGiven    = r.TotalDiscountsGiven,
+        GrossProfit            = r.GrossProfit,
+        TotalCreditOutstanding = r.TotalCreditOutstanding,
+        TotalTransactions      = r.TotalTransactions,
+        TotalUnitsSold         = r.TotalUnitsSold,
+        GeneratedAt            = r.GeneratedAt,
+        GeneratedBy            = r.User is null
+            ? "Unknown"
+            : $"{r.User.FirstName} {r.User.LastName}",
+    };
 }

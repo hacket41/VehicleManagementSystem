@@ -1,13 +1,18 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
 namespace backend.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 
+[Table("CustomerReviews")]
+[PrimaryKey(nameof(Id))]
 public class CustomerReview
 {
-    [Key]
     public int Id { get; set; }
 
+    [ForeignKey(nameof(CustomerId))]
     public Guid CustomerId { get; set; }
-    public User Customer { get; set; } = null!;
+    public User? User { get; set; }
 
     [Range(1, 5)]
     public int Rating { get; set; }

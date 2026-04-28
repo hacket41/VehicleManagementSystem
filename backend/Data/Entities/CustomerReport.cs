@@ -1,11 +1,15 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using backend.Data.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data.Entities;
 
+[Table("CustomerReports")]
+[PrimaryKey(nameof(Id))]
+[Index(nameof(GeneratedByStaffId), Name = "IX_CustomerReports_GeneratedByStaffId")]
 public class CustomerReport
 {
-    [Key]
     public int Id { get; set; }
 
     public CustomerReportType Type { get; set; }
@@ -17,7 +21,7 @@ public class CustomerReport
 
     public DateTime GeneratedAt { get; set; } = DateTime.UtcNow;
 
+    [ForeignKey(nameof(User))]
     public Guid GeneratedByStaffId { get; set; }
-    public User GeneratedByStaff { get; set; } = null!;
+    public User? User { get; set; }
 }
-
