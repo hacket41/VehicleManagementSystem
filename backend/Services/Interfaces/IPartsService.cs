@@ -9,7 +9,7 @@ public interface IPartsService
     public Task <List<PartsWithDetailsResponse>> GetAllParts();
     public Task<PartsWithDetailsResponse?> GetPartWithDetails(int id);
 
-    public Task<IActionResult> PurchasePart(PartsPurchaseRequest part);
+    public Task<PartsWithDetailsResponse> PurchasePart(PartsPurchaseRequest part);
 
     public Task<IActionResult> EditPart(PartsPurchaseRequest part);
 

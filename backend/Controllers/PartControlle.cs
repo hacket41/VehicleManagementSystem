@@ -1,3 +1,4 @@
+using backend.Data.DTO.Request;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,9 +25,23 @@ public class PartController(IPartsService parts) : ControllerBase
     public async Task<IActionResult> GetAllParts()
     {
         var allParts = await parts.GetAllParts();
-        // if (allParts.Count == 0) return [];
+        return Ok(allParts);zzz
+    }
 
-        return Ok(allParts);
+
+    [HttpPost]
+    [Route("add")]
+    public async Task<IActionResult> PurchasePart([FromBody] PartsPurchaseRequest part)
+    {
+        try
+        {
+            var newPart = await parts.PurchasePart(part);
+            return CreatedAtAction(nameof(GetPartWithDetails), new {id = newPart.Id}, newPart);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
 
