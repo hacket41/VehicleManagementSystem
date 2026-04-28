@@ -8,6 +8,7 @@ public class PartsWithDetailsResponse
     public string Description { get; set; } = string.Empty;
     public string VendorName { get; set; } = string.Empty;
     public string CategoryName { get; set; } = string.Empty;
+    public string CompatibleVehicle { get; set; } = string.Empty;
     public decimal SellingPrice { get; set; }
     public int StockQuantity { get; set; }
     public DateTime UpdatedAt { get; set; }

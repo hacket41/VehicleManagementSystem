@@ -14,10 +14,7 @@ public class PartController(IPartsService parts) : ControllerBase
     public async Task<IActionResult> GetPartWithDetails([FromRoute] int  id)
     {
         var part = await parts.GetPartWithDetails(id);
-
-        if (part == null) return NotFound();
-
-        return Ok(part);
+        return part == null ? NotFound() : Ok(part);
     }
 
     [HttpGet]
@@ -25,7 +22,7 @@ public class PartController(IPartsService parts) : ControllerBase
     public async Task<IActionResult> GetAllParts()
     {
         var allParts = await parts.GetAllParts();
-        return Ok(allParts);zzz
+        return Ok(allParts);
     }
 
 
@@ -42,6 +39,15 @@ public class PartController(IPartsService parts) : ControllerBase
         {
             return StatusCode(500, ex.Message);
         }
+    }
+
+    [HttpPut]
+    [Route("{id:int}")]
+    public async Task<IActionResult> EditPart(int id, [FromBody] PartsPurchaseRequest part)
+    {
+
+        var result = await parts.EditPart(id, part);
+        return result == null ? NotFound() : Ok(result);
     }
 
 

@@ -11,7 +11,7 @@ public interface IPartsService
 
     public Task<PartsWithDetailsResponse> PurchasePart(PartsPurchaseRequest part);
 
-    public Task<IActionResult> EditPart(PartsPurchaseRequest part);
+    public Task<PartsWithDetailsResponse?> EditPart(int id, PartsPurchaseRequest part);
 
     public Task<IActionResult> DeletePart(int id);
 

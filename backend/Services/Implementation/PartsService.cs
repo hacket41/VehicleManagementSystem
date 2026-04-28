@@ -46,6 +46,7 @@ public class PartsService(AppDbContext db) : IPartsService
                 VendorName = p.Vendor!.Name,
                 CategoryName = p.Category!.Name,
 
+                CompatibleVehicle = p.CompatibleVehicles,
                 SellingPrice = p.SellingPrice,
                 StockQuantity = p.StockQuantity,
                 UpdatedAt = p.UpdatedAt
@@ -91,9 +92,42 @@ public class PartsService(AppDbContext db) : IPartsService
 
     }
 
-    public async Task<IActionResult> EditPart(PartsPurchaseRequest part)
+    public async Task<PartsWithDetailsResponse?> EditPart(int id, PartsPurchaseRequest part)
     {
-        throw new NotImplementedException();
+
+        var updatedPart = await db.Parts
+            .Include(p => p.Vendor)
+            .Include(p => p.Category)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (updatedPart == null) return null;
+
+        updatedPart.Name = part.Name;
+        updatedPart.PartNumber = part.PartNumber;
+        updatedPart.Description = part.Description;
+        updatedPart.VendorId = part.VendorId;
+        updatedPart.CategoryId = part.CategoryId;
+        updatedPart.CompatibleVehicles = part.CompatibleVehicles;
+        updatedPart.SellingPrice = part.SellingPrice;
+        updatedPart.StockQuantity = part.StockQuantity;
+        updatedPart.StockQuantity = part.StockQuantity;
+        updatedPart.IsActive = part.IsActive;
+        updatedPart.UpdatedAt = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+
+        return new PartsWithDetailsResponse
+        {
+            Id = id,
+            Name = updatedPart.Name,
+            PartNumber = updatedPart.PartNumber,
+            Description = updatedPart.Description,
+            VendorName = updatedPart.Vendor?.Name ?? "Unknown",
+            CategoryName = updatedPart.Category?.Name ?? "Unknown",
+            SellingPrice = updatedPart.SellingPrice,
+            StockQuantity = updatedPart.StockQuantity,
+            UpdatedAt = updatedPart.UpdatedAt
+        };
     }
 
     public async Task<IActionResult> DeletePart(int id)
