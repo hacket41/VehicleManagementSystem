@@ -1,23 +1,35 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Data.DTO.Request;
 
 public class PartsPurchaseRequest
 {
     [Required, MaxLength(100)]
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    [Required, MaxLength(50)]
-    public required string PartNumber { get; set; }
+    [MaxLength(50)]
+    public string PartNumber { get; set; } = string.Empty;
 
-    [Required, MaxLength(500)]
-    public required string Description { get; set; }
+    [MaxLength(500)]
+    public string Description { get; set; } = string.Empty;
 
-    [Required, MaxLength(50)]
-    public required string Category { get; set; }
+    public int CategoryId { get; set; }
 
+    public int VendorId { get; set; }
 
-    // [Required, MaxLength(50)]
-    // public required
+    [MaxLength(500)]
+    public string CompatibleVehicles { get; set; } = string.Empty;
+
+    [Range(0.01 , double.MaxValue, ErrorMessage =  "Price must be greater than 0.")]
+    public decimal CostPrice { get; set; }
+
+    [Range(0.01 , double.MaxValue, ErrorMessage =  "Price must be greater than 0.")]
+    public decimal SellingPrice { get; set; }
+
+    [Range(0 , int.MaxValue, ErrorMessage =  "Stock Quantity must be greater than 0.")]
+    public int StockQuantity { get; set; }
+
+    public bool IsActive { get; set; } = true;
 
 }

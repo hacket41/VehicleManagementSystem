@@ -6,11 +6,12 @@ namespace backend.Services.Interfaces;
 
 public interface IPartsService
 {
+    public Task <List<PartsWithDetailsResponse>> GetAllParts();
     public Task<PartsWithDetailsResponse?> GetPartWithDetails(int id);
 
-    public Task<IActionResult> PurchasePart(PartsPurchase part);
+    public Task<IActionResult> PurchasePart(PartsPurchaseRequest part);
 
-    public Task<IActionResult> EditPart(PartsPurchase part);
+    public Task<IActionResult> EditPart(PartsPurchaseRequest part);
 
     public Task<IActionResult> DeletePart(int id);
 

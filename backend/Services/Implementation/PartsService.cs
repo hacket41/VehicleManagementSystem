@@ -12,6 +12,25 @@ public class PartsService(AppDbContext db) : IPartsService
 {
 
 
+    public async Task<List<PartsWithDetailsResponse>> GetAllParts()
+    {
+        return await db.Parts
+            .Select(p => new PartsWithDetailsResponse
+            {
+                Id = p.Id,
+                Name = p.Name,
+                PartNumber = p.PartNumber,
+                Description = p.Description,
+
+                VendorName = p.Vendor!.Name,
+                CategoryName = p.Category!.Name,
+
+                SellingPrice = p.SellingPrice,
+                StockQuantity = p.StockQuantity,
+                UpdatedAt = p.UpdatedAt
+            }).ToListAsync();
+    }
+
     public async Task<PartsWithDetailsResponse?> GetPartWithDetails(int id)
     {
         return await db.Parts
@@ -23,8 +42,8 @@ public class PartsService(AppDbContext db) : IPartsService
                 PartNumber = p.PartNumber,
                 Description = p.Description,
 
-                VendorName = p.Vendor.Name,
-                CategoryName = p.Category.Name,
+                VendorName = p.Vendor!.Name,
+                CategoryName = p.Category!.Name,
 
                 SellingPrice = p.SellingPrice,
                 StockQuantity = p.StockQuantity,
@@ -32,12 +51,12 @@ public class PartsService(AppDbContext db) : IPartsService
             }).FirstOrDefaultAsync();
     }
 
-    public async Task<IActionResult> PurchasePart(PartsPurchase part)
+    public async Task<IActionResult> PurchasePart(PartsPurchaseRequest part)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IActionResult> EditPart(PartsPurchase part)
+    public async Task<IActionResult> EditPart(PartsPurchaseRequest part)
     {
         throw new NotImplementedException();
     }

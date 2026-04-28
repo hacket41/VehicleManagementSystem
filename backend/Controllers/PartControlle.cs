@@ -5,9 +5,8 @@ namespace backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PartController(
-    IPartsService parts
-    ) : ControllerBase
+public class PartController(IPartsService parts) : ControllerBase
+
 {
     [HttpGet]
     [Route("{id:int}")]
@@ -19,4 +18,16 @@ public class PartController(
 
         return Ok(part);
     }
+
+    [HttpGet]
+    [Route("all")]
+    public async Task<IActionResult> GetAllParts()
+    {
+        var allParts = await parts.GetAllParts();
+        // if (allParts.Count == 0) return [];
+
+        return Ok(allParts);
+    }
+
+
 }
