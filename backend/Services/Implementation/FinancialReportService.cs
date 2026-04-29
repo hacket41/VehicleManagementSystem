@@ -47,7 +47,6 @@ public class FinancialReportService(AppDbContext db) : IFinancialReportService
         db.FinancialReports.Add(report);
         await db.SaveChangesAsync();
 
-        // ✅ Eagerly load User after insert so MapToDto has the name
         await db.Entry(report).Reference(r => r.User).LoadAsync();
 
         return MapToDto(report);
