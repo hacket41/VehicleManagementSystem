@@ -3,21 +3,17 @@ using backend.Data.DTO.Response;
 using backend.Data.Entities;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Cryptography.X509Certificates;
 
 namespace backend.Services.Implementation;
 
 public class AuthService(
     UserManager<User> userManager,
-    SignInManager<User> signInManager,
-    RoleManager<IdentityRole<Guid>> roleManager,
     IJwtTokenService jwtTokenService
     ) :IAuthService
 {
 
     public async Task<AuthResponseDto> RegisterAdmin(RegisterUserDto user)
     {
-
         var newUser = new User
         {
             UserName = (user.FirstName + user.LastName).ToLower(),
@@ -99,7 +95,6 @@ public class AuthService(
 
     }
 
-
     public async Task<AuthResponseDto> RegisterCustomer(RegisterUserDto user)
     {
         var newUser = new User
@@ -136,7 +131,6 @@ public class AuthService(
         {
             Success = true,
             Errors = null,
-
         };
 
     }
@@ -148,7 +142,7 @@ public class AuthService(
             return new AuthResponseDto
             {
                 Success = false,
-                Errors = ["Invalid Credentials", "TestEmail"],
+                Errors = ["Invalid Credentials"],
             };
 
         var isPasswordValid = await userManager.CheckPasswordAsync(userEmail, user.Password);
@@ -156,17 +150,56 @@ public class AuthService(
             return new AuthResponseDto
             {
                 Success = false,
-                Errors = ["Invalid Credentials", "TestPassword"]
+                Errors = ["Invalid Credentials"]
             };
 
         var token = await jwtTokenService.GenerateUserToken(userEmail);
+        var refreshToken = await jwtTokenService.GenerateAndSaveRefreshToken(userEmail);
 
         return new AuthResponseDto
         {
             Success = true,
             Token = token,
+            RefreshToken = refreshToken,
         };
-
-
     }
+
+    public async Task<AuthResponseDto> RefreshTokens(RequestRefreshTokenDto request)
+    {
+        var user = await jwtTokenService.ValidateRefreshToken(request.UserId, request.RefreshToken);
+        if (user is null) return null!;
+
+        var token = await jwtTokenService.GenerateUserToken(user);
+        var refreshToken = await jwtTokenService.GenerateAndSaveRefreshToken(user);
+        return new AuthResponseDto
+        {
+            Success = true,
+            Token = token,
+            RefreshToken = refreshToken,
+        };
+    }
+
+    public void SetTokenInsideCookies(HttpContext httpContext, string token, string refreshToken)
+    {
+        httpContext.Response.Cookies.Append("accessToken", token,
+            new CookieOptions
+            {
+                Expires = DateTime.Now.AddHours(6),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            });
+        httpContext.Response.Cookies.Append("refreshToken", refreshToken,
+            new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(14),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            });
+    }
+
+
 }

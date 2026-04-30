@@ -31,16 +31,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
 );
 
-// Read JWT settings directly
-var jwtSecret   = builder.Configuration["Jwt:Secret"]!;
-var jwtIssuer   = builder.Configuration["Jwt:Issuer"]!;
-var jwtAudience = builder.Configuration["Jwt:Audience"]!;
-
-var jwtConfig = builder.Configuration.GetSection("Jwt");
-builder.Services.AddOptions<JwtOptions>()
-    .Bind(jwtConfig)
-    .ValidateDataAnnotations();
-
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
@@ -64,53 +54,40 @@ builder.Services.AddIdentityCore<User>(options =>
 .AddSignInManager()
 .AddDefaultTokenProviders();
 
-var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.UseSecurityTokenValidators = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration.GetValue<string>("Jwt:Issuer"),
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme    = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme             = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.UseSecurityTokenValidators = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer           = true,
-        ValidIssuer              = jwtIssuer,
-        ValidateAudience         = true,
-        ValidAudience            = jwtAudience,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey         = signingKey,
-        ValidateLifetime         = true,
-        ClockSkew                = TimeSpan.Zero,
-        NameClaimType            = ClaimTypes.NameIdentifier,
-        RoleClaimType            = ClaimTypes.Role,
-    };
-    
-    //DEBUG MESSAGES
-    options.Events = new JwtBearerEvents
-    {
-        OnAuthenticationFailed = ctx =>
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration.GetValue<string>("Jwt:Audience"),
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+
+            IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("Jwt:Secret")!)),
+            ValidateIssuerSigningKey = true,
+
+            RoleClaimType = ClaimTypes.Role,
+            NameClaimType = ClaimTypes.NameIdentifier
+        };
+        options.Events = new JwtBearerEvents
         {
-            Console.WriteLine($"[JWT FAIL] {ctx.Exception.GetType().Name}: {ctx.Exception.Message}");
-            Console.WriteLine($"[JWT FAIL] Token: {ctx.Request.Headers["Authorization"]}");
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = ctx =>
-        {
-            Console.WriteLine($"[JWT OK] User: {ctx.Principal?.Identity?.Name}");
-            return Task.CompletedTask;
-        },
-        OnChallenge = ctx =>
-        {
-            Console.WriteLine($"[JWT CHALLENGE] Error: {ctx.Error}, Desc: {ctx.ErrorDescription}");
-            return Task.CompletedTask;
-        }
-    };
-});
+            OnMessageReceived = ctx =>
+            {
+                ctx.Request.Cookies.TryGetValue("accessToken", out var accessToken);
+                if (!string.IsNullOrEmpty(accessToken))
+                    ctx.Token = accessToken;
+                return Task.CompletedTask;
+            }
+        };
+    });
 
 builder.Services.AddAuthorization();
 

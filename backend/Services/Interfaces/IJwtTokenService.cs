@@ -4,6 +4,9 @@ namespace backend.Services.Interfaces;
 
 public interface IJwtTokenService
 {
-    public Task<string> GenerateUserToken(User user);
+     Task<string> GenerateUserToken(User user);
+     Task<string> GenerateAndSaveRefreshToken(User user);
+      Task<User?> ValidateRefreshToken(Guid userId,  string refreshToken);
+
 
 }
