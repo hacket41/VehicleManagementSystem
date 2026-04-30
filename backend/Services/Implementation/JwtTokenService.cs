@@ -25,11 +25,8 @@ public class JwtTokenService(
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
         };
-
         var roles = await userManager.GetRolesAsync(user);
-
         claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
-
         return GenerateToken(claims);
     }
 

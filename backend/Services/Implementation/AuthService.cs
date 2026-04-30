@@ -1,27 +1,19 @@
-using System.Security.Claims;
 using backend.Data.DTO.Request;
 using backend.Data.DTO.Response;
 using backend.Data.Entities;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Services.Implementation;
 
 public class AuthService(
     UserManager<User> userManager,
-    SignInManager<User> signInManager,
-    RoleManager<IdentityRole<Guid>> roleManager,
-    IJwtTokenService jwtTokenService,
-    IConfiguration  configuration
+    IJwtTokenService jwtTokenService
     ) :IAuthService
 {
 
     public async Task<AuthResponseDto> RegisterAdmin(RegisterUserDto user)
     {
-
         var newUser = new User
         {
             UserName = (user.FirstName + user.LastName).ToLower(),
@@ -103,7 +95,6 @@ public class AuthService(
 
     }
 
-
     public async Task<AuthResponseDto> RegisterCustomer(RegisterUserDto user)
     {
         var newUser = new User
@@ -140,7 +131,6 @@ public class AuthService(
         {
             Success = true,
             Errors = null,
-
         };
 
     }
@@ -152,7 +142,7 @@ public class AuthService(
             return new AuthResponseDto
             {
                 Success = false,
-                Errors = ["Invalid Credentials", "TestEmail"],
+                Errors = ["Invalid Credentials"],
             };
 
         var isPasswordValid = await userManager.CheckPasswordAsync(userEmail, user.Password);
@@ -160,7 +150,7 @@ public class AuthService(
             return new AuthResponseDto
             {
                 Success = false,
-                Errors = ["Invalid Credentials", "TestPassword"]
+                Errors = ["Invalid Credentials"]
             };
 
         var token = await jwtTokenService.GenerateUserToken(userEmail);
