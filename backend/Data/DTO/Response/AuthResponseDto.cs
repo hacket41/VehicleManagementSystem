@@ -1,3 +1,4 @@
+
 namespace backend.Data.DTO.Response;
 
 public class AuthResponseDto

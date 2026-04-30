@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using backend.Data.DTO.Request;
+using backend.Services.Implementation;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,12 +8,15 @@ namespace backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(
+    IAuthService authService,
+    IJwtTokenService jwtTokenService
+    ) : ControllerBase
 {
     [HttpPost("register-customer")]
     public async Task<IActionResult> RegisterCustomer(RegisterUserDto user)
     {
-        var result  = await authService.RegisterCustomer(user);
+        var result = await authService.RegisterCustomer(user);
         return Ok(result);
     }
 
@@ -25,7 +30,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("register-admin")]
     public async Task<IActionResult> RegisterAdmin(RegisterUserDto user)
     {
-        var result  = await authService.RegisterAdmin(user);
+        var result = await authService.RegisterAdmin(user);
         return Ok(result);
     }
 
@@ -33,9 +38,33 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<IActionResult> Login(LoginRequest user)
     {
         var result = await authService.Login(user);
+        if (!result.Success) return BadRequest(result);
+        authService.SetTokenInsideCookies(HttpContext,  result.Token!, result.RefreshToken! );
+        return Ok();
+    }
 
-        if(!result.Success) return BadRequest(result);
-        return Ok(result);
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken()
+    {
+        HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken);
+        HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
+        if(accessToken is null || refreshToken is null) return Unauthorized("Missing or Invalid Tokens");
+
+        var principal = jwtTokenService.GetPrincipalFromToken(accessToken);
+        if(principal is null) return Unauthorized("Invalid Token");
+
+        var userId = principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if(!Guid.TryParse(userId, out var userGuid))  return Unauthorized("Invalid Token, Cannot convert to GUID");
+
+        var result = await authService.RefreshTokens(new RequestRefreshTokenDto
+        {
+            UserId = userGuid,
+            RefreshToken = refreshToken,
+        });
+
+        if (result is null || result.Token is null || result.RefreshToken is null) return Unauthorized("Invalid Or Expired Refresh Token");
+        authService.SetTokenInsideCookies(HttpContext, result.Token, result.RefreshToken);
+        return Ok();
     }
 
 }
