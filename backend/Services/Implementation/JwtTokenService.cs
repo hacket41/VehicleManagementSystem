@@ -72,4 +72,30 @@ public class JwtTokenService(
         return user;
     }
 
+    public ClaimsPrincipal? GetPrincipalFromToken(string token)
+    {
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(configuration.GetValue<string>("Jwt:Secret")!));
+        var validationParams = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = configuration.GetValue<string>("Jwt:Issuer"),
+            ValidateAudience = true,
+            ValidAudience = configuration.GetValue<string>("Jwt:Audience"),
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = key,
+            ValidateLifetime = false,
+        };
+
+        var handler = new JwtSecurityTokenHandler();
+        try
+        {
+            return handler.ValidateToken(token, validationParams, out _);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
 }
