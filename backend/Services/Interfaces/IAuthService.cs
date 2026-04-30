@@ -10,5 +10,7 @@ public interface IAuthService
     public Task<AuthResponseDto> RegisterCustomer(RegisterUserDto user);
     public Task<AuthResponseDto> Login(LoginRequest user);
     public Task<AuthResponseDto> RefreshTokens(RequestRefreshTokenDto request);
+    public void SetTokenInsideCookies(HttpContext httpContext, string token, string refreshToken);
+
 
 }

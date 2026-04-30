@@ -33,8 +33,8 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<IActionResult> Login(LoginRequest user)
     {
         var result = await authService.Login(user);
-
         if (!result.Success) return BadRequest(result);
+        authService.SetTokenInsideCookies(HttpContext,  result.Token!, result.RefreshToken! );
         return Ok(result);
     }
 
@@ -43,7 +43,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         var result = await authService.RefreshTokens(request);
         if (result is null || result.Token is null || result.RefreshToken is null) return Unauthorized("Invalid Refresh Token");
-
+        authService.SetTokenInsideCookies(HttpContext, result.Token, result.RefreshToken);
         return Ok(result);
     }
 

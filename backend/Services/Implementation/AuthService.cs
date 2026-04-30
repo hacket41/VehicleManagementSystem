@@ -177,7 +177,28 @@ public class AuthService(
             Token = token,
             RefreshToken = refreshToken,
         };
+    }
 
+    public void SetTokenInsideCookies(HttpContext httpContext, string token, string refreshToken)
+    {
+        httpContext.Response.Cookies.Append("accessToken", token,
+            new CookieOptions
+            {
+                Expires = DateTime.Now.AddHours(6),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            });
+        httpContext.Response.Cookies.Append("refreshToken", refreshToken,
+            new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(14),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            });
     }
 
 
