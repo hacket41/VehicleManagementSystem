@@ -6,24 +6,67 @@ type Problem = {
   title?: string
 }
 
+let isRefreshing = false
+let refreshPromise: Promise<boolean> | null = null
+
+async function tryRefreshTokens(): Promise<boolean> {
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise
+  }
+
+  isRefreshing = true
+  refreshPromise = fetch(`${URL}/auth/refresh`, {
+    method: 'POST',
+    credentials: 'include',
+  })
+    .then((res) => res.ok)
+    .catch(() => false)
+    .finally(() => {
+      isRefreshing = false
+      refreshPromise = null
+    })
+
+  return refreshPromise
+}
+
+async function executeRequest(
+  path: string,
+  init?: RequestInit,
+): Promise<Response> {
+  return fetch(`${URL}${path}`, {
+    ...init,
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...init?.headers,
+    },
+  })
+}
+
 export async function apiFetch<T>(
   path: string,
   init?: RequestInit,
 ): Promise<T> {
   try {
-    const res = await fetch(`${URL}${path}`, {
-      ...init,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...init?.headers,
-      },
-    })
+    let res = await executeRequest(path, init)
+    1
+    if (res.status === 401) {
+      const refreshed = await tryRefreshTokens()
+
+      if (!refreshed) {
+        // window.location.href = '/login'
+        throw new Error('Session expired, please log in again')
+      }
+      res = await executeRequest(path, init)
+
+      if (res.status === 401) {
+        // window.location.href = '/login'
+        throw new Error('Session expired, please log in again')
+      }
+    }
 
     const contentType = res.headers.get('content-type')
-
     let data: unknown = null
-
     if (contentType?.includes('application/json')) {
       data = await res.json()
     } else {
