@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using backend.Data.Entities;
 using backend.Services.Interfaces;
@@ -45,5 +46,21 @@ public class JwtTokenService(
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    private static string GenerateRefreshToken()
+    {
+        var random = new byte[32];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(random);
+        return Convert.ToBase64String(random);
+    }
+
+    public async Task<string> GenerateAndSaveRefreshToken(User user)
+    {
+        var refreshToken = GenerateRefreshToken();
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryDate = DateTime.UtcNow.AddDays(14);
+        await userManager.UpdateAsync(user);
+        return refreshToken;
+    }
 
 }

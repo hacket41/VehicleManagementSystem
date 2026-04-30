@@ -154,10 +154,13 @@ public class AuthService(
             };
 
         var token = await jwtTokenService.GenerateUserToken(userEmail);
+        var refreshToken = await jwtTokenService.GenerateAndSaveRefreshToken(userEmail);
+
         return new AuthResponseDto
         {
             Success = true,
             Token = token,
+            RefreshToken = refreshToken,
         };
     }
 
