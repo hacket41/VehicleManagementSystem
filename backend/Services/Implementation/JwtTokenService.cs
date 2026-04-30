@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using backend.Data.Entities;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -9,9 +10,11 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace backend.Services.Implementation;
 
-public class JwtTokenService(IOptions<JwtOptions> jwtoptions, UserManager<User> userManager) :IJwtTokenService
+public class JwtTokenService(
+    UserManager<User> userManager,
+    IConfiguration configuration
+    ) :IJwtTokenService
 {
-    private readonly JwtOptions _jwtOptions = jwtoptions.Value;
 
     public async Task<string> GenerateUserToken(User user)
     {
@@ -32,14 +35,15 @@ public class JwtTokenService(IOptions<JwtOptions> jwtoptions, UserManager<User> 
 
     private string GenerateToken(IEnumerable<Claim> claims)
     {
-        var cred = new SigningCredentials(_jwtOptions.SymmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("Jwt:Secret")!));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _jwtOptions.Issuer,
-            audience: _jwtOptions.Audience,
+            issuer: configuration.GetValue<string>("Jwt:Issuer"),
+            audience: configuration.GetValue<string>("Jwt:Audience"),
             claims: claims,
-            expires: _jwtOptions.ExpiryDate,
-            signingCredentials: cred
+            expires: DateTime.UtcNow.AddHours(6),
+            signingCredentials: creds
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

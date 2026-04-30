@@ -37,9 +37,9 @@ var jwtIssuer   = builder.Configuration["Jwt:Issuer"]!;
 var jwtAudience = builder.Configuration["Jwt:Audience"]!;
 
 var jwtConfig = builder.Configuration.GetSection("Jwt");
-builder.Services.AddOptions<JwtOptions>()
-    .Bind(jwtConfig)
-    .ValidateDataAnnotations();
+// builder.Services.AddOptions<JwtOptions>()
+//     .Bind(jwtConfig)
+//     .ValidateDataAnnotations();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();

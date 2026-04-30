@@ -1,9 +1,12 @@
+using System.Security.Claims;
 using backend.Data.DTO.Request;
 using backend.Data.DTO.Response;
 using backend.Data.Entities;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Services.Implementation;
 
@@ -11,7 +14,8 @@ public class AuthService(
     UserManager<User> userManager,
     SignInManager<User> signInManager,
     RoleManager<IdentityRole<Guid>> roleManager,
-    IJwtTokenService jwtTokenService
+    IJwtTokenService jwtTokenService,
+    IConfiguration  configuration
     ) :IAuthService
 {
 
@@ -160,13 +164,11 @@ public class AuthService(
             };
 
         var token = await jwtTokenService.GenerateUserToken(userEmail);
-
         return new AuthResponseDto
         {
             Success = true,
             Token = token,
         };
-
-
     }
+
 }
