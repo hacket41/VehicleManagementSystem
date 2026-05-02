@@ -14,6 +14,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
 import { Route as MainAboutRouteImport } from './routes/_main/about'
 import { Route as MainTestIndexRouteImport } from './routes/_main/test/index'
+import { Route as MainTestTest1RouteImport } from './routes/_main/test/test1'
 
 const MainRouteRoute = MainRouteRouteImport.update({
   id: '/_main',
@@ -39,17 +40,24 @@ const MainTestIndexRoute = MainTestIndexRouteImport.update({
   path: '/test/',
   getParentRoute: () => MainRouteRoute,
 } as any)
+const MainTestTest1Route = MainTestTest1RouteImport.update({
+  id: '/test/test1',
+  path: '/test/test1',
+  getParentRoute: () => MainRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/about': typeof MainAboutRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/test/test1': typeof MainTestTest1Route
   '/test/': typeof MainTestIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof MainAboutRoute
   '/': typeof MainIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/test/test1': typeof MainTestTest1Route
   '/test': typeof MainTestIndexRoute
 }
 export interface FileRoutesById {
@@ -58,19 +66,21 @@ export interface FileRoutesById {
   '/_main/about': typeof MainAboutRoute
   '/_main/': typeof MainIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/_main/test/test1': typeof MainTestTest1Route
   '/_main/test/': typeof MainTestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/dashboard/' | '/test/'
+  fullPaths: '/' | '/about' | '/dashboard/' | '/test/test1' | '/test/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/' | '/dashboard' | '/test'
+  to: '/about' | '/' | '/dashboard' | '/test/test1' | '/test'
   id:
     | '__root__'
     | '/_main'
     | '/_main/about'
     | '/_main/'
     | '/dashboard/'
+    | '/_main/test/test1'
     | '/_main/test/'
   fileRoutesById: FileRoutesById
 }
@@ -116,18 +126,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainTestIndexRouteImport
       parentRoute: typeof MainRouteRoute
     }
+    '/_main/test/test1': {
+      id: '/_main/test/test1'
+      path: '/test/test1'
+      fullPath: '/test/test1'
+      preLoaderRoute: typeof MainTestTest1RouteImport
+      parentRoute: typeof MainRouteRoute
+    }
   }
 }
 
 interface MainRouteRouteChildren {
   MainAboutRoute: typeof MainAboutRoute
   MainIndexRoute: typeof MainIndexRoute
+  MainTestTest1Route: typeof MainTestTest1Route
   MainTestIndexRoute: typeof MainTestIndexRoute
 }
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
   MainAboutRoute: MainAboutRoute,
   MainIndexRoute: MainIndexRoute,
+  MainTestTest1Route: MainTestTest1Route,
   MainTestIndexRoute: MainTestIndexRoute,
 }
 
