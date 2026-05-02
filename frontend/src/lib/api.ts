@@ -120,9 +120,31 @@ function isJsonResponse(contentType: string | null): boolean {
   )
 }
 
+// function toApiError(status: number, data: unknown): ApiError {
+//   if (typeof data === 'object' && data !== null) {
+//     const p = data as ProblemDetails
+//     return new ApiError(
+//       status,
+//       p.title ?? `HTTP ${status}`,
+//       p.detail,
+//       p.errors,
+//       p.traceId,
+//     )
+//   }
+//   return new ApiError(
+//     status,
+//     typeof data === 'string' ? data : `HTTP ${status}`,
+//   )
+// }
+
 function toApiError(status: number, data: unknown): ApiError {
   if (typeof data === 'object' && data !== null) {
     const p = data as ProblemDetails
+
+    if (Array.isArray(p.errors)) {
+      return new ApiError(status, p.errors[0] ?? `HTTP ${status}`) // ← "Invalid Credentials"
+    }
+
     return new ApiError(
       status,
       p.title ?? `HTTP ${status}`,
@@ -136,7 +158,6 @@ function toApiError(status: number, data: unknown): ApiError {
     typeof data === 'string' ? data : `HTTP ${status}`,
   )
 }
-
 const isServer = typeof window === 'undefined'
 
 export async function apiFetch<T, B = unknown>(

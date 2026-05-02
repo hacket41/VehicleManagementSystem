@@ -1,3 +1,10 @@
+import { useMutation } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { login } from '#/api/auth.api'
+import { handleApiError } from '#/lib/handleApiError'
+import { queryClient } from '#/lib/queryClient'
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -6,57 +13,69 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+
+export type LoginPayload = {
+  email: string
+  password: string
+}
 
 export function LoginForm() {
+  const router = useRouter()
+  const form = useForm<LoginPayload>({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = form
+
+  const { mutate } = useMutation({
+    mutationFn: login,
+    onSuccess: () => {
+      toast.success('Logged in successfully')
+      queryClient.refetchQueries({ queryKey: ['me'] })
+      router.navigate({ to: '/' })
+    },
+    onError: (e) => {
+      toast.error(e.message)
+    },
+  })
+  const onSubmit = (data: LoginPayload) => {
+    console.log(data)
+    mutate(data)
+  }
+
   return (
-    <form className="w-full max-w-sm">
+    <form className="w-full max-w-sm" onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field>
-          <FieldLabel htmlFor="form-name">Name</FieldLabel>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input
-            id="form-name"
+            id="email"
             type="text"
-            placeholder="Evil Rabbit"
-            required
+            placeholder="you@example.com"
+            {...register('email', { required: true })}
           />
+          {errors.email && <span>{errors.email.message}</span>}
         </Field>
         <Field>
-          <FieldLabel htmlFor="form-email">Email</FieldLabel>
-          <Input id="form-email" type="email" placeholder="john@example.com" />
+          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <Input
+            id="password"
+            type="password"
+            placeholder="********"
+            {...register('password', { required: true })}
+          />
+          {errors.password && <span>{errors.password.message}</span>}
           <FieldDescription>
-            We&apos;ll never share your email with anyone.
+            We&apos;ll never share your password with anyone.
           </FieldDescription>
         </Field>
-        <div className="grid grid-cols-2 gap-4">
-          <Field>
-            <FieldLabel htmlFor="form-phone">Phone</FieldLabel>
-            <Input id="form-phone" type="tel" placeholder="+1 (555) 123-4567" />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="form-country">Country</FieldLabel>
-            <Select defaultValue="us">
-              <SelectTrigger id="form-country">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="us">United States</SelectItem>
-                <SelectItem value="uk">United Kingdom</SelectItem>
-                <SelectItem value="ca">Canada</SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
-        </div>
-        <Field>
-          <FieldLabel htmlFor="form-address">Address</FieldLabel>
-          <Input id="form-address" type="text" placeholder="123 Main St" />
-        </Field>
+
         <Field orientation="horizontal">
           <Button type="button" variant="outline">
             Cancel
