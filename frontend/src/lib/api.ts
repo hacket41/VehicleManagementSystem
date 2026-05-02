@@ -83,20 +83,18 @@ export async function apiFetch<T, B = unknown>(
     if (res.status === 401) {
       const refreshed = await tryRefreshTokens()
 
-      if (!refreshed) {
-        // window.location.href = '/login'
-        throw redirect({
-          to: '/login',
-        })
-      }
+      // if (!refreshed) {
+      //   // window.location.href = '/login'
+      //   throw redirect({
+      //     to: '/login',
+      //   })
+      // }
       res = await executeRequest(path, init)
 
-      if (res.status === 401) {
-        // window.location.href = '/login'
-        throw redirect({
-          to: '/login',
-        })
-      }
+      // if (res.status === 401) {
+      //   // window.location.href = '/login'
+      //   return
+      // }
     }
 
     const contentType = res.headers.get('content-type')

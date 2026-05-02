@@ -16,4 +16,8 @@ public class RegisterUserDto
     [MinLength(1)]
     [MaxLength(10)]
     public string Phone { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(100)]
+    public string Address { get; set; } = string.Empty;
 }

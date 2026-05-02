@@ -31,6 +31,7 @@ public class UserController(
             Name = user.FirstName + " " + user.LastName,
             Email = user.Email ?? "",
             PhoneNumber = user.PhoneNumber ?? "",
+            Address = user.Address,
             Roles = roles
         });
     }

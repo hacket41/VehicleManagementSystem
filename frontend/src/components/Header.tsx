@@ -1,8 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { useAuth } from '#/hooks/useAuth'
-import LogoutButton from './Navbar/LogoutButton'
+import AuthButtons from './Navbar/AuthButtons'
 import ThemeToggle from './ThemeToggle'
-import { Button } from './ui/button'
 
 export default function Header() {
   return (
@@ -23,31 +21,5 @@ export default function Header() {
         <ThemeToggle />
       </div>
     </nav>
-  )
-}
-
-function AuthButtons() {
-  const { user, isPending, isError } = useAuth()
-  if (isPending) return null
-  if (isError) return null
-  return (
-    <>
-      {!user ? (
-        <div className="flex gap-2">
-          <Link to="/login">
-            <Button type="button" className={'primary'}>
-              Login
-            </Button>
-          </Link>
-          <Link to="/signup">
-            <Button type="button" variant={'secondary'}>
-              Signup
-            </Button>
-          </Link>
-        </div>
-      ) : (
-        <LogoutButton />
-      )}
-    </>
   )
 }

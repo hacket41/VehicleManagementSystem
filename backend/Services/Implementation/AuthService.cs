@@ -21,6 +21,7 @@ public class AuthService(
             LastName = user.LastName,
             Email = user.Email,
             PhoneNumber = user.Phone,
+            Address = user.Address
         };
 
         var result = await userManager.CreateAsync(newUser, user.Password);
@@ -63,6 +64,8 @@ public class AuthService(
             LastName = user.LastName,
             Email = user.Email,
             PhoneNumber = user.Phone,
+            Address = user.Address
+
         };
 
         var result = await userManager.CreateAsync(newUser, user.Password);
@@ -104,6 +107,8 @@ public class AuthService(
             LastName = user.LastName,
             Email = user.Email,
             PhoneNumber = user.Phone,
+            Address = user.Address
+
         };
 
         var result = await userManager.CreateAsync(newUser, user.Password);
