@@ -11,6 +11,9 @@ public class User : IdentityUser<Guid>
     [MaxLength(50)]
     public string LastName { get; set; } = string.Empty;
 
+    [MaxLength(100)]
+    public string Address { get; set; } = string.Empty;
+
     [MaxLength(255)]
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiryDate { get; set; }

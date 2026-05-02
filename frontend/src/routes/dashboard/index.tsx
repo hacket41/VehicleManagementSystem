@@ -1,9 +1,9 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { AppSidebar } from '#/components/app-sidebar'
 import { ChartAreaInteractive } from '#/components/chart-area-interactive'
 import { SectionCards } from '#/components/section-cards'
 import { SiteHeader } from '#/components/site-header'
 import { SidebarInset, SidebarProvider } from '#/components/ui/sidebar'
-import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
@@ -20,7 +20,7 @@ function RouteComponent() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="floating" className="p-4" />
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">

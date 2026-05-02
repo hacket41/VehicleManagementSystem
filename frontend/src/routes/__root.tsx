@@ -7,6 +7,7 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { Toaster } from '#/components/ui/sonner'
 import { queryClient } from '#/lib/queryClient'
 import appCss from '../styles.css?url'
 
@@ -50,6 +51,7 @@ function RootDocument() {
       <body className="font-sans antialiased">
         <QueryClientProvider client={queryClient}>
           <Outlet />
+          <Toaster position="top-center" richColors closeButton />
         </QueryClientProvider>
 
         <TanStackDevtools

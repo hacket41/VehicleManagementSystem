@@ -1,15 +1,34 @@
+import { redirect } from '@tanstack/react-router'
 import { createIsomorphicFn } from '@tanstack/react-start'
 
-const URL = import.meta.env.VITE_API
+const BASE_URL = import.meta.env.VITE_API as string
 
-type Problem = {
-  status?: number
-  detail?: string
-  title?: string
+if (import.meta.env.DEV && !BASE_URL) {
+  console.warn('[apiFetch] VITE_API is not set. All requests will fail.')
 }
 
-let isRefreshing = false
-let refreshPromise: Promise<boolean> | null = null
+type ProblemDetails = {
+  type?: string
+  title?: string
+  status?: number
+  detail?: string
+  instance?: string
+  errors?: Record<string, string[]>
+  traceId?: string
+}
+
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    message: string,
+    public readonly detail?: string,
+    public readonly validationErrors?: Record<string, string[]>,
+    public readonly traceId?: string,
+  ) {
+    super(message)
+    this.name = 'ApiError'
+  }
+}
 
 const getForwardHeaders = createIsomorphicFn()
   .client(() => new Headers())
@@ -17,101 +36,160 @@ const getForwardHeaders = createIsomorphicFn()
     const { getRequestHeaders } = await import('@tanstack/react-start/server')
     const cookie = getRequestHeaders().get('cookie')
     const headers = new Headers()
-    if (cookie) {
-      headers.set('cookie', cookie)
-    }
+    if (cookie) headers.set('cookie', cookie)
     return headers
   })
 
+type QueueItem = {
+  resolve: (refreshed: boolean) => void
+  reject: (err: unknown) => void
+}
+
+let isRefreshing = false
+let pendingQueue: QueueItem[] = []
+
+function drainQueue(success: boolean, err?: unknown): void {
+  for (const item of pendingQueue) {
+    success ? item.resolve(true) : item.reject(err)
+  }
+  pendingQueue = []
+}
+
 async function tryRefreshTokens(): Promise<boolean> {
-  if (isRefreshing && refreshPromise) {
-    return refreshPromise
+  if (isRefreshing) {
+    return new Promise<boolean>((resolve, reject) => {
+      pendingQueue.push({ resolve, reject })
+    })
   }
 
   isRefreshing = true
-  const headers = await getForwardHeaders()
-  refreshPromise = fetch(`${URL}/auth/refresh-token`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: Object.fromEntries(headers.entries()),
-  })
-    .then((res) => res.ok)
-    .catch(() => false)
-    .finally(() => {
-      isRefreshing = false
-      refreshPromise = null
+  try {
+    const res = await fetch(`${BASE_URL}/auth/refresh-token`, {
+      method: 'POST',
+      credentials: 'include',
     })
-  return refreshPromise
+    drainQueue(res.ok)
+    return res.ok
+  } catch (err) {
+    drainQueue(false, err)
+    return false
+  } finally {
+    isRefreshing = false
+  }
 }
 
 async function executeRequest(
   path: string,
-  init?: RequestInit,
+  init?: Omit<RequestInit, 'body'> & { body?: unknown },
 ): Promise<Response> {
+  const { body: rawBody, headers: callerHeaders, ...restInit } = init ?? {}
+
   const forwardHeaders = await getForwardHeaders()
-  console.log(
-    '[SSR Fetched]:',
-    path,
-    Object.fromEntries(forwardHeaders.entries()),
-  )
-  return fetch(`${URL}${path}`, {
-    ...init,
+  const mergedHeaders = new Headers(forwardHeaders)
+
+  let serializedBody: BodyInit | undefined
+  if (rawBody != null) {
+    if (rawBody instanceof FormData || rawBody instanceof URLSearchParams) {
+      serializedBody = rawBody
+    } else if (typeof rawBody === 'string') {
+      serializedBody = rawBody
+    } else {
+      serializedBody = JSON.stringify(rawBody)
+      mergedHeaders.set('Content-Type', 'application/json')
+    }
+  }
+
+  if (callerHeaders) {
+    new Headers(callerHeaders).forEach((value, key) => {
+      mergedHeaders.set(key, value)
+    })
+  }
+
+  return fetch(`${BASE_URL}${path}`, {
+    ...restInit,
+    body: serializedBody,
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...Object.fromEntries(forwardHeaders.entries()),
-      ...init?.headers,
-    },
+    headers: mergedHeaders,
   })
 }
 
-export async function apiFetch<T>(
+function isJsonResponse(contentType: string | null): boolean {
+  if (!contentType) return false
+  return (
+    contentType.includes('application/json') || contentType.includes('+json')
+  )
+}
+
+// function toApiError(status: number, data: unknown): ApiError {
+//   if (typeof data === 'object' && data !== null) {
+//     const p = data as ProblemDetails
+//     return new ApiError(
+//       status,
+//       p.title ?? `HTTP ${status}`,
+//       p.detail,
+//       p.errors,
+//       p.traceId,
+//     )
+//   }
+//   return new ApiError(
+//     status,
+//     typeof data === 'string' ? data : `HTTP ${status}`,
+//   )
+// }
+
+function toApiError(status: number, data: unknown): ApiError {
+  if (typeof data === 'object' && data !== null) {
+    const p = data as ProblemDetails
+
+    if (Array.isArray(p.errors)) {
+      return new ApiError(status, p.errors[0] ?? `HTTP ${status}`) // ← "Invalid Credentials"
+    }
+
+    return new ApiError(
+      status,
+      p.title ?? `HTTP ${status}`,
+      p.detail,
+      p.errors,
+      p.traceId,
+    )
+  }
+  return new ApiError(
+    status,
+    typeof data === 'string' ? data : `HTTP ${status}`,
+  )
+}
+const isServer = typeof window === 'undefined'
+
+export async function apiFetch<T, B = unknown>(
   path: string,
-  init?: RequestInit,
+  init?: Omit<RequestInit, 'body'> & { body?: B },
 ): Promise<T> {
   try {
     let res = await executeRequest(path, init)
-    if (res.status === 401) {
-      const refreshed = await tryRefreshTokens()
 
-      if (!refreshed) {
-        // window.location.href = '/login'
-        throw new Error('Session expired, please log in again')
+    if (res.status === 401) {
+      if (isServer) {
+        throw redirect({ to: '/login' })
       }
+
+      const refreshed = await tryRefreshTokens()
+      if (!refreshed) throw redirect({ to: '/login' })
+
       res = await executeRequest(path, init)
 
-      if (res.status === 401) {
-        // window.location.href = '/login'
-        throw new Error('Session expired, please log in again')
-      }
+      if (res.status === 401) throw redirect({ to: '/login' })
     }
 
-    const contentType = res.headers.get('content-type')
-    let data: unknown = null
-    if (contentType?.includes('application/json')) {
-      data = await res.json()
-    } else {
-      data = await res.text()
-    }
+    const data: unknown = isJsonResponse(res.headers.get('content-type'))
+      ? await res.json()
+      : await res.text()
 
-    if (!res.ok) {
-      if (typeof data === 'object' && data !== null) {
-        const problem = data as Problem
-
-        throw new Error(problem.detail || problem.title || `API ${res.status}`)
-      }
-
-      throw new Error(
-        typeof data === 'string'
-          ? data
-          : `API ${res.status}: ${res.statusText}`,
-      )
-    }
+    if (!res.ok) throw toApiError(res.status, data)
 
     return data as T
   } catch (err) {
     if (err instanceof TypeError) {
-      throw new Error('Network error: Unable to reach server')
+      throw new ApiError(0, 'Network error: Unable to reach the server')
     }
     throw err
   }

@@ -29,16 +29,21 @@ public static class DataSeeder
     
     private static async Task SeedUsers(UserManager<User> userManager)
     {
-        await EnsureUser(userManager, AdminId,    "admin@vehicle.com",    "Admin",   "User",    "Admin1234!", "Admin");
-        await EnsureUser(userManager, StaffId,    "staff@vehicle.com",    "Staff",   "Member",  "Staff1234!", "Staff");
-        await EnsureUser(userManager, Customer1Id,"alice@example.com",    "Alice",   "Johnson", "Pass1234!", "Customer");
-        await EnsureUser(userManager, Customer2Id,"bob@example.com",      "Bob",     "Smith",   "Pass1234!", "Customer");
-        await EnsureUser(userManager, Customer3Id,"charlie@example.com",  "Charlie", "Brown",   "Pass1234!", "Customer");
+        await EnsureUser(userManager, AdminId,    "admin@vehicle.com",    "Admin",   "User",
+            "Admin1234!",  "Anamnagar-10, Kathmandu", "Admin");
+        await EnsureUser(userManager, StaffId,    "staff@vehicle.com",    "Staff",   "Member",
+            "Staff1234!","Sukumbasi, Bagmati", "Staff");
+        await EnsureUser(userManager, Customer1Id,"alice@example.com",    "Alice",   "Johnson",
+            "Pass1234!", "Boudha-5, Kathmandu", "Customer");
+        await EnsureUser(userManager, Customer2Id,"bob@example.com",      "Bob",     "Smith",
+            "Pass1234!", "Gothatar-9, Kathmandu", "Customer");
+        await EnsureUser(userManager, Customer3Id,"charlie@example.com",  "Charlie", "Brown",
+            "Pass1234!", "Pokhara", "Customer");
     }
 
     private static async Task EnsureUser(
         UserManager<User> userManager,
-        Guid id, string email, string first, string last, string password, string role)
+        Guid id, string email, string first, string last, string password, string address, string role)
     {
         if (await userManager.FindByIdAsync(id.ToString()) is not null) return;
 
@@ -50,6 +55,7 @@ public static class DataSeeder
             FirstName   = first,
             LastName    = last,
             PhoneNumber = "9800000000",
+            Address = address,
             EmailConfirmed = true,
         };
 
