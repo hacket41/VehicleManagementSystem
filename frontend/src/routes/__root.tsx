@@ -51,7 +51,7 @@ function RootDocument() {
       <body className="font-sans antialiased">
         <QueryClientProvider client={queryClient}>
           <Outlet />
-          <Toaster />
+          <Toaster position="top-right" richColors closeButton />
         </QueryClientProvider>
 
         <TanStackDevtools
