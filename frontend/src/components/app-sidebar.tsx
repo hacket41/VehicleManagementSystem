@@ -14,6 +14,7 @@ import {
   SidebarMenuItem,
 } from "#/components/ui/sidebar"
 import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon, CommandIcon } from "lucide-react"
+import { Link } from "@tanstack/react-router"
 
 const data = {
   user: {
@@ -181,7 +182,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<a href="#" />}
+              render={<Link to="/" />}
             >
               <CommandIcon className="size-5!" />
               <span className="text-base font-semibold">Acme Inc.</span>
