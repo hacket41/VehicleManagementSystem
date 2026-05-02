@@ -1,3 +1,5 @@
+import { createIsomorphicFn } from '@tanstack/react-start'
+
 const URL = import.meta.env.VITE_API
 
 type Problem = {
@@ -9,15 +11,29 @@ type Problem = {
 let isRefreshing = false
 let refreshPromise: Promise<boolean> | null = null
 
+const getForwardHeaders = createIsomorphicFn()
+  .client(() => new Headers())
+  .server(async () => {
+    const { getRequestHeaders } = await import('@tanstack/react-start/server')
+    const cookie = getRequestHeaders().get('cookie')
+    const headers = new Headers()
+    if (cookie) {
+      headers.set('cookie', cookie)
+    }
+    return headers
+  })
+
 async function tryRefreshTokens(): Promise<boolean> {
   if (isRefreshing && refreshPromise) {
     return refreshPromise
   }
 
   isRefreshing = true
-  refreshPromise = fetch(`${URL}/auth/refresh`, {
+  const headers = await getForwardHeaders()
+  refreshPromise = fetch(`${URL}/auth/refresh-token`, {
     method: 'POST',
     credentials: 'include',
+    headers: Object.fromEntries(headers.entries()),
   })
     .then((res) => res.ok)
     .catch(() => false)
@@ -25,7 +41,6 @@ async function tryRefreshTokens(): Promise<boolean> {
       isRefreshing = false
       refreshPromise = null
     })
-
   return refreshPromise
 }
 
@@ -33,11 +48,18 @@ async function executeRequest(
   path: string,
   init?: RequestInit,
 ): Promise<Response> {
+  const forwardHeaders = await getForwardHeaders()
+  console.log(
+    '[SSR Fetched]:',
+    path,
+    Object.fromEntries(forwardHeaders.entries()),
+  )
   return fetch(`${URL}${path}`, {
     ...init,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
+      ...Object.fromEntries(forwardHeaders.entries()),
       ...init?.headers,
     },
   })
@@ -49,7 +71,6 @@ export async function apiFetch<T>(
 ): Promise<T> {
   try {
     let res = await executeRequest(path, init)
-    1
     if (res.status === 401) {
       const refreshed = await tryRefreshTokens()
 
@@ -92,7 +113,6 @@ export async function apiFetch<T>(
     if (err instanceof TypeError) {
       throw new Error('Network error: Unable to reach server')
     }
-
     throw err
   }
 }
