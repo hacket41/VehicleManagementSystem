@@ -1,6 +1,6 @@
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import Footer from '#/components/Footer'
 import Header from '#/components/Header'
-import { Outlet, createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_main')({
   component: SiteLayout,
