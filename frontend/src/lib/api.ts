@@ -1,3 +1,5 @@
+import { createIsomorphicFn } from '@tanstack/react-start'
+
 const URL = import.meta.env.VITE_API
 
 type Problem = {
@@ -9,13 +11,25 @@ type Problem = {
 let isRefreshing = false
 let refreshPromise: Promise<boolean> | null = null
 
+const getForwardHeaders = createIsomorphicFn()
+  .client(() => new Headers())
+  .server(async () => {
+    const { getRequestHeaders } = await import('@tanstack/react-start/server')
+    const cookie = getRequestHeaders().get('cookie')
+    const headers = new Headers()
+    if (cookie) {
+      headers.set('cookie', cookie)
+    }
+    return headers
+  })
+
 async function tryRefreshTokens(): Promise<boolean> {
   if (isRefreshing && refreshPromise) {
     return refreshPromise
   }
 
   isRefreshing = true
-  refreshPromise = fetch(`${URL}/auth/refresh`, {
+  refreshPromise = fetch(`${URL}/auth/refresh-token`, {
     method: 'POST',
     credentials: 'include',
   })
@@ -33,11 +47,13 @@ async function executeRequest(
   path: string,
   init?: RequestInit,
 ): Promise<Response> {
+  const forwardHeaders = await getForwardHeaders()
   return fetch(`${URL}${path}`, {
     ...init,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
+      ...Object.fromEntries(forwardHeaders.entries()),
       ...init?.headers,
     },
   })

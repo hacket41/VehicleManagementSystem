@@ -1,6 +1,6 @@
 import { Button } from '#/components/ui/button'
 import { apiFetch } from '#/lib/api'
-import { createFileRoute, ErrorComponent, Link } from '@tanstack/react-router'
+import { createFileRoute, ErrorComponent } from '@tanstack/react-router'
 import { useState } from 'react'
 
 type MeResponse = {
@@ -11,7 +11,7 @@ type MeResponse = {
 }
 
 export const Route = createFileRoute('/')({
-  ssr: false,
+  // ssr: false,
   loader: () => apiFetch<MeResponse>('/test/me'),
   errorComponent: ({ error }) => <ErrorComponent error={error} />,
   component: App,
