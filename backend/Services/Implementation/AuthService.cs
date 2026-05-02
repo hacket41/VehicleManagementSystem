@@ -164,6 +164,30 @@ public class AuthService(
         };
     }
 
+    public async Task<bool> Logout(Guid userId, HttpContext httpContext)
+    {
+        await jwtTokenService.RevokeRefreshToken(userId);
+
+        httpContext.Response.Cookies.Append("accessToken","",
+        new CookieOptions{
+            Expires = DateTime.Now.AddDays(-1),
+            HttpOnly = true,
+            IsEssential = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+        });
+
+        httpContext.Response.Cookies.Append("refreshToken","",
+            new CookieOptions{
+                Expires = DateTime.Now.AddDays(-1),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            });
+        return true;
+    }
+
     public async Task<AuthResponseDto> RefreshTokens(RequestRefreshTokenDto request)
     {
         var user = await jwtTokenService.ValidateRefreshToken(request.UserId, request.RefreshToken);

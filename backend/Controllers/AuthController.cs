@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using backend.Data.DTO.Request;
 using backend.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers;
@@ -39,6 +40,17 @@ public class AuthController(
         var result = await authService.Login(user);
         if (!result.Success) return BadRequest(result);
         authService.SetTokenInsideCookies(HttpContext,  result.Token!, result.RefreshToken! );
+        return Ok();
+    }
+
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if(!Guid.TryParse(userId, out var userGuid)) return Unauthorized("Invalid Token");
+
+        await authService.Logout(userGuid, HttpContext);
         return Ok();
     }
 

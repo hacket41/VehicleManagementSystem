@@ -1,3 +1,4 @@
+import { redirect } from '@tanstack/react-router'
 import { createIsomorphicFn } from '@tanstack/react-start'
 
 const URL = import.meta.env.VITE_API
@@ -49,25 +50,33 @@ async function executeRequest(
   init?: RequestInit,
 ): Promise<Response> {
   const forwardHeaders = await getForwardHeaders()
-  console.log(
-    '[SSR Fetched]:',
-    path,
-    Object.fromEntries(forwardHeaders.entries()),
-  )
+  const mergedHeaders = new Headers(forwardHeaders)
+
+  let body = init?.body
+
+  if (body && typeof body === 'object' && !(body instanceof FormData)) {
+    body = JSON.stringify(body)
+    mergedHeaders.set('Content-Type', 'application/json')
+  }
+
+  if (init?.headers) {
+    const initHeaders = new Headers(init.headers)
+    initHeaders.forEach((value, key) => {
+      mergedHeaders.set(key, value)
+    })
+  }
+
+  console.log('[SSR Fetched]:', path)
   return fetch(`${URL}${path}`, {
     ...init,
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...Object.fromEntries(forwardHeaders.entries()),
-      ...init?.headers,
-    },
+    headers: mergedHeaders,
   })
 }
 
-export async function apiFetch<T>(
+export async function apiFetch<T, B = unknown>(
   path: string,
-  init?: RequestInit,
+  init?: RequestInit & { body?: B },
 ): Promise<T> {
   try {
     let res = await executeRequest(path, init)
@@ -76,13 +85,17 @@ export async function apiFetch<T>(
 
       if (!refreshed) {
         // window.location.href = '/login'
-        throw new Error('Session expired, please log in again')
+        throw redirect({
+          to: '/login',
+        })
       }
       res = await executeRequest(path, init)
 
       if (res.status === 401) {
         // window.location.href = '/login'
-        throw new Error('Session expired, please log in again')
+        throw redirect({
+          to: '/login',
+        })
       }
     }
 
