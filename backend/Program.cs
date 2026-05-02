@@ -1,12 +1,13 @@
 using System.Security.Claims;
 using System.Text;
-using backend;
 using backend.Data;
 using backend.Data.Entities;
 using backend.Services.Implementation;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
@@ -25,6 +26,14 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.Configure<MvcOptions>(options =>
+{
+    options.ModelMetadataDetailsProviders.Add(
+        new SystemTextJsonValidationMetadataProvider()
+    );
+});
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
