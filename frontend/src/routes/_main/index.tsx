@@ -15,12 +15,12 @@ export const Route = createFileRoute('/_main/')({
 })
 
 function App() {
-  const { data: me } = useQuery(getMe())
+  // const { data: me } = useQuery(getMe())
 
   return (
     <main className="container mx-auto p-8 space-y-6">
       <section className="border rounded p-4 space-y-3">
-        <h3>{!me ? 'You are not logged in' : 'You are logged in'}</h3>
+        {/*<h3>{!me ? 'You are not logged in' : 'You are logged in'}</h3>*/}
       </section>
     </main>
   )
