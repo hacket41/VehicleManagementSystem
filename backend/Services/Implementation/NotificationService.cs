@@ -1,15 +1,20 @@
 using backend.Data;
+using backend.Data.DTO.Request;
 using backend.Data.Entities;
 using backend.Data.Enums;
 using backend.Services.Interfaces;
+using backend.Services.Implementation.Template;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using backend.Data.DTO.Request;
 
 namespace backend.Services.Implementation;
 
-public class NotificationService(AppDbContext db, ILogger<NotificationService> logger) : INotificationService
+public class NotificationService(
+    AppDbContext db,
+    IEmailService emailService,
+    UserManager<User> userManager,
+    ILogger<NotificationService> logger) : INotificationService
 {
-    
     public async Task<NotificationSummaryDto> CheckLowStockAsync()
     {
         var summary = new NotificationSummaryDto();
@@ -18,11 +23,12 @@ public class NotificationService(AppDbContext db, ILogger<NotificationService> l
             .Where(p => p.IsActive && p.StockQuantity < p.LowStockThreshold)
             .ToListAsync();
 
-        //new noti si created only if not pending
         var alreadyPending = await db.LowStockNotifications
             .Where(n => n.Status == NotificationStatus.Pending)
             .Select(n => n.PartId)
             .ToListAsync();
+
+        var newlyAlertedParts = new List<Part>();
 
         foreach (var part in lowParts)
         {
@@ -32,26 +38,50 @@ public class NotificationService(AppDbContext db, ILogger<NotificationService> l
                 continue;
             }
 
-            var notification = new LowStockNotification
+            db.LowStockNotifications.Add(new LowStockNotification
             {
                 PartId             = part.Id,
                 StockAtTimeOfAlert = part.StockQuantity,
-                Status             = NotificationStatus.Sent,  
+                Status             = NotificationStatus.Sent,
                 SentAt             = DateTime.UtcNow,
-            };
+            });
 
-            db.LowStockNotifications.Add(notification);
+            newlyAlertedParts.Add(part);
             summary.Processed++;
-            summary.Details.Add($"LOW STOCK ALERT: Part '{part.Name}' (#{part.PartNumber}) — only {part.StockQuantity} units left (threshold: {part.LowStockThreshold}).");
+            summary.Details.Add(
+                $"LOW STOCK ALERT: Part '{part.Name}' (#{part.PartNumber}) — " +
+                $"only {part.StockQuantity} units left (threshold: {part.LowStockThreshold}).");
+
             logger.LogWarning("Low stock alert: Part {Name} has {Qty} units.", part.Name, part.StockQuantity);
         }
 
-        if (summary.Processed > 0)
+        if (newlyAlertedParts.Count > 0)
+        {
             await db.SaveChangesAsync();
+
+            var admins = await userManager.GetUsersInRoleAsync("Admin");
+            var adminList = admins.Where(a => !string.IsNullOrEmpty(a.Email)).ToList();
+
+            foreach (var admin in adminList)
+            {
+                try
+                {
+                    await emailService.SendAsync(
+                        toEmail:  admin.Email!,
+                        toName:   admin.UserName ?? "Admin",
+                        subject:  $"[AutoParts] Low Stock Alert — {newlyAlertedParts.Count} part(s) need attention",
+                        htmlBody: EmailTemplates.LowStockAlert(newlyAlertedParts));
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed to send low-stock alert to admin {Email}.", admin.Email);
+                }
+            }
+        }
 
         return summary;
     }
-    
+
     public async Task<NotificationSummaryDto> SendCreditRemindersAsync()
     {
         var summary = new NotificationSummaryDto();
@@ -79,7 +109,7 @@ public class NotificationService(AppDbContext db, ILogger<NotificationService> l
 
             var daysOverdue = (int)(DateTime.UtcNow - sale.SaleDate).TotalDays - 30;
 
-            var reminder = new CreditReminder
+            db.CreditReminders.Add(new CreditReminder
             {
                 SaleId        = sale.Id,
                 CustomerId    = sale.CustomerId,
@@ -89,17 +119,31 @@ public class NotificationService(AppDbContext db, ILogger<NotificationService> l
                 DaysOverdue   = daysOverdue,
                 Status        = NotificationStatus.Sent,
                 SentAt        = DateTime.UtcNow,
-            };
+            });
 
-            db.CreditReminders.Add(reminder);
             summary.Processed++;
             summary.Details.Add(
                 $"CREDIT REMINDER: Customer '{sale.Customer.FirstName} {sale.Customer.LastName}' " +
-                $"({sale.Customer.Email}) — Invoice {sale.InvoiceNumber}, Amount: {sale.TotalAmount:C}, " +
-                $"{daysOverdue} days overdue.");
+                $"({sale.Customer.Email}) — Invoice {sale.InvoiceNumber}, " +
+                $"Amount: {sale.TotalAmount:C}, {daysOverdue} days overdue.");
+
+            try
+            {
+                await emailService.SendAsync(
+                    toEmail:  sale.Customer.Email,
+                    toName:   $"{sale.Customer.FirstName} {sale.Customer.LastName}",
+                    subject:  $"Payment Reminder — Invoice {sale.InvoiceNumber}",
+                    htmlBody: EmailTemplates.CreditReminder(sale, daysOverdue));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex,
+                    "Failed to send credit reminder for invoice {Invoice} to {Email}.",
+                    sale.InvoiceNumber, sale.Customer.Email);
+            }
 
             logger.LogInformation(
-                "Credit reminder: Invoice {Invoice} for customer {Email} is {Days} days overdue.",
+                "Credit reminder: Invoice {Invoice} for {Email} is {Days} days overdue.",
                 sale.InvoiceNumber, sale.Customer.Email, daysOverdue);
         }
 
