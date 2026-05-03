@@ -66,7 +66,7 @@ public class NotificationService(
             {
                 try
                 {
-                    await emailService.SendAsync(
+                    await emailService.SendAsync( //EMAIL SUCCESSFULLY WORKS {This is low stock reminders}
                         toEmail:  admin.Email!,
                         toName:   admin.UserName ?? "Admin",
                         subject:  $"[AutoParts] Low Stock Alert — {newlyAlertedParts.Count} part(s) need attention",
@@ -129,7 +129,7 @@ public class NotificationService(
 
             try
             {
-                await emailService.SendAsync(
+                await emailService.SendAsync( //This part is for remiding overdue customers
                     toEmail:  sale.Customer.Email,
                     toName:   $"{sale.Customer.FirstName} {sale.Customer.LastName}",
                     subject:  $"Payment Reminder — Invoice {sale.InvoiceNumber}",
