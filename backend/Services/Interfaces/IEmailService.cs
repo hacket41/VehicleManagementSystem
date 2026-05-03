@@ -1,6 +1,6 @@
 namespace backend.Services.Interfaces;
 
-public class IEmailService
+public interface IEmailService
 {
     Task SendAsync(string toEmail, string toName, string subject, string htmlBody);
 }
