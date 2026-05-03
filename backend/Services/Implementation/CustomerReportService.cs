@@ -135,8 +135,6 @@ public class CustomerReportService(AppDbContext db) : ICustomerReportService
             .OrderByDescending(r => r.OutstandingCredit)
             .ToListAsync();
     }
-
-
     private static CustomerReportDto MapToDto(CustomerReport r, List<CustomerReportRowDto> rows) => new()
     {
         Id          = r.Id,
