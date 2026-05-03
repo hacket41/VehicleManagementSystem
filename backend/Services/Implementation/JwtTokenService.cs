@@ -98,4 +98,13 @@ public class JwtTokenService(
         }
     }
 
+    public async Task RevokeRefreshToken(Guid userId)
+    {
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (user is null) return;
+
+        user.RefreshToken = null;
+        user.RefreshTokenExpiryDate = null;
+        await userManager.UpdateAsync(user);
+    }
 }

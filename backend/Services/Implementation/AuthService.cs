@@ -21,6 +21,7 @@ public class AuthService(
             LastName = user.LastName,
             Email = user.Email,
             PhoneNumber = user.Phone,
+            Address = user.Address
         };
 
         var result = await userManager.CreateAsync(newUser, user.Password);
@@ -63,6 +64,8 @@ public class AuthService(
             LastName = user.LastName,
             Email = user.Email,
             PhoneNumber = user.Phone,
+            Address = user.Address
+
         };
 
         var result = await userManager.CreateAsync(newUser, user.Password);
@@ -104,6 +107,8 @@ public class AuthService(
             LastName = user.LastName,
             Email = user.Email,
             PhoneNumber = user.Phone,
+            Address = user.Address
+
         };
 
         var result = await userManager.CreateAsync(newUser, user.Password);
@@ -162,6 +167,30 @@ public class AuthService(
             Token = token,
             RefreshToken = refreshToken,
         };
+    }
+
+    public async Task<bool> Logout(Guid userId, HttpContext httpContext)
+    {
+        await jwtTokenService.RevokeRefreshToken(userId);
+
+        httpContext.Response.Cookies.Append("accessToken","",
+        new CookieOptions{
+            Expires = DateTime.Now.AddDays(-1),
+            HttpOnly = true,
+            IsEssential = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+        });
+
+        httpContext.Response.Cookies.Append("refreshToken","",
+            new CookieOptions{
+                Expires = DateTime.Now.AddDays(-1),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+            });
+        return true;
     }
 
     public async Task<AuthResponseDto> RefreshTokens(RequestRefreshTokenDto request)

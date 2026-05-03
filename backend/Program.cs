@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using System.Text;
-using backend;
 using backend.Configuration;
 using backend.Data;
 using backend.Data.Entities;
@@ -8,6 +7,8 @@ using backend.Services.Implementation;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
@@ -18,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:5173")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:3001")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -26,6 +27,14 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.Configure<MvcOptions>(options =>
+{
+    options.ModelMetadataDetailsProviders.Add(
+        new SystemTextJsonValidationMetadataProvider()
+    );
+});
+
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
