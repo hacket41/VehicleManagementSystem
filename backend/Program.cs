@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text;
 using backend;
+using backend.Configuration;
 using backend.Data;
 using backend.Data.Entities;
 using backend.Services.Implementation;
@@ -39,6 +40,11 @@ builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddScoped<ICustomerReportService, CustomerReportService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
+
+//Yo Email ko configuration ho:
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = true;
 Microsoft.IdentityModel.Logging.IdentityModelEventSource.LogCompleteSecurityArtifact = true;
 
