@@ -7,7 +7,10 @@ import type { MeResponse } from '#/routes/_main'
 export const getMe = () => {
   return queryOptions({
     queryKey: ['me'],
-    queryFn: () => apiFetch<MeResponse>('/api/user/me'),
+    queryFn: () =>
+      apiFetch<MeResponse>('/api/user/me', {
+        method: 'GET',
+      }),
     retry: false,
   })
 }
