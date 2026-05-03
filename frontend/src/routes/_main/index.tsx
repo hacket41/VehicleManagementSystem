@@ -1,6 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { getMe } from '#/api/auth.api'
 
 export type MeResponse = {
   id: string

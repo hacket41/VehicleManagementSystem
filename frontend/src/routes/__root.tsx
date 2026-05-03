@@ -9,6 +9,7 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { Toaster } from '#/components/ui/sonner'
 import { queryClient } from '#/lib/queryClient'
+import { AuthProvider } from '#/providers/AuthContextProvider'
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
@@ -50,8 +51,10 @@ function RootDocument() {
 
       <body className="font-sans antialiased">
         <QueryClientProvider client={queryClient}>
-          <Outlet />
-          <Toaster position="top-center" richColors closeButton />
+          <AuthProvider>
+            <Outlet />
+            <Toaster position="top-center" richColors closeButton />
+          </AuthProvider>
         </QueryClientProvider>
 
         <TanStackDevtools

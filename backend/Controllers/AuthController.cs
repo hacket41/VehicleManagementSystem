@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using backend.Data.DTO.Request;
+using backend.Data.DTO.Response;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,28 +18,35 @@ public class AuthController(
     public async Task<IActionResult> RegisterCustomer(RegisterUserDto user)
     {
         var result = await authService.RegisterCustomer(user);
-        return Ok(result);
+        return result.Success? Ok(result) : BadRequest(result);
     }
 
     [HttpPost("register-staff")]
     public async Task<IActionResult> RegisterStaff(RegisterUserDto user)
     {
         var result = await authService.RegisterStaff(user);
-        return Ok(result);
+        return result.Success? Ok(result) : BadRequest(result);
     }
 
     [HttpPost("register-admin")]
     public async Task<IActionResult> RegisterAdmin(RegisterUserDto user)
     {
         var result = await authService.RegisterAdmin(user);
-        return Ok(result);
+        return result.Success? Ok(result) : BadRequest(result);
+
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest user)
     {
         var result = await authService.Login(user);
-        if (!result.Success) return BadRequest(result);
+
+        if (!result.Success)
+            return Unauthorized(ApiResponse<AuthResponseDto>.Fail(
+                "Login failed",
+                result.Errors
+            ));
+
         authService.SetTokenInsideCookies(HttpContext,  result.Token!, result.RefreshToken! );
         return Ok();
     }

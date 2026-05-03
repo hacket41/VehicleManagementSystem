@@ -1,20 +1,37 @@
+import type { FieldValues, Path, UseFormReturn } from 'react-hook-form'
 import { toast } from 'sonner'
-import { ApiError } from './api'
+import { ApiError } from '#/lib/api'
 
-export function handleApiError(err: unknown) {
-  if (!(err instanceof ApiError)) {
+export function handleFormApiError<T extends FieldValues>(
+  error: unknown,
+  form: UseFormReturn<T>,
+) {
+  if (!(error instanceof ApiError)) {
     toast.error('Something went wrong')
     return
   }
 
-  if (err.validationErrors) {
-    for (const messages of Object.values(err.validationErrors)) {
-      for (const message of messages) {
-        toast.error(message)
-      }
-    }
+  if (!error.errors) {
+    toast.error(error.message)
     return
   }
 
-  toast.error(err.detail ?? err.message)
+  let hasFieldError = false
+
+  Object.entries(error.errors).forEach(([field, messages]) => {
+    const key = field.toLowerCase() as Path<T>
+
+    if (key in form.getValues()) {
+      hasFieldError = true
+
+      form.setError(key, {
+        type: 'server',
+        message: messages[0],
+      })
+    }
+  })
+
+  if (!hasFieldError) {
+    toast.error(error.message)
+  }
 }

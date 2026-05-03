@@ -3,7 +3,7 @@ import { useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { login } from '#/api/auth.api'
-import { handleApiError } from '#/lib/handleApiError'
+import { handleFormApiError } from '#/lib/handleApiError'
 import { queryClient } from '#/lib/queryClient'
 import { Button } from '@/components/ui/button'
 import {
@@ -40,8 +40,8 @@ export function LoginForm() {
       queryClient.refetchQueries({ queryKey: ['me'] })
       router.navigate({ to: '/' })
     },
-    onError: (e) => {
-      toast.error(e.message)
+    onError: () => {
+      toast.error('Invalid credentials')
     },
   })
   const onSubmit = (data: LoginPayload) => {

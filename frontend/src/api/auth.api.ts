@@ -8,6 +8,7 @@ export const getMe = () => {
   return queryOptions({
     queryKey: ['me'],
     queryFn: () => apiFetch<MeResponse>('/api/user/me'),
+    retry: false,
   })
 }
 

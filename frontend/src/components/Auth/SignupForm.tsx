@@ -3,7 +3,7 @@ import { useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { registerCustomer } from '#/api/auth.api'
-import { handleApiError } from '#/lib/handleApiError'
+import { handleFormApiError } from '#/lib/handleApiError'
 import { queryClient } from '#/lib/queryClient'
 import { Button } from '@/components/ui/button'
 import {
@@ -50,7 +50,7 @@ export function SignupForm() {
       queryClient.invalidateQueries({ queryKey: ['me'] })
       toast.success('Account created successfully')
     },
-    onError: (e) => handleApiError(e),
+    onError: (e) => handleFormApiError(e, form),
   })
 
   function onSubmit(data: RegisterPayload) {
@@ -68,9 +68,13 @@ export function SignupForm() {
               id="firstName"
               type="text"
               placeholder="John"
-              {...register('firstName', { required: true })}
+              {...register('firstName', { required: 'First name is required' })}
             />
-            {errors.firstName && <span>{errors.firstName.message}</span>}
+            {errors.firstName && (
+              <span className="text-primary text-xs">
+                {errors.firstName.message}
+              </span>
+            )}
           </Field>
           <Field>
             <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
@@ -78,9 +82,13 @@ export function SignupForm() {
               id="lastName"
               type="text"
               placeholder="Doe"
-              {...register('lastName', { required: true })}
+              {...register('lastName', { required: 'Last name is required' })}
             />
-            {errors.lastName && <span>{errors.lastName.message}</span>}
+            {errors.lastName && (
+              <span className="text-primary text-xs ">
+                {errors.lastName.message}
+              </span>
+            )}
           </Field>
         </FieldGroup>
         <Field>
@@ -89,9 +97,11 @@ export function SignupForm() {
             id="email"
             type="email"
             placeholder="john@example.com"
-            {...register('email', { required: true })}
+            {...register('email', { required: 'Email is required' })}
           />
-          {errors.email && <span>{errors.email.message}</span>}
+          {errors.email && (
+            <span className="text-primary text-xs">{errors.email.message}</span>
+          )}
           <FieldDescription>
             We&apos;ll never share your email with anyone.
           </FieldDescription>
@@ -102,9 +112,13 @@ export function SignupForm() {
             id="password"
             type="password"
             placeholder="********"
-            {...register('password', { required: true })}
+            {...register('password', { required: 'Password is required' })}
           />
-          {errors.password && <span>{errors.password.message}</span>}
+          {errors.password && (
+            <span className="text-primary text-xs">
+              {errors.password.message}
+            </span>
+          )}
           <FieldDescription>
             Please enter a strong password for your account.
           </FieldDescription>
@@ -118,7 +132,11 @@ export function SignupForm() {
               placeholder="+1 (555) 123-4567"
               {...register('phone')}
             />
-            {errors.phone && <span>{errors.phone.message}</span>}
+            {errors.phone && (
+              <span className="text-primary text-xs">
+                {errors.phone.message}
+              </span>
+            )}
           </Field>
         </div>
         <Field>
@@ -127,9 +145,13 @@ export function SignupForm() {
             id="address"
             type="text"
             placeholder="123 Main St"
-            {...register('address')}
+            {...register('address', { required: 'Address is required' })}
           />
-          {errors.address && <span>{errors.address.message}</span>}
+          {errors.address && (
+            <span className="text-primary text-xs">
+              {errors.address.message}
+            </span>
+          )}
         </Field>
         <Field orientation="horizontal">
           <Button type="button" variant="outline">
