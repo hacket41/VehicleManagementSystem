@@ -6,10 +6,8 @@ export const getParts = () => {
   return queryOptions({
     queryKey: ['parts'],
     queryFn: async () =>
-      apiFetch<Part[]>('/api/part/all', {
+      apiFetch<Part[]>('/api/part', {
         method: 'GET',
       }),
   })
 }
-
-// export const
