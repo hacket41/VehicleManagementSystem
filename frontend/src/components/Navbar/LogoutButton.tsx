@@ -26,11 +26,12 @@ export default function LogoutButton() {
   const { mutate: logoutMutation, isPending } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.setQueryData(['me'], null)
-      router.navigate({ to: '/' })
       toast.success('Logged out successfully')
+      queryClient.setQueryData(['me'], null)
       setOpen(false)
-      window.location.href = '/'
+      router.navigate({ to: '/' })
+
+      // window.location.href = '/'
     },
     onError: (e) => toast.error(e.message),
   })

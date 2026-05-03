@@ -40,8 +40,8 @@ export function LoginForm() {
       queryClient.refetchQueries({ queryKey: ['me'] })
       router.navigate({ to: '/' })
     },
-    onError: () => {
-      toast.error('Invalid credentials')
+    onError: (e) => {
+      toast.error(e instanceof Error ? e.message : 'Invalid credentials')
     },
   })
   const onSubmit = (data: LoginPayload) => {
@@ -58,9 +58,11 @@ export function LoginForm() {
             id="email"
             type="text"
             placeholder="you@example.com"
-            {...register('email', { required: true })}
+            {...register('email', { required: 'Email is required' })}
           />
-          {errors.email && <span>{errors.email.message}</span>}
+          {errors.email && (
+            <span className="text-xs">{errors.email.message}</span>
+          )}
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -68,9 +70,11 @@ export function LoginForm() {
             id="password"
             type="password"
             placeholder="********"
-            {...register('password', { required: true })}
+            {...register('password', { required: 'Password is required' })}
           />
-          {errors.password && <span>{errors.password.message}</span>}
+          {errors.password && (
+            <span className="text-xs">{errors.password.message}</span>
+          )}
           <FieldDescription>
             We&apos;ll never share your password with anyone.
           </FieldDescription>

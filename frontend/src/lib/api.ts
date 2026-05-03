@@ -5,6 +5,8 @@ type ProblemDetails = {
   status?: number
   detail?: string
   errors?: Record<string, string[]>
+  message?: string
+  success?: boolean
 }
 
 export class ApiError extends Error {
@@ -21,7 +23,12 @@ export class ApiError extends Error {
 function parseError(status: number, data: unknown): ApiError {
   if (typeof data === 'object' && data !== null) {
     const p = data as ProblemDetails
-    return new ApiError(status, p.title ?? `HTTP ${status}`, p.detail, p.errors)
+    const message =
+      p.title ||
+      p.message ||
+      (Array.isArray(p.errors) ? p.errors[0] : undefined) ||
+      `HTTP ${status}`
+    return new ApiError(status, message, p.detail, p.errors)
   }
 
   return new ApiError(
