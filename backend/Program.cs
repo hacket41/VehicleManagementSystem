@@ -28,6 +28,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
+
+
 builder.Services.Configure<MvcOptions>(options =>
 {
     options.ModelMetadataDetailsProviders.Add(
@@ -135,4 +137,5 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

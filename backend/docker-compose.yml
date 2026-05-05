@@ -8,7 +8,7 @@
       - db
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Postgres=Host=db;Port=5432;Username=postgres;Password=;Database=VehicleManagement
+      - ConnectionStrings__Postgres=Host=db;Port=5432;Username=postgres;Password=nobel;Database=VehicleManagement
   db:
     image: postgres:17
     container_name: postgres-db
