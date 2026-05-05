@@ -3,9 +3,8 @@ import { useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { logout } from '#/api/auth.api'
-import { useAuth } from '#/hooks/useAuth'
-import { handleApiError } from '#/lib/handleApiError'
 import { queryClient } from '#/lib/queryClient'
+import { useAuth } from '#/providers/AuthContextProvider'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,15 +26,14 @@ export default function LogoutButton() {
   const { mutate: logoutMutation, isPending } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ['me'] })
-      router.navigate({ to: '/' })
       toast.success('Logged out successfully')
+      queryClient.setQueryData(['me'], null)
       setOpen(false)
-      window.location.href = '/'
+      router.navigate({ to: '/' })
+
+      // window.location.href = '/'
     },
-    onError: (e) => {
-      handleApiError(e)
-    },
+    onError: (e) => toast.error(e.message),
   })
   return (
     <div className="flex justify-between items-center gap-4">
@@ -58,7 +56,7 @@ export default function LogoutButton() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               type="button"
-              variant="ghost"
+              variant="destructive"
               onClick={() => logoutMutation()}
               disabled={isPending}
             >

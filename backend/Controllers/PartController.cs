@@ -19,7 +19,6 @@ public class PartController(IPartsService parts) : ControllerBase
     }
 
     [HttpGet]
-    [Route("all")]
     public async Task<IActionResult> GetAllParts()
     {
         var allParts = await parts.GetAllParts();
@@ -29,7 +28,6 @@ public class PartController(IPartsService parts) : ControllerBase
 
     [Authorize(Roles="Admin")]
     [HttpPost]
-    [Route("add")]
     public async Task<IActionResult> PurchasePart([FromBody] PartsPurchaseRequest part)
     {
         try

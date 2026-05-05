@@ -40,6 +40,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         builder.Entity<User>().ToTable("Users");
         builder.Entity<IdentityRole<Guid>>().ToTable("Roles");
 
+        builder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
+
         SeedRoles(builder);
     }
 

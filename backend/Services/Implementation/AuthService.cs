@@ -11,7 +11,6 @@ public class AuthService(
     IJwtTokenService jwtTokenService
     ) :IAuthService
 {
-
     public async Task<AuthResponseDto> RegisterAdmin(RegisterUserDto user)
     {
         var newUser = new User

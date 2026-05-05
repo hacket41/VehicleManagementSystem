@@ -7,6 +7,8 @@
         <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
 
       <UserSecretsId>6cb1dfc0-7fee-4bb8-a286-fabb9d0420d4</UserSecretsId>
+
+      <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
     <ItemGroup>
