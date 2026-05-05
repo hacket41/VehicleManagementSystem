@@ -17,7 +17,8 @@ function RouteComponent() {
     <div>
       <div>
         <h1>All Parts</h1>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {parts.map((part) => (
             <PartCard key={part.id} part={part} />
           ))}

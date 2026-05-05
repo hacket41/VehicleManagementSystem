@@ -5,6 +5,7 @@ import LogoutButton from './LogoutButton'
 
 export default function AuthButtons() {
   const { user } = useAuth()
+  console.log(user)
 
   if (user) {
     return <LogoutButton />

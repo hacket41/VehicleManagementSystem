@@ -17,9 +17,7 @@ function App() {
 
   return (
     <main className="container mx-auto p-8 space-y-6">
-      <section className="border rounded p-4 space-y-3">
-        {/*<h3>{!me ? 'You are not logged in' : 'You are logged in'}</h3>*/}
-      </section>
+      <section className="border rounded p-4 space-y-3"></section>
     </main>
   )
 }

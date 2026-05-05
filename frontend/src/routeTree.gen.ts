@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteRouteImport } from './routes/_main/route'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
+import { Route as MainTestingRouteImport } from './routes/_main/testing'
 import { Route as MainSignupRouteImport } from './routes/_main/signup'
 import { Route as MainPartsRouteImport } from './routes/_main/parts'
 import { Route as MainLoginRouteImport } from './routes/_main/login'
 import { Route as MainAboutRouteImport } from './routes/_main/about'
 import { Route as MainTestIndexRouteImport } from './routes/_main/test/index'
+import { Route as MainTestTest2RouteImport } from './routes/_main/test/test2'
 import { Route as MainTestTest1RouteImport } from './routes/_main/test/test1'
 
 const MainRouteRoute = MainRouteRouteImport.update({
@@ -31,6 +33,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
 const MainIndexRoute = MainIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => MainRouteRoute,
+} as any)
+const MainTestingRoute = MainTestingRouteImport.update({
+  id: '/testing',
+  path: '/testing',
   getParentRoute: () => MainRouteRoute,
 } as any)
 const MainSignupRoute = MainSignupRouteImport.update({
@@ -58,6 +65,11 @@ const MainTestIndexRoute = MainTestIndexRouteImport.update({
   path: '/test/',
   getParentRoute: () => MainRouteRoute,
 } as any)
+const MainTestTest2Route = MainTestTest2RouteImport.update({
+  id: '/test/test2',
+  path: '/test/test2',
+  getParentRoute: () => MainRouteRoute,
+} as any)
 const MainTestTest1Route = MainTestTest1RouteImport.update({
   id: '/test/test1',
   path: '/test/test1',
@@ -70,8 +82,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof MainLoginRoute
   '/parts': typeof MainPartsRoute
   '/signup': typeof MainSignupRoute
+  '/testing': typeof MainTestingRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/test/test1': typeof MainTestTest1Route
+  '/test/test2': typeof MainTestTest2Route
   '/test/': typeof MainTestIndexRoute
 }
 export interface FileRoutesByTo {
@@ -79,9 +93,11 @@ export interface FileRoutesByTo {
   '/login': typeof MainLoginRoute
   '/parts': typeof MainPartsRoute
   '/signup': typeof MainSignupRoute
+  '/testing': typeof MainTestingRoute
   '/': typeof MainIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/test/test1': typeof MainTestTest1Route
+  '/test/test2': typeof MainTestTest2Route
   '/test': typeof MainTestIndexRoute
 }
 export interface FileRoutesById {
@@ -91,9 +107,11 @@ export interface FileRoutesById {
   '/_main/login': typeof MainLoginRoute
   '/_main/parts': typeof MainPartsRoute
   '/_main/signup': typeof MainSignupRoute
+  '/_main/testing': typeof MainTestingRoute
   '/_main/': typeof MainIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/_main/test/test1': typeof MainTestTest1Route
+  '/_main/test/test2': typeof MainTestTest2Route
   '/_main/test/': typeof MainTestIndexRoute
 }
 export interface FileRouteTypes {
@@ -104,8 +122,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/parts'
     | '/signup'
+    | '/testing'
     | '/dashboard/'
     | '/test/test1'
+    | '/test/test2'
     | '/test/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -113,9 +133,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/parts'
     | '/signup'
+    | '/testing'
     | '/'
     | '/dashboard'
     | '/test/test1'
+    | '/test/test2'
     | '/test'
   id:
     | '__root__'
@@ -124,9 +146,11 @@ export interface FileRouteTypes {
     | '/_main/login'
     | '/_main/parts'
     | '/_main/signup'
+    | '/_main/testing'
     | '/_main/'
     | '/dashboard/'
     | '/_main/test/test1'
+    | '/_main/test/test2'
     | '/_main/test/'
   fileRoutesById: FileRoutesById
 }
@@ -156,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof MainIndexRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
+    '/_main/testing': {
+      id: '/_main/testing'
+      path: '/testing'
+      fullPath: '/testing'
+      preLoaderRoute: typeof MainTestingRouteImport
       parentRoute: typeof MainRouteRoute
     }
     '/_main/signup': {
@@ -193,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainTestIndexRouteImport
       parentRoute: typeof MainRouteRoute
     }
+    '/_main/test/test2': {
+      id: '/_main/test/test2'
+      path: '/test/test2'
+      fullPath: '/test/test2'
+      preLoaderRoute: typeof MainTestTest2RouteImport
+      parentRoute: typeof MainRouteRoute
+    }
     '/_main/test/test1': {
       id: '/_main/test/test1'
       path: '/test/test1'
@@ -208,8 +246,10 @@ interface MainRouteRouteChildren {
   MainLoginRoute: typeof MainLoginRoute
   MainPartsRoute: typeof MainPartsRoute
   MainSignupRoute: typeof MainSignupRoute
+  MainTestingRoute: typeof MainTestingRoute
   MainIndexRoute: typeof MainIndexRoute
   MainTestTest1Route: typeof MainTestTest1Route
+  MainTestTest2Route: typeof MainTestTest2Route
   MainTestIndexRoute: typeof MainTestIndexRoute
 }
 
@@ -218,8 +258,10 @@ const MainRouteRouteChildren: MainRouteRouteChildren = {
   MainLoginRoute: MainLoginRoute,
   MainPartsRoute: MainPartsRoute,
   MainSignupRoute: MainSignupRoute,
+  MainTestingRoute: MainTestingRoute,
   MainIndexRoute: MainIndexRoute,
   MainTestTest1Route: MainTestTest1Route,
+  MainTestTest2Route: MainTestTest2Route,
   MainTestIndexRoute: MainTestIndexRoute,
 }
 

@@ -3,7 +3,6 @@ import { useRouter } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { login } from '#/api/auth.api'
-import { handleFormApiError } from '#/lib/handleApiError'
 import { queryClient } from '#/lib/queryClient'
 import { Button } from '@/components/ui/button'
 import {
@@ -44,6 +43,7 @@ export function LoginForm() {
       toast.error(e instanceof Error ? e.message : 'Invalid credentials')
     },
   })
+
   const onSubmit = (data: LoginPayload) => {
     console.log(data)
     mutate(data)

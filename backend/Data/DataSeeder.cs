@@ -35,7 +35,8 @@ public static class DataSeeder
             "Staff1234!","Sukumbasi, Bagmati", "Staff");
         await EnsureUser(userManager, Customer1Id,"alice@example.com",    "Alice",   "Johnson",
             "Pass1234!", "Boudha-5, Kathmandu", "Customer");
-        await EnsureUser(userManager, Customer2Id,"bob@example.com",      "Bob",     "Smith",
+        await EnsureUser(userManager, Customer2Id,"abhijit.singh.0106@gmail.com",      "Bob",
+            "Smith",
             "Pass1234!", "Gothatar-9, Kathmandu", "Customer");
         await EnsureUser(userManager, Customer3Id,"charlie@example.com",  "Charlie", "Brown",
             "Pass1234!", "Pokhara", "Customer");
