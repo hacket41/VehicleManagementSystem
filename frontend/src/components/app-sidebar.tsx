@@ -1,19 +1,12 @@
-import { Link } from '@tanstack/react-router'
 import {
-  CameraIcon,
-  ChartBarIcon,
-  CircleHelpIcon,
+  Bolt,
+  CarFrontIcon,
   CommandIcon,
-  DatabaseIcon,
   FileChartColumnIcon,
-  FileIcon,
-  FileTextIcon,
-  FolderIcon,
-  LayoutDashboardIcon,
-  ListIcon,
-  SearchIcon,
+  Home,
+  Mail,
   Settings2Icon,
-  UsersIcon,
+  UserStarIcon,
 } from 'lucide-react'
 import type * as React from 'react'
 import { NavDocuments } from '#/components/nav-documents'
@@ -26,7 +19,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from '#/components/ui/sidebar'
 
@@ -38,111 +30,44 @@ const data = {
   },
   navMain: [
     {
-      title: 'Dashboard',
-      url: '#',
-      icon: <LayoutDashboardIcon />,
+      title: 'Home',
+      url: '/dashboard',
+      icon: <Home />,
     },
     {
-      title: 'Lifecycle',
-      url: '#',
-      icon: <ListIcon />,
+      title: 'Parts Management',
+      url: '/dashboard/parts',
+      icon: <Bolt />,
     },
     {
-      title: 'Analytics',
-      url: '#',
-      icon: <ChartBarIcon />,
+      title: 'Vehicle Management',
+      url: '/dashboard/vehicles',
+      icon: <CarFrontIcon />,
     },
     {
-      title: 'Projects',
-      url: '#',
-      icon: <FolderIcon />,
-    },
-    {
-      title: 'Team',
-      url: '#',
-      icon: <UsersIcon />,
+      title: 'Vendor Management',
+      url: '/dashboard/vendors',
+      icon: <UserStarIcon />,
     },
   ],
-  navClouds: [
-    {
-      title: 'Capture',
-      icon: <CameraIcon />,
-      isActive: true,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Proposal',
-      icon: <FileTextIcon />,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Prompts',
-      icon: <FileTextIcon />,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-  ],
+
   navSecondary: [
     {
       title: 'Settings',
       url: '#',
       icon: <Settings2Icon />,
     },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: <CircleHelpIcon />,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: <SearchIcon />,
-    },
   ],
   documents: [
     {
-      name: 'Data Library',
-      url: '#',
-      icon: <DatabaseIcon />,
+      name: 'Notifications',
+      url: '/dashboard/notifications',
+      icon: <Mail />,
     },
     {
       name: 'Reports',
       url: '#',
       icon: <FileChartColumnIcon />,
-    },
-    {
-      name: 'Word Assistant',
-      url: '#',
-      icon: <FileIcon />,
     },
   ],
 }
@@ -152,13 +77,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<Link to="/" />}
-            >
+            <div className="flex gap-4 p-2">
               <CommandIcon className="size-5!" />
               <span className="text-base font-semibold">Acme Inc.</span>
-            </SidebarMenuButton>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -168,7 +90,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )

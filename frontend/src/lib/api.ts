@@ -79,7 +79,7 @@ async function parseResponse<T>(res: Response): Promise<T> {
 
 async function refreshToken(): Promise<boolean> {
   try {
-    const res = await fetch(`${BASE_URL}/auth/refresh-token`, {
+    const res = await fetch(`${BASE_URL}/api/auth/refresh-token`, {
       method: 'POST',
       credentials: 'include',
     })
