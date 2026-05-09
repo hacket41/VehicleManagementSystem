@@ -1,12 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export type MeResponse = {
-  id: string
-  name: string
-  email: string
-  phoneNumber: string
-  roles: string[]
-}
+
 
 export const Route = createFileRoute('/_main/')({
   component: App,

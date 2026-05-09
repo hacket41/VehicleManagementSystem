@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
+import { Eye, EyeOffIcon } from 'lucide-react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { registerCustomer } from '#/api/auth.api'
@@ -25,6 +27,8 @@ export type RegisterPayload = {
 }
 
 export function SignupForm() {
+  const [showPassword, setShowPassword] = useState(false)
+
   const router = useRouter()
   const form = useForm<RegisterPayload>({
     defaultValues: {
@@ -108,12 +112,24 @@ export function SignupForm() {
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input
-            id="password"
-            type="password"
-            placeholder="********"
-            {...register('password', { required: 'Password is required' })}
-          />
+          <div className="relative">
+            <Input
+              className="pr-10"
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="********"
+              {...register('password', { required: 'Password is required' })}
+            />
+            <Button
+              variant="ghost"
+              size={'icon'}
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3"
+            >
+              {showPassword ? <EyeOffIcon /> : <Eye />}
+            </Button>
+          </div>
+
           {errors.password && (
             <span className="text-primary text-xs">
               {errors.password.message}
@@ -127,6 +143,7 @@ export function SignupForm() {
           <Field>
             <FieldLabel htmlFor="phone">Phone</FieldLabel>
             <Input
+              className="pr-10"
               id="phone"
               type="text"
               placeholder="+1 (555) 123-4567"

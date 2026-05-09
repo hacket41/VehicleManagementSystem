@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
+import { Eye, EyeOff } from 'lucide-react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { login } from '#/api/auth.api'
@@ -19,6 +21,7 @@ export type LoginPayload = {
 }
 
 export function LoginForm() {
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const form = useForm<LoginPayload>({
     defaultValues: {
@@ -56,7 +59,7 @@ export function LoginForm() {
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input
             id="email"
-            type="text"
+            type="email"
             placeholder="you@example.com"
             {...register('email', { required: 'Email is required' })}
           />
@@ -65,13 +68,27 @@ export function LoginForm() {
           )}
         </Field>
         <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input
-            id="password"
-            type="password"
-            placeholder="********"
-            {...register('password', { required: 'Password is required' })}
-          />
+          <FieldLabel htmlFor="password" className="flex justify-between">
+            Password
+          </FieldLabel>
+
+          <div className="relative">
+            <Input
+              className="pr-10"
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="********"
+              {...register('password', { required: 'Password is required' })}
+            />
+            <Button
+              variant={'link'}
+              size={'icon'}
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2"
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </Button>
+          </div>
           {errors.password && (
             <span className="text-xs">{errors.password.message}</span>
           )}

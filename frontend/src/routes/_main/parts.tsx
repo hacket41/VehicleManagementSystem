@@ -12,7 +12,7 @@ export const Route = createFileRoute('/_main/parts')({
 function RouteComponent() {
   const { data: parts } = useQuery(getParts())
   if (!parts) return null
-  console.log(parts)
+  // console.log(parts)
   return (
     <div>
       <div>

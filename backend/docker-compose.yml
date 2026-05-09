@@ -1,20 +1,32 @@
 ﻿services:
   api:
     build: .
-    container_name: aspnet-api
+    container_name: nepauto-backend
     ports:
-      - "80:8080"
+      - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Postgres=Host=db;Port=5432;Username=postgres;Password=;Database=VehicleManagement
+      - ConnectionStrings__Postgres=Host=db;Port=5432;Username=postgres;Password=postgres;Database=VehicleManagement
   db:
     image: postgres:17
-    container_name: postgres-db
+    container_name: db
+    restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_DB: mydb
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: VehicleManagement
     ports:
       - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d VehicleManagement"]
+      interval: 5s
+      timeout: 5s
+      retries: 1
+      start_period: 10s
+volumes:
+  postgres-data:
