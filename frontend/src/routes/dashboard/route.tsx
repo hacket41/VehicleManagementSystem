@@ -1,10 +1,19 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { getMe } from '#/api/auth.api'
 import { AppSidebar } from '#/components/app-sidebar'
 import { SiteHeader } from '#/components/site-header'
 import { SidebarInset, SidebarProvider } from '#/components/ui/sidebar'
 
 export const Route = createFileRoute('/dashboard')({
   component: RouteComponent,
+  loader: async ({ context }) => {
+    try {
+      const user = await context.queryClient.ensureQueryData(getMe())
+      if (!user) throw redirect({ to: '/' })
+    } catch {
+      throw redirect({ to: '/' })
+    }
+  },
 })
 
 function RouteComponent() {

@@ -1,6 +1,6 @@
 {
   "projectName": "frontend",
-  "mode": "file-router",
+  "mode": "file-Pro",
   "typescript": true,
   "packageManager": "npm",
   "includeExamples": false,

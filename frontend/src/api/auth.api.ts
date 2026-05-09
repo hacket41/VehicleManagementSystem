@@ -14,6 +14,12 @@ export const getMe = () => {
   })
 }
 
+export const refreshToken = async () => {
+  return apiFetch('/api/auth/refresh-token', {
+    method: 'POST',
+  })
+}
+
 export const registerCustomer = async (data: RegisterPayload) => {
   return apiFetch('/api/auth/register-customer', {
     method: 'POST',

@@ -1,7 +1,7 @@
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import { QueryClientProvider } from '@tanstack/react-query'
+import { type QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
-  createRootRoute,
+  createRootRouteWithContext,
   HeadContent,
   Outlet,
   Scripts,
@@ -12,7 +12,10 @@ import { queryClient } from '#/lib/queryClient'
 import { AuthProvider } from '#/providers/AuthContextProvider'
 import appCss from '../styles.css?url'
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+  queryClient: QueryClient
+}
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       {
@@ -23,7 +26,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'VMS',
+        title: 'Nep-Auto',
       },
     ],
     links: [

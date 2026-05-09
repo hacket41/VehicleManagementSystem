@@ -1,4 +1,5 @@
 const BASE_URL = import.meta.env.VITE_API as string
+const REQUEST_TIMEOUT_MS = 15_000
 
 type ProblemDetails = {
   title?: string
@@ -6,7 +7,6 @@ type ProblemDetails = {
   detail?: string
   errors?: Record<string, string[]>
   message?: string
-  success?: boolean
 }
 
 export class ApiError extends Error {
@@ -17,20 +17,17 @@ export class ApiError extends Error {
     public errors?: Record<string, string[]>,
   ) {
     super(message)
+    this.name = 'ApiError'
   }
 }
 
 function parseError(status: number, data: unknown): ApiError {
   if (typeof data === 'object' && data !== null) {
     const p = data as ProblemDetails
-    const message =
-      p.title ||
-      p.message ||
-      (Array.isArray(p.errors) ? p.errors[0] : undefined) ||
-      `HTTP ${status}`
+    const firstError = p.errors ? Object.values(p.errors).flat()[0] : undefined
+    const message = p.title ?? p.message ?? firstError ?? `HTTP ${status}`
     return new ApiError(status, message, p.detail, p.errors)
   }
-
   return new ApiError(
     status,
     typeof data === 'string' ? data : `HTTP ${status}`,
@@ -40,10 +37,11 @@ function parseError(status: number, data: unknown): ApiError {
 type ApiRequestInit = Omit<RequestInit, 'body'> & {
   body?: unknown
 }
+
 async function request(path: string, init?: ApiRequestInit): Promise<Response> {
   const headers = new Headers(init?.headers)
-
   let body: BodyInit | undefined
+
   if (init?.body != null) {
     if (
       init.body instanceof FormData ||
@@ -62,44 +60,54 @@ async function request(path: string, init?: ApiRequestInit): Promise<Response> {
     body,
     headers,
     credentials: 'include',
+    // Prevents requests from hanging forever
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   })
 }
 
 async function parseResponse<T>(res: Response): Promise<T> {
   const contentType = res.headers.get('content-type')
-
   const data = contentType?.includes('json')
     ? await res.json()
     : await res.text()
-
   if (!res.ok) throw parseError(res.status, data)
-
   return data as T
 }
 
+let refreshPromise: Promise<boolean> | null = null
+
 async function refreshToken(): Promise<boolean> {
-  try {
-    const res = await fetch(`${BASE_URL}/api/auth/refresh-token`, {
-      method: 'POST',
-      credentials: 'include',
+  if (refreshPromise) return refreshPromise
+
+  refreshPromise = fetch(`${BASE_URL}/api/auth/refresh-token`, {
+    method: 'POST',
+    credentials: 'include',
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  })
+    .then((res) => res.ok)
+    .catch(() => false)
+    .finally(() => {
+      // Clear the lock whether it succeeded or failed
+      refreshPromise = null
     })
-    return res.ok
-  } catch {
-    return false
-  }
+
+  return refreshPromise
 }
 
 export async function apiFetch<T>(
   path: string,
   init?: ApiRequestInit,
 ): Promise<T> {
-  let res = await request(path, init)
+  const res = await request(path, init)
 
   if (res.status === 401) {
-    const ok = await refreshToken()
-    if (ok) {
-      res = await request(path, init)
+    const refreshed = await refreshToken()
+    if (!refreshed) {
+      // Refresh failed — throw immediately, don't retry
+      throw new ApiError(401, 'Session expired. Please log in again.')
     }
+    // Refresh succeeded — retry the original request once
+    return parseResponse<T>(await request(path, init))
   }
 
   return parseResponse<T>(res)
