@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createContext, useContext } from 'react'
 import { getMe } from '#/api/auth.api'
-import type { MeResponse } from '#/routes/_main'
+import type { MeResponse } from '#/types/user.types'
 
 type AuthContextType = {
   user: MeResponse | null

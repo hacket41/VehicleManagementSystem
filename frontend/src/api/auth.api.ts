@@ -2,7 +2,7 @@ import { queryOptions } from '@tanstack/react-query'
 import type { LoginPayload } from '#/components/Auth/LoginForm'
 import type { RegisterPayload } from '#/components/Auth/SignupForm'
 import { apiFetch } from '#/lib/api'
-import type { MeResponse } from '#/routes/_main'
+import type { MeResponse } from '#/types/user.types'
 
 export const getMe = () => {
   return queryOptions({
@@ -11,7 +11,6 @@ export const getMe = () => {
       apiFetch<MeResponse>('/api/user/me', {
         method: 'GET',
       }),
-    retry: false,
   })
 }
 
