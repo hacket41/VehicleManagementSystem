@@ -1,11 +1,11 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { useAuth } from '#/providers/AuthContextProvider'
+import { getMe } from '#/api/auth.api'
 import { Button } from '../ui/button'
 import LogoutButton from './LogoutButton'
 
 export default function AuthButtons() {
-  const { user } = useAuth()
-  console.log(user)
+  const { data: user } = useQuery(getMe())
 
   if (user) {
     return <LogoutButton />

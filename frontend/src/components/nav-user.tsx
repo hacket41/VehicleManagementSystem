@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import {
   BellIcon,
   CircleUserRoundIcon,
@@ -5,6 +6,7 @@ import {
   EllipsisVerticalIcon,
   LogOutIcon,
 } from 'lucide-react'
+import { getMe } from '#/api/auth.api'
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/ui/avatar'
 import {
   DropdownMenu,
@@ -21,10 +23,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '#/components/ui/sidebar'
-import { useAuth } from '#/providers/AuthContextProvider'
 
 export function NavUser() {
-  const { user } = useAuth()
+  const { data: user } = useQuery(getMe())
   const { isMobile } = useSidebar()
   return (
     <SidebarMenu>

@@ -1,5 +1,5 @@
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import { type QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -7,9 +7,9 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { getMe } from '#/api/auth.api'
+import NotFound from '#/components/NotFound'
 import { Toaster } from '#/components/ui/sonner'
-import { queryClient } from '#/lib/queryClient'
-import { AuthProvider } from '#/providers/AuthContextProvider'
 import appCss from '../styles.css?url'
 
 interface MyRouterContext {
@@ -41,7 +41,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
+  beforeLoad: async ({ context }) => {
+    const user = await context.queryClient.ensureQueryData(getMe())
+    return { user }
+  },
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 })
 
 function RootDocument() {
@@ -53,16 +58,12 @@ function RootDocument() {
       </head>
 
       <body className="font-sans antialiased">
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <Outlet />
-            <Toaster position="top-center" richColors closeButton />
-          </AuthProvider>
-        </QueryClientProvider>
+        <Outlet />
+        <Toaster position="bottom-right" richColors closeButton />
 
         <TanStackDevtools
           config={{
-            position: 'bottom-right',
+            position: 'bottom-left',
           }}
           plugins={[
             {

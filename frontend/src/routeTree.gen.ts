@@ -20,9 +20,6 @@ import { Route as MainSignupRouteImport } from './routes/_main/signup'
 import { Route as MainPartsRouteImport } from './routes/_main/parts'
 import { Route as MainLoginRouteImport } from './routes/_main/login'
 import { Route as MainAboutRouteImport } from './routes/_main/about'
-import { Route as MainTestIndexRouteImport } from './routes/_main/test/index'
-import { Route as MainTestTest2RouteImport } from './routes/_main/test/test2'
-import { Route as MainTestTest1RouteImport } from './routes/_main/test/test1'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
@@ -78,21 +75,6 @@ const MainAboutRoute = MainAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => MainRouteRoute,
 } as any)
-const MainTestIndexRoute = MainTestIndexRouteImport.update({
-  id: '/test/',
-  path: '/test/',
-  getParentRoute: () => MainRouteRoute,
-} as any)
-const MainTestTest2Route = MainTestTest2RouteImport.update({
-  id: '/test/test2',
-  path: '/test/test2',
-  getParentRoute: () => MainRouteRoute,
-} as any)
-const MainTestTest1Route = MainTestTest1RouteImport.update({
-  id: '/test/test1',
-  path: '/test/test1',
-  getParentRoute: () => MainRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
@@ -105,9 +87,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/test/test1': typeof MainTestTest1Route
-  '/test/test2': typeof MainTestTest2Route
-  '/test/': typeof MainTestIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof MainAboutRoute
@@ -119,9 +98,6 @@ export interface FileRoutesByTo {
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/': typeof MainIndexRoute
   '/dashboard': typeof DashboardIndexRoute
-  '/test/test1': typeof MainTestTest1Route
-  '/test/test2': typeof MainTestTest2Route
-  '/test': typeof MainTestIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,9 +112,6 @@ export interface FileRoutesById {
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/_main/': typeof MainIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
-  '/_main/test/test1': typeof MainTestTest1Route
-  '/_main/test/test2': typeof MainTestTest2Route
-  '/_main/test/': typeof MainTestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,9 +126,6 @@ export interface FileRouteTypes {
     | '/dashboard/parts'
     | '/dashboard/vehicles'
     | '/dashboard/'
-    | '/test/test1'
-    | '/test/test2'
-    | '/test/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
@@ -167,9 +137,6 @@ export interface FileRouteTypes {
     | '/dashboard/vehicles'
     | '/'
     | '/dashboard'
-    | '/test/test1'
-    | '/test/test2'
-    | '/test'
   id:
     | '__root__'
     | '/_main'
@@ -183,9 +150,6 @@ export interface FileRouteTypes {
     | '/dashboard/vehicles'
     | '/_main/'
     | '/dashboard/'
-    | '/_main/test/test1'
-    | '/_main/test/test2'
-    | '/_main/test/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -272,27 +236,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainAboutRouteImport
       parentRoute: typeof MainRouteRoute
     }
-    '/_main/test/': {
-      id: '/_main/test/'
-      path: '/test'
-      fullPath: '/test/'
-      preLoaderRoute: typeof MainTestIndexRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/test/test2': {
-      id: '/_main/test/test2'
-      path: '/test/test2'
-      fullPath: '/test/test2'
-      preLoaderRoute: typeof MainTestTest2RouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/test/test1': {
-      id: '/_main/test/test1'
-      path: '/test/test1'
-      fullPath: '/test/test1'
-      preLoaderRoute: typeof MainTestTest1RouteImport
-      parentRoute: typeof MainRouteRoute
-    }
   }
 }
 
@@ -303,9 +246,6 @@ interface MainRouteRouteChildren {
   MainSignupRoute: typeof MainSignupRoute
   MainTestingRoute: typeof MainTestingRoute
   MainIndexRoute: typeof MainIndexRoute
-  MainTestTest1Route: typeof MainTestTest1Route
-  MainTestTest2Route: typeof MainTestTest2Route
-  MainTestIndexRoute: typeof MainTestIndexRoute
 }
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
@@ -315,9 +255,6 @@ const MainRouteRouteChildren: MainRouteRouteChildren = {
   MainSignupRoute: MainSignupRoute,
   MainTestingRoute: MainTestingRoute,
   MainIndexRoute: MainIndexRoute,
-  MainTestTest1Route: MainTestTest1Route,
-  MainTestTest2Route: MainTestTest2Route,
-  MainTestIndexRoute: MainTestIndexRoute,
 }
 
 const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(

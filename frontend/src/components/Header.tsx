@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { useAuth } from '#/providers/AuthContextProvider'
+import { getMe } from '#/api/auth.api'
 import AuthButtons from './Navbar/AuthButtons'
 import ThemeToggle from './ThemeToggle'
 
@@ -15,7 +16,6 @@ export default function Header() {
       <div className="flex gap-6">
         <DashboardLink />
         <Link to="/about">About</Link>
-        <Link to="/test">Test</Link>
         <Link to="/parts">Parts</Link>
       </div>
       <div className="flex gap-8">
@@ -27,7 +27,10 @@ export default function Header() {
 }
 
 function DashboardLink() {
-  const { user } = useAuth()
-  if (!user) return null
+  const { data: user } = useQuery(getMe())
+  const hasAccess =
+    user?.roles.includes('Admin') || user?.roles.includes('Staff')
+  if (!hasAccess) return null
+
   return <Link to="/dashboard">Dashboard</Link>
 }
