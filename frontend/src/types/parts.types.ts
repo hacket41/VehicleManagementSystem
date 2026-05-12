@@ -1,12 +1,35 @@
 export interface Part {
-  id?: number
+  id: string
   name: string
   partNumber: string
   description: string
+  vendorId: number
   vendorName: string
+  categoryId: number
   categoryName: string
-  compatibleVehicle: string
+  compatibleVehicles: string
+  costPrice: number
   sellingPrice: number
   stockQuantity: number
-  updatedAt?: string
+  imageUrl: string
+  isActive: boolean
+  updatedAt: string
+}
+
+// export interface PartCreateRequest {
+//   name: string
+//   partNumber: string
+//   description: string
+//   categoryId: string
+//   vendorId: string
+//   compatibleVehicles: string
+//   costPrice: number
+//   sellingPrice: number
+//   stockQuantity: number
+//   isActive: boolean
+// }
+
+export interface PartCategory {
+  id?: string
+  name: string
 }

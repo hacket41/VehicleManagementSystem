@@ -7,13 +7,14 @@ import {
   Scripts,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { getMe } from '#/api/auth.api'
 import NotFound from '#/components/NotFound'
 import { Toaster } from '#/components/ui/sonner'
+import { AuthProvider, type AuthState } from '#/utils/AuthProvider'
 import appCss from '../styles.css?url'
 
 interface MyRouterContext {
   queryClient: QueryClient
+  authState: AuthState
 }
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
@@ -41,10 +42,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
-  beforeLoad: async ({ context }) => {
-    const user = await context.queryClient.ensureQueryData(getMe())
-    return { user }
-  },
+
   shellComponent: RootDocument,
   notFoundComponent: NotFound,
 })
@@ -58,21 +56,23 @@ function RootDocument() {
       </head>
 
       <body className="font-sans antialiased">
-        <Outlet />
-        <Toaster position="bottom-right" richColors closeButton />
+        <AuthProvider>
+          <Outlet />
+          <Toaster position="bottom-right" richColors closeButton />
 
-        <TanStackDevtools
-          config={{
-            position: 'bottom-left',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
-        <Scripts />
+          <TanStackDevtools
+            config={{
+              position: 'bottom-left',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+          <Scripts />
+        </AuthProvider>
       </body>
     </html>
   )

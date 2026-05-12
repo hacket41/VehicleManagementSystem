@@ -1,4 +1,5 @@
 using backend.Data.DTO.Request;
+using backend.Data.Entities;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,7 @@ namespace backend.Controllers;
 public class PartController(IPartsService parts) : ControllerBase
 
 {
+    //Parts  Section
     [HttpGet]
     [Route("{id:int}")]
     public async Task<IActionResult> GetPartWithDetails([FromRoute] int  id)
@@ -25,8 +27,7 @@ public class PartController(IPartsService parts) : ControllerBase
         return Ok(allParts);
     }
 
-
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin, Staff" )]
     [HttpPost]
     public async Task<IActionResult> PurchasePart([FromBody] PartsPurchaseRequest part)
     {
@@ -41,7 +42,7 @@ public class PartController(IPartsService parts) : ControllerBase
         }
     }
 
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin, Staff" )]
     [HttpPut]
     [Route("{id:int}")]
     public async Task<IActionResult> EditPart(int id, [FromBody] PartsPurchaseRequest part)
@@ -50,7 +51,7 @@ public class PartController(IPartsService parts) : ControllerBase
         return result == null ? NotFound() : Ok(result);
     }
 
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin, Staff" )]
     [HttpDelete]
     [Route("{id:int}")]
     public async Task<IActionResult> DeletePart(int id)
@@ -58,4 +59,41 @@ public class PartController(IPartsService parts) : ControllerBase
         var partToDelete = await parts.DeletePart(id);
         return !partToDelete ? NoContent() : Ok(partToDelete);
     }
+
+    //Parts Categories Section
+
+    [HttpGet("categories")]
+    public async Task<IActionResult> GetPartsCategories()
+    {
+        var result = await parts.GetPartsCategories();
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Admin, Staff" )]
+    [HttpPost("categories")]
+    public async Task<IActionResult> AddPartsCategory(PartCategoryRequest partCategory)
+    {
+        var result = await parts.AddPartsCategory(partCategory);
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Admin, Staff" )]
+    [HttpPut("categories")]
+    public async Task<IActionResult> EditPartsCategory(PartCategory partCategory)
+    {
+        var result = await parts.EditPartsCategory(partCategory);
+        return Ok(result);
+    }
+
+    [Authorize("Admin, Staff")]
+    [HttpDelete("categories/{id:int}")]
+    public async Task<IActionResult> DeletePartsCategory([FromRoute] int id)
+    {
+        var result = await parts.DeletePartsCategory(id);
+        return !result? NotFound() : NoContent();
+    }
+
+
+
+
 }

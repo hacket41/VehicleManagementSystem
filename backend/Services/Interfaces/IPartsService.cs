@@ -1,17 +1,27 @@
 using backend.Data.DTO.Request;
 using backend.Data.DTO.Response;
+using backend.Data.Entities;
 
 namespace backend.Services.Interfaces;
 
 public interface IPartsService
 {
-    public Task <List<PartsWithDetailsResponse>> GetAllParts();
+    Task <List<PartsWithDetailsResponse>> GetAllParts();
 
-    public Task<PartsWithDetailsResponse?> GetPartWithDetails(int id);
+    Task<PartsWithDetailsResponse?> GetPartWithDetails(int id);
 
-    public Task<PartsWithDetailsResponse> PurchasePart(PartsPurchaseRequest part);
+    Task<PartsWithDetailsResponse> PurchasePart(PartsPurchaseRequest part);
 
-    public Task<PartsWithDetailsResponse?> EditPart(int id, PartsPurchaseRequest part);
+    Task<PartsWithDetailsResponse?> EditPart(int id, PartsPurchaseRequest part);
 
-    public Task<bool> DeletePart(int id);
+    Task<bool> DeletePart(int id);
+
+    Task<List<PartCategory>> GetPartsCategories();
+
+    Task<string> AddPartsCategory(PartCategoryRequest categoryName);
+
+    Task<bool> DeletePartsCategory(int id);
+
+    Task<string> EditPartsCategory(PartCategory partCategory);
+
 }

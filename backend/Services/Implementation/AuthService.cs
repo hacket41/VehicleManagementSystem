@@ -195,7 +195,7 @@ public class AuthService(
     public async Task<AuthResponseDto> RefreshTokens(RequestRefreshTokenDto request)
     {
         var user = await jwtTokenService.ValidateRefreshToken(request.UserId, request.RefreshToken);
-        if (user is null) return null!;
+        if (user is null) return null;
 
         var token = await jwtTokenService.GenerateUserToken(user);
         var refreshToken = await jwtTokenService.GenerateAndSaveRefreshToken(user);

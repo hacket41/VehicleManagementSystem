@@ -30,6 +30,8 @@ public class PartsPurchaseRequest
     [Range(0 , int.MaxValue, ErrorMessage =  "Stock Quantity must be greater than 0.")]
     public int StockQuantity { get; set; }
 
+    public string ImageUrl { get; set; } = string.Empty;
+
     public bool IsActive { get; set; } = true;
 
 }

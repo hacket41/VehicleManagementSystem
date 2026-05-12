@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { getMe } from '#/api/auth.api'
+import { useAuth } from '#/utils/AuthProvider'
 import AuthButtons from './Navbar/AuthButtons'
 import ThemeToggle from './ThemeToggle'
 
@@ -27,9 +26,8 @@ export default function Header() {
 }
 
 function DashboardLink() {
-  const { data: user } = useQuery(getMe())
-  const hasAccess =
-    user?.roles.includes('Admin') || user?.roles.includes('Staff')
+  const { isAdmin, isStaff } = useAuth()
+  const hasAccess = isAdmin || isStaff
   if (!hasAccess) return null
 
   return <Link to="/dashboard">Dashboard</Link>

@@ -15,6 +15,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
 import { Route as DashboardVehiclesRouteImport } from './routes/dashboard/vehicles'
 import { Route as DashboardPartsRouteImport } from './routes/dashboard/parts'
+import { Route as ApiUploadthingRouteImport } from './routes/api/uploadthing'
 import { Route as MainTestingRouteImport } from './routes/_main/testing'
 import { Route as MainSignupRouteImport } from './routes/_main/signup'
 import { Route as MainPartsRouteImport } from './routes/_main/parts'
@@ -50,6 +51,11 @@ const DashboardPartsRoute = DashboardPartsRouteImport.update({
   path: '/parts',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const ApiUploadthingRoute = ApiUploadthingRouteImport.update({
+  id: '/api/uploadthing',
+  path: '/api/uploadthing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MainTestingRoute = MainTestingRouteImport.update({
   id: '/testing',
   path: '/testing',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/parts': typeof MainPartsRoute
   '/signup': typeof MainSignupRoute
   '/testing': typeof MainTestingRoute
+  '/api/uploadthing': typeof ApiUploadthingRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/parts': typeof MainPartsRoute
   '/signup': typeof MainSignupRoute
   '/testing': typeof MainTestingRoute
+  '/api/uploadthing': typeof ApiUploadthingRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/': typeof MainIndexRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_main/parts': typeof MainPartsRoute
   '/_main/signup': typeof MainSignupRoute
   '/_main/testing': typeof MainTestingRoute
+  '/api/uploadthing': typeof ApiUploadthingRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/_main/': typeof MainIndexRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/parts'
     | '/signup'
     | '/testing'
+    | '/api/uploadthing'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
     | '/dashboard/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/parts'
     | '/signup'
     | '/testing'
+    | '/api/uploadthing'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
     | '/'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/_main/parts'
     | '/_main/signup'
     | '/_main/testing'
+    | '/api/uploadthing'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
     | '/_main/'
@@ -155,6 +167,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   MainRouteRoute: typeof MainRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  ApiUploadthingRoute: typeof ApiUploadthingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -200,6 +213,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/parts'
       preLoaderRoute: typeof DashboardPartsRouteImport
       parentRoute: typeof DashboardRouteRoute
+    }
+    '/api/uploadthing': {
+      id: '/api/uploadthing'
+      path: '/api/uploadthing'
+      fullPath: '/api/uploadthing'
+      preLoaderRoute: typeof ApiUploadthingRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_main/testing': {
       id: '/_main/testing'
@@ -280,6 +300,7 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   MainRouteRoute: MainRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  ApiUploadthingRoute: ApiUploadthingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

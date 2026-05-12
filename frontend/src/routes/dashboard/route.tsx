@@ -5,15 +5,15 @@ import { SidebarInset, SidebarProvider } from '#/components/ui/sidebar'
 
 export const Route = createFileRoute('/dashboard')({
   component: RouteComponent,
-  loader: async ({ context }) => {
-    const { user } = context
-    const hasAccess =
-      user?.roles.includes('Admin') || user?.roles.includes('Staff')
+  // loader: async ({ context }) => {
+  //   const { user } = context
+  //   const hasAccess =
+  //     user?.roles.includes('Admin') || user?.roles.includes('Staff')
 
-    if (!hasAccess) {
-      throw redirect({ to: '/' })
-    }
-  },
+  //   if (!hasAccess) {
+  //     throw redirect({ to: '/' })
+  //   }
+  // },
 })
 
 function RouteComponent() {

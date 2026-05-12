@@ -22,8 +22,8 @@ export type LoginPayload = {
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
-  const router = useRouter()
-  const queryClient = useQueryClient()
+    const router = useRouter()
+    const queryClient = useQueryClient();
   const form = useForm<LoginPayload>({
     defaultValues: {
       email: '',

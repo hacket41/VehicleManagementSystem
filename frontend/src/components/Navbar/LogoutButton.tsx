@@ -27,6 +27,7 @@ export default function LogoutButton() {
     onSuccess: () => {
       toast.success('Logged out successfully')
       queryClient.setQueryData(['me'], null)
+      // queryClient.removeQueries({ queryKey: ['me'] })
       setOpen(false)
       router.navigate({ to: '/' })
     },
