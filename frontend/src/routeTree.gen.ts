@@ -8,249 +8,268 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as MainRouteRouteImport } from './routes/_main/route'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as MainIndexRouteImport } from './routes/_main/index'
-import { Route as MainTestingRouteImport } from './routes/_main/testing'
-import { Route as MainSignupRouteImport } from './routes/_main/signup'
-import { Route as MainPartsRouteImport } from './routes/_main/parts'
-import { Route as MainLoginRouteImport } from './routes/_main/login'
-import { Route as MainAboutRouteImport } from './routes/_main/about'
-import { Route as MainTestIndexRouteImport } from './routes/_main/test/index'
-import { Route as MainTestTest2RouteImport } from './routes/_main/test/test2'
-import { Route as MainTestTest1RouteImport } from './routes/_main/test/test1'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as MainRouteRouteImport } from "./routes/_main/route";
+import { Route as DashboardIndexRouteImport } from "./routes/dashboard/index";
+import { Route as MainIndexRouteImport } from "./routes/_main/index";
+import { Route as MainTestingRouteImport } from "./routes/_main/testing";
+import { Route as MainSignupRouteImport } from "./routes/_main/signup";
+import { Route as MainPartsRouteImport } from "./routes/_main/parts";
+import { Route as MainLoginRouteImport } from "./routes/_main/login";
+import { Route as MainAboutRouteImport } from "./routes/_main/about";
+import { Route as MainTestIndexRouteImport } from "./routes/_main/test/index";
+import { Route as MainTestTest2RouteImport } from "./routes/_main/test/test2";
+import { Route as MainTestTest1RouteImport } from "./routes/_main/test/test1";
+import { Route as MainFinancialReportImport } from "./router/_main/financialreport.tsx";
 
 const MainRouteRoute = MainRouteRouteImport.update({
-  id: '/_main',
+  id: "/_main",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
+  id: "/dashboard/",
+  path: "/dashboard/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const MainIndexRoute = MainIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
 const MainTestingRoute = MainTestingRouteImport.update({
-  id: '/testing',
-  path: '/testing',
+  id: "/testing",
+  path: "/testing",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
 const MainSignupRoute = MainSignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+  id: "/signup",
+  path: "/signup",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
 const MainPartsRoute = MainPartsRouteImport.update({
-  id: '/parts',
-  path: '/parts',
+  id: "/parts",
+  path: "/parts",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
 const MainLoginRoute = MainLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+  id: "/login",
+  path: "/login",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
 const MainAboutRoute = MainAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+  id: "/about",
+  path: "/about",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
 const MainTestIndexRoute = MainTestIndexRouteImport.update({
-  id: '/test/',
-  path: '/test/',
+  id: "/test/",
+  path: "/test/",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
 const MainTestTest2Route = MainTestTest2RouteImport.update({
-  id: '/test/test2',
-  path: '/test/test2',
+  id: "/test/test2",
+  path: "/test/test2",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
 const MainTestTest1Route = MainTestTest1RouteImport.update({
-  id: '/test/test1',
-  path: '/test/test1',
+  id: "/test/test1",
+  path: "/test/test1",
   getParentRoute: () => MainRouteRoute,
-} as any)
+} as any);
+const MainFinancialReportRoute = MainFinancialReportImport.update({
+  id: "/financial-report",
+  path: "/financial-report",
+});
 
 export interface FileRoutesByFullPath {
-  '/': typeof MainIndexRoute
-  '/about': typeof MainAboutRoute
-  '/login': typeof MainLoginRoute
-  '/parts': typeof MainPartsRoute
-  '/signup': typeof MainSignupRoute
-  '/testing': typeof MainTestingRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/test/test1': typeof MainTestTest1Route
-  '/test/test2': typeof MainTestTest2Route
-  '/test/': typeof MainTestIndexRoute
+  "/": typeof MainIndexRoute;
+  "/about": typeof MainAboutRoute;
+  "/login": typeof MainLoginRoute;
+  "/parts": typeof MainPartsRoute;
+  "/signup": typeof MainSignupRoute;
+  "/testing": typeof MainTestingRoute;
+  "/dashboard/": typeof DashboardIndexRoute;
+  "/test/test1": typeof MainTestTest1Route;
+  "/test/test2": typeof MainTestTest2Route;
+  "/test/": typeof MainTestIndexRoute;
+  "/financial-report/": typeof MainFinancialReportRoute;
 }
 export interface FileRoutesByTo {
-  '/about': typeof MainAboutRoute
-  '/login': typeof MainLoginRoute
-  '/parts': typeof MainPartsRoute
-  '/signup': typeof MainSignupRoute
-  '/testing': typeof MainTestingRoute
-  '/': typeof MainIndexRoute
-  '/dashboard': typeof DashboardIndexRoute
-  '/test/test1': typeof MainTestTest1Route
-  '/test/test2': typeof MainTestTest2Route
-  '/test': typeof MainTestIndexRoute
+  "/about": typeof MainAboutRoute;
+  "/login": typeof MainLoginRoute;
+  "/parts": typeof MainPartsRoute;
+  "/signup": typeof MainSignupRoute;
+  "/testing": typeof MainTestingRoute;
+  "/": typeof MainIndexRoute;
+  "/dashboard": typeof DashboardIndexRoute;
+  "/test/test1": typeof MainTestTest1Route;
+  "/test/test2": typeof MainTestTest2Route;
+  "/test": typeof MainTestIndexRoute;
+  "/financial-report/": typeof MainFinancialReportRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/_main': typeof MainRouteRouteWithChildren
-  '/_main/about': typeof MainAboutRoute
-  '/_main/login': typeof MainLoginRoute
-  '/_main/parts': typeof MainPartsRoute
-  '/_main/signup': typeof MainSignupRoute
-  '/_main/testing': typeof MainTestingRoute
-  '/_main/': typeof MainIndexRoute
-  '/dashboard/': typeof DashboardIndexRoute
-  '/_main/test/test1': typeof MainTestTest1Route
-  '/_main/test/test2': typeof MainTestTest2Route
-  '/_main/test/': typeof MainTestIndexRoute
+  __root__: typeof rootRouteImport;
+  "/_main": typeof MainRouteRouteWithChildren;
+  "/_main/about": typeof MainAboutRoute;
+  "/_main/login": typeof MainLoginRoute;
+  "/_main/parts": typeof MainPartsRoute;
+  "/_main/signup": typeof MainSignupRoute;
+  "/_main/testing": typeof MainTestingRoute;
+  "/_main/": typeof MainIndexRoute;
+  "/dashboard/": typeof DashboardIndexRoute;
+  "/_main/test/test1": typeof MainTestTest1Route;
+  "/_main/test/test2": typeof MainTestTest2Route;
+  "/_main/test/": typeof MainTestIndexRoute;
+  "/financial-report/": typeof MainFinancialReportRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/about'
-    | '/login'
-    | '/parts'
-    | '/signup'
-    | '/testing'
-    | '/dashboard/'
-    | '/test/test1'
-    | '/test/test2'
-    | '/test/'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | "/about"
+    | "/login"
+    | "/parts"
+    | "/signup"
+    | "/testing"
+    | "/dashboard/"
+    | "/test/test1"
+    | "/test/test2"
+    | "/test/"
+    | "/financial-report";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/about'
-    | '/login'
-    | '/parts'
-    | '/signup'
-    | '/testing'
-    | '/'
-    | '/dashboard'
-    | '/test/test1'
-    | '/test/test2'
-    | '/test'
+    | "/about"
+    | "/login"
+    | "/parts"
+    | "/signup"
+    | "/testing"
+    | "/"
+    | "/dashboard"
+    | "/test/test1"
+    | "/test/test2"
+    | "/test"
+    | "/financial-report";
   id:
-    | '__root__'
-    | '/_main'
-    | '/_main/about'
-    | '/_main/login'
-    | '/_main/parts'
-    | '/_main/signup'
-    | '/_main/testing'
-    | '/_main/'
-    | '/dashboard/'
-    | '/_main/test/test1'
-    | '/_main/test/test2'
-    | '/_main/test/'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/_main"
+    | "/_main/about"
+    | "/_main/login"
+    | "/_main/parts"
+    | "/_main/signup"
+    | "/_main/testing"
+    | "/_main/"
+    | "/dashboard/"
+    | "/_main/test/test1"
+    | "/_main/test/test2"
+    | "/_main/test/"
+    | "/financial-report";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  MainRouteRoute: typeof MainRouteRouteWithChildren
-  DashboardIndexRoute: typeof DashboardIndexRoute
+  MainRouteRoute: typeof MainRouteRouteWithChildren;
+  DashboardIndexRoute: typeof DashboardIndexRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/_main': {
-      id: '/_main'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof MainRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_main/': {
-      id: '/_main/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof MainIndexRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/testing': {
-      id: '/_main/testing'
-      path: '/testing'
-      fullPath: '/testing'
-      preLoaderRoute: typeof MainTestingRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/signup': {
-      id: '/_main/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof MainSignupRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/parts': {
-      id: '/_main/parts'
-      path: '/parts'
-      fullPath: '/parts'
-      preLoaderRoute: typeof MainPartsRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/login': {
-      id: '/_main/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof MainLoginRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/about': {
-      id: '/_main/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof MainAboutRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/test/': {
-      id: '/_main/test/'
-      path: '/test'
-      fullPath: '/test/'
-      preLoaderRoute: typeof MainTestIndexRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/test/test2': {
-      id: '/_main/test/test2'
-      path: '/test/test2'
-      fullPath: '/test/test2'
-      preLoaderRoute: typeof MainTestTest2RouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/test/test1': {
-      id: '/_main/test/test1'
-      path: '/test/test1'
-      fullPath: '/test/test1'
-      preLoaderRoute: typeof MainTestTest1RouteImport
-      parentRoute: typeof MainRouteRoute
-    }
+    "/_main": {
+      id: "/_main";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof MainRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/dashboard/": {
+      id: "/dashboard/";
+      path: "/dashboard";
+      fullPath: "/dashboard/";
+      preLoaderRoute: typeof DashboardIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_main/": {
+      id: "/_main/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof MainIndexRouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/testing": {
+      id: "/_main/testing";
+      path: "/testing";
+      fullPath: "/testing";
+      preLoaderRoute: typeof MainTestingRouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/signup": {
+      id: "/_main/signup";
+      path: "/signup";
+      fullPath: "/signup";
+      preLoaderRoute: typeof MainSignupRouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/parts": {
+      id: "/_main/parts";
+      path: "/parts";
+      fullPath: "/parts";
+      preLoaderRoute: typeof MainPartsRouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/login": {
+      id: "/_main/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof MainLoginRouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/about": {
+      id: "/_main/about";
+      path: "/about";
+      fullPath: "/about";
+      preLoaderRoute: typeof MainAboutRouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/test/": {
+      id: "/_main/test/";
+      path: "/test";
+      fullPath: "/test/";
+      preLoaderRoute: typeof MainTestIndexRouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/test/test2": {
+      id: "/_main/test/test2";
+      path: "/test/test2";
+      fullPath: "/test/test2";
+      preLoaderRoute: typeof MainTestTest2RouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/test/test1": {
+      id: "/_main/test/test1";
+      path: "/test/test1";
+      fullPath: "/test/test1";
+      preLoaderRoute: typeof MainTestTest1RouteImport;
+      parentRoute: typeof MainRouteRoute;
+    };
+    "/_main/financial-report": {
+      id: "/_main/finanical-report";
+      path: "/_main/finanical-report";
+      fullpath: "/_main/finanical-report";
+      preLoaderRoute: typeof MainFinancialReportImport;
+      parentRoute: typeof MainFinancialReportRoute;
+    };
   }
 }
 
 interface MainRouteRouteChildren {
-  MainAboutRoute: typeof MainAboutRoute
-  MainLoginRoute: typeof MainLoginRoute
-  MainPartsRoute: typeof MainPartsRoute
-  MainSignupRoute: typeof MainSignupRoute
-  MainTestingRoute: typeof MainTestingRoute
-  MainIndexRoute: typeof MainIndexRoute
-  MainTestTest1Route: typeof MainTestTest1Route
-  MainTestTest2Route: typeof MainTestTest2Route
-  MainTestIndexRoute: typeof MainTestIndexRoute
+  MainAboutRoute: typeof MainAboutRoute;
+  MainLoginRoute: typeof MainLoginRoute;
+  MainPartsRoute: typeof MainPartsRoute;
+  MainSignupRoute: typeof MainSignupRoute;
+  MainTestingRoute: typeof MainTestingRoute;
+  MainIndexRoute: typeof MainIndexRoute;
+  MainTestTest1Route: typeof MainTestTest1Route;
+  MainTestTest2Route: typeof MainTestTest2Route;
+  MainTestIndexRoute: typeof MainTestIndexRoute;
+  MainFinancialReportRoute: typeof MainFinancialReportRoute;
 }
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
@@ -263,25 +282,26 @@ const MainRouteRouteChildren: MainRouteRouteChildren = {
   MainTestTest1Route: MainTestTest1Route,
   MainTestTest2Route: MainTestTest2Route,
   MainTestIndexRoute: MainTestIndexRoute,
-}
+  MainFinancialReportRoute: MainFinancialReportRoute,
+};
 
 const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(
   MainRouteRouteChildren,
-)
+);
 
 const rootRouteChildren: RootRouteChildren = {
   MainRouteRoute: MainRouteRouteWithChildren,
   DashboardIndexRoute: DashboardIndexRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { createStart } from "@tanstack/react-start";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }
