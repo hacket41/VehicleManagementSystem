@@ -11,7 +11,7 @@ export const generateFinancialReport = async (
 ) => {
   return apiFetch<FinancialReport>("/api/FinancialReport/generate", {
     method: "POST",
-    body: "payload",
+    body: payload,
   });
 };
 
@@ -22,6 +22,16 @@ export const getFinancialReport = (type?: ReportType) => {
     queryKey: ["financial-reports", type],
     queryFn: async () =>
       apiFetch<FinancialReport[]>(`/api/FinancialReport${query}`, {
+        method: "GET",
+      }),
+  });
+};
+
+export const getFinancialReportById = (id: number) => {
+  return queryOptions({
+    queryKey: ["financial-report", id],
+    queryFn: async () =>
+      apiFetch<FinancialReport>(`/api/FinancialReport/${id}`, {
         method: "GET",
       }),
   });
