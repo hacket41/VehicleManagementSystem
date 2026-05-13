@@ -1,22 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { getFinancialReport } from "#/api/financialreport.api";
 import type { FinancialReport } from "#/types/financialreports.types";
 import { Badge } from "@/components/ui/badge";
 
 interface Props {
+  reports: FinancialReport[];
   onSelect: (id: number) => void;
 }
 
-export function ReportList({ onSelect }: Props) {
-  const { data, isLoading } = useQuery(getFinancialReport());
-
+export function ReportList({ reports, onSelect }: Props) {
   return (
     <div className="border rounded-lg p-4 space-y-3">
       <h2 className="text-lg font-semibold">Reports</h2>
 
-      {isLoading && <p>Loading...</p>}
-
-      {data?.map((r: FinancialReport) => (
+      {reports.map((r) => (
         <div
           key={r.id}
           onClick={() => onSelect(r.id)}
@@ -24,7 +19,10 @@ export function ReportList({ onSelect }: Props) {
         >
           <div>
             <p className="font-medium">
-              {r.type} <Badge variant="secondary">Profit {r.grossProfit}</Badge>
+              {r.type}
+              <Badge variant="secondary" className="ml-2">
+                Profit {r.grossProfit}
+              </Badge>
             </p>
 
             <p className="text-sm text-muted-foreground">

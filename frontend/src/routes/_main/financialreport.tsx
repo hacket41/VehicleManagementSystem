@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-
 import { queryClient } from "#/lib/queryClient";
-
 import { GenerateReportCard } from "#/components/FinancialReports/GenerateReportCard";
 import { ReportList } from "#/components/FinancialReports/ReportList";
 import { ReportDetailsDialog } from "#/components/FinancialReports/ReportDetailsDialog";
