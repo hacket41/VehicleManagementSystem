@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -54,7 +54,7 @@ export function GenerateReportCard() {
           className="w-[200px]"
         />
 
-        <Button onclick={handleGenerate} disabled={mutation.isPending}>
+        <Button onClick={handleGenerate} disabled={mutation.isPending}>
           {mutation.isPending ? "Generating..." : "Generate"}
         </Button>
       </div>
