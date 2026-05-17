@@ -22,11 +22,18 @@ public class PartsService(AppDbContext db) : IPartsService
                 PartNumber = p.PartNumber,
                 Description = p.Description,
 
+                VendorId = p.VendorId,
                 VendorName = p.Vendor!.Name,
+
+                CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
 
+                CostPrice = p.CostPrice,
                 SellingPrice = p.SellingPrice,
                 StockQuantity = p.StockQuantity,
+
+                ImageUrl = p.ImageUrl,
+                IsActive = p.IsActive,
                 UpdatedAt = p.UpdatedAt
             }).ToListAsync();
     }
@@ -48,6 +55,8 @@ public class PartsService(AppDbContext db) : IPartsService
                 CompatibleVehicle = p.CompatibleVehicles,
                 SellingPrice = p.SellingPrice,
                 StockQuantity = p.StockQuantity,
+
+                ImageUrl = p.ImageUrl,
                 UpdatedAt = p.UpdatedAt
             }).FirstOrDefaultAsync();
     }
@@ -66,6 +75,7 @@ public class PartsService(AppDbContext db) : IPartsService
             SellingPrice = request.SellingPrice,
             StockQuantity = request.StockQuantity,
             IsActive = request.IsActive,
+            ImageUrl = request.ImageUrl,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -110,6 +120,7 @@ public class PartsService(AppDbContext db) : IPartsService
         updatedPart.SellingPrice = part.SellingPrice;
         updatedPart.StockQuantity = part.StockQuantity;
         updatedPart.StockQuantity = part.StockQuantity;
+        updatedPart.ImageUrl = part.ImageUrl;
         updatedPart.IsActive = part.IsActive;
         updatedPart.UpdatedAt = DateTime.UtcNow;
 
@@ -137,4 +148,41 @@ public class PartsService(AppDbContext db) : IPartsService
 
         return result > 0;
     }
+
+    public async Task<List<PartCategory>> GetPartsCategories()
+    {
+        var partsCategories = await db.PartCategories.ToListAsync();
+        return partsCategories;
+    }
+
+    public async Task<string> AddPartsCategory(PartCategoryRequest categoryName)
+    {
+        var category = new PartCategory
+        {
+            Name = categoryName.Name
+        };
+        await db.PartCategories.AddAsync(category);
+        await db.SaveChangesAsync();
+        return categoryName.Name;
+    }
+
+
+
+
+    public async Task<bool> DeletePartsCategory(int id)
+    {
+        var result = await db.PartCategories.Where(pc => pc.Id == id).ExecuteDeleteAsync();
+        return result > 0;
+    }
+
+    public async Task<string> EditPartsCategory(PartCategory partCategory)
+    {
+        var category = await db.PartCategories.FirstOrDefaultAsync(p => p.Id == partCategory.Id);
+        if (category == null) return null!;
+
+        category.Name = partCategory.Name;
+        await db.SaveChangesAsync();
+        return partCategory.Name;
+    }
+
 }

@@ -1,10 +1,8 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { logout } from '#/api/auth.api'
-import { queryClient } from '#/lib/queryClient'
-import { useAuth } from '#/providers/AuthContextProvider'
+import { getMe, logout } from '#/api/auth.api'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,17 +19,17 @@ import { Spinner } from '../ui/spinner'
 
 export default function LogoutButton() {
   const [open, setOpen] = useState(false)
-  const { user } = useAuth()
+  const { data: user } = useQuery(getMe())
   const router = useRouter()
+  const queryClient = useQueryClient()
   const { mutate: logoutMutation, isPending } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
       toast.success('Logged out successfully')
       queryClient.setQueryData(['me'], null)
+      // queryClient.removeQueries({ queryKey: ['me'] })
       setOpen(false)
       router.navigate({ to: '/' })
-
-      // window.location.href = '/'
     },
     onError: (e) => toast.error(e.message),
   })
@@ -39,10 +37,10 @@ export default function LogoutButton() {
     <div className="flex justify-between items-center gap-4">
       <span>{user?.name}</span>
       <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogTrigger>
-          <Button type="button" disabled={isPending}>
-            Logout
-          </Button>
+        <AlertDialogTrigger
+          render={<Button type="button" disabled={isPending} />}
+        >
+          Logout
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>

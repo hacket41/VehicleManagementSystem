@@ -1,12 +1,10 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { Eye, EyeOffIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { registerCustomer } from '#/api/auth.api'
-import { handleFormApiError } from '#/lib/handleApiError'
-import { queryClient } from '#/lib/queryClient'
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -28,6 +26,7 @@ export type RegisterPayload = {
 
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const queryClient = useQueryClient()
 
   const router = useRouter()
   const form = useForm<RegisterPayload>({
@@ -54,7 +53,7 @@ export function SignupForm() {
       queryClient.invalidateQueries({ queryKey: ['me'] })
       toast.success('Account created successfully')
     },
-    onError: (e) => handleFormApiError(e, form),
+    onError: (e) => toast.error(e.message),
   })
 
   function onSubmit(data: RegisterPayload) {
@@ -174,7 +173,9 @@ export function SignupForm() {
           <Button type="button" variant="outline">
             Cancel
           </Button>
-          <Button type="submit">{isPending ? <Spinner /> : 'Submit'}</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? <Spinner /> : 'Submit'}
+          </Button>
         </Field>
       </FieldGroup>
     </form>

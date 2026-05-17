@@ -1,11 +1,10 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { login } from '#/api/auth.api'
-import { queryClient } from '#/lib/queryClient'
 import { Button } from '@/components/ui/button'
 import {
   Field,
@@ -14,6 +13,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Spinner } from '../ui/spinner'
 
 export type LoginPayload = {
   email: string
@@ -22,7 +22,8 @@ export type LoginPayload = {
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
-  const router = useRouter()
+    const router = useRouter()
+    const queryClient = useQueryClient();
   const form = useForm<LoginPayload>({
     defaultValues: {
       email: '',
@@ -35,7 +36,7 @@ export function LoginForm() {
     formState: { errors },
   } = form
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: login,
     onSuccess: () => {
       toast.success('Logged in successfully')
@@ -101,7 +102,9 @@ export function LoginForm() {
           <Button type="button" variant="outline">
             Cancel
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? <Spinner /> : 'Submit'}
+          </Button>
         </Field>
       </FieldGroup>
     </form>

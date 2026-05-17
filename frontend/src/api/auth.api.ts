@@ -4,13 +4,26 @@ import type { RegisterPayload } from '#/components/Auth/SignupForm'
 import { apiFetch } from '#/lib/api'
 import type { MeResponse } from '#/types/user.types'
 
+// const getMeServerAuth = createServerFn().handler(async () => {
+//   try {
+//     return await apiFetch<MeResponse>('/api/user/me', { method: 'GET' })
+//   } catch (error) {
+//     if (error instanceof ApiError && error.status === 401) {
+//       return null
+//     }
+//     throw error
+//   }
+// })
+//
+
 export const getMe = () => {
   return queryOptions({
     queryKey: ['me'],
-    queryFn: () =>
-      apiFetch<MeResponse>('/api/user/me', {
-        method: 'GET',
-      }),
+    queryFn: async () => {
+      return await apiFetch<MeResponse>('/api/user/me', { method: 'GET' })
+    },
+    staleTime: Infinity,
+    retry: false,
   })
 }
 

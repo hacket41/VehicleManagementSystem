@@ -6,14 +6,15 @@ export const Route = createFileRoute('/_main')({
   component: SiteLayout,
 })
 
-export default function SiteLayout() {
+function SiteLayout() {
   return (
-    <div className="flex min-h-screen flex-col">
+    // <div className="flex min-h-screen flex-col">
+    <>
       <Header />
       <main className="container mx-auto">
         <Outlet />
       </main>
       <Footer />
-    </div>
+    </>
   )
 }

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { useAuth } from '#/utils/AuthProvider'
 import AuthButtons from './Navbar/AuthButtons'
 import ThemeToggle from './ThemeToggle'
 
@@ -12,9 +13,8 @@ export default function Header() {
       </div>
 
       <div className="flex gap-6">
-        <Link to="/dashboard">Dashboard</Link>
+        <DashboardLink />
         <Link to="/about">About</Link>
-        <Link to="/test">Test</Link>
         <Link to="/parts">Parts</Link>
       </div>
       <div className="flex gap-8">
@@ -23,4 +23,12 @@ export default function Header() {
       </div>
     </nav>
   )
+}
+
+function DashboardLink() {
+  const { isAdmin, isStaff } = useAuth()
+  const hasAccess = isAdmin || isStaff
+  if (!hasAccess) return null
+
+  return <Link to="/dashboard">Dashboard</Link>
 }

@@ -1,18 +1,22 @@
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import { QueryClientProvider } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
 import {
-  createRootRoute,
+  createRootRouteWithContext,
   HeadContent,
   Outlet,
   Scripts,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import NotFound from '#/components/NotFound'
 import { Toaster } from '#/components/ui/sonner'
-import { queryClient } from '#/lib/queryClient'
-import { AuthProvider } from '#/providers/AuthContextProvider'
+import { AuthProvider, type AuthState } from '#/utils/AuthProvider'
 import appCss from '../styles.css?url'
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+  queryClient: QueryClient
+  authState: AuthState
+}
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       {
@@ -23,7 +27,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'VMS',
+        title: 'Nep-Auto',
       },
     ],
     links: [
@@ -38,7 +42,9 @@ export const Route = createRootRoute({
       },
     ],
   }),
+
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 })
 
 function RootDocument() {
@@ -50,25 +56,23 @@ function RootDocument() {
       </head>
 
       <body className="font-sans antialiased">
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <Outlet />
-            <Toaster position="top-center" richColors closeButton />
-          </AuthProvider>
-        </QueryClientProvider>
+        <AuthProvider>
+          <Outlet />
+          <Toaster position="bottom-right" richColors closeButton />
 
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
-        <Scripts />
+          <TanStackDevtools
+            config={{
+              position: 'bottom-left',
+            }}
+            plugins={[
+              {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+          <Scripts />
+        </AuthProvider>
       </body>
     </html>
   )

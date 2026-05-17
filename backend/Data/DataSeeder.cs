@@ -118,29 +118,38 @@ public static class DataSeeder
     {
         if (await db.PartCategories.AnyAsync()) return;
 
-        var category = new List<PartCategory>
+        var categories = new List<PartCategory>
         {
-            new() { Id = 1, Name = "Engine" },
-            new() { Id = 2, Name = "Cooling" },
-            new() { Id = 3, Name = "Electrical" },
-            new() { Id = 4, Name = "Suspension" },
-            new() { Id = 5, Name = "Tyres" },
+            new() { Name = "Engine" },
+            new() { Name = "Cooling" },
+            new() { Name = "Electrical" },
+            new() { Name = "Suspension" },
+            new() { Name = "Tyres" },
         };
 
-        await db.PartCategories.AddRangeAsync(category);
+        await db.PartCategories.AddRangeAsync(categories);
         await db.SaveChangesAsync();
     }
 
         private static async Task SeedParts(AppDbContext db)
         {
             if (await db.Parts.AnyAsync()) return;
+            var engine     = await db.PartCategories.FirstAsync(c => c.Name == "Engine");
+            var cooling    = await db.PartCategories.FirstAsync(c => c.Name == "Cooling");
+            var electrical = await db.PartCategories.FirstAsync(c => c.Name == "Electrical");
+            var suspension = await db.PartCategories.FirstAsync(c => c.Name == "Suspension");
+
+            var vendor1 = await db.Vendors.FirstAsync(v => v.Name == "AutoParts Nepal Pvt. Ltd.");
+            var vendor2 = await db.Vendors.FirstAsync(v => v.Name == "Himalayan Spares");
+            var vendor3 = await db.Vendors.FirstAsync(v => v.Name == "Everest Auto Supplies");
+            var vendor4 = await db.Vendors.FirstAsync(v => v.Name == "Global Vehicle Parts");
 
             var parts = new List<Part>
             {
                 // Low stock
                 new() {
                     Name="Brake Pad Set", PartNumber="BP-001",
-                    CategoryId = 1, VendorId = 1,
+                    CategoryId = engine.Id, VendorId = vendor1.Id,
                     CostPrice=800, SellingPrice=1200,
                     StockQuantity=3, LowStockThreshold=10,
                     CompatibleVehicles="Toyota,Honda",
@@ -149,7 +158,7 @@ public static class DataSeeder
 
                 new() {
                     Name="Oil Filter", PartNumber="OF-002",
-                    CategoryId = 2, VendorId = 2,
+                    CategoryId = cooling.Id, VendorId = vendor2.Id,
                     CostPrice=150, SellingPrice=250,
                     StockQuantity=5, LowStockThreshold=10,
                     CompatibleVehicles="All",
@@ -159,7 +168,7 @@ public static class DataSeeder
                 // Normal stock
                 new() {
                     Name="Air Filter", PartNumber="AF-003",
-                    CategoryId = 1, VendorId = 2,
+                    CategoryId = engine.Id, VendorId = vendor2.Id,
                     CostPrice=200, SellingPrice=400,
                     StockQuantity=50, LowStockThreshold=10,
                     CompatibleVehicles="All",
@@ -168,7 +177,7 @@ public static class DataSeeder
 
                 new() {
                     Name="Spark Plug (set 4)", PartNumber="SP-004",
-                    CategoryId = 1, VendorId = 3,
+                    CategoryId = electrical.Id, VendorId = vendor3.Id,
                     CostPrice=500, SellingPrice=900,
                     StockQuantity=30, LowStockThreshold=10,
                     CompatibleVehicles="Petrol engines",
@@ -177,7 +186,7 @@ public static class DataSeeder
 
                 new() {
                     Name="Shock Absorber", PartNumber="SA-005",
-                    CategoryId = 4, VendorId = 4,
+                    CategoryId = suspension.Id, VendorId = vendor4.Id,
                     CostPrice=2000, SellingPrice=3500,
                     StockQuantity=20, LowStockThreshold=10,
                     CompatibleVehicles="Sedans",
@@ -186,7 +195,7 @@ public static class DataSeeder
 
                 new() {
                     Name="Timing Belt", PartNumber="TB-006",
-                    CategoryId = 1, VendorId = 1,
+                    CategoryId = engine.Id, VendorId = vendor1.Id,
                     CostPrice=600, SellingPrice=1100,
                     StockQuantity=15, LowStockThreshold=10,
                     CompatibleVehicles="Honda,Suzuki",
@@ -195,7 +204,7 @@ public static class DataSeeder
 
                 new() {
                     Name="Radiator", PartNumber="RD-007",
-                    CategoryId = 2, VendorId = 3,
+                    CategoryId = cooling.Id, VendorId = vendor3.Id,
                     CostPrice=3500, SellingPrice=5500,
                     StockQuantity=8, LowStockThreshold=10,
                     CompatibleVehicles="Toyota",
@@ -204,7 +213,7 @@ public static class DataSeeder
 
                 new() {
                     Name="Battery 12V", PartNumber="BT-008",
-                    CategoryId = 3, VendorId = 4,
+                    CategoryId = electrical.Id, VendorId = vendor4.Id,
                     CostPrice=2500, SellingPrice=4000,
                     StockQuantity=12, LowStockThreshold=10,
                     CompatibleVehicles="All",

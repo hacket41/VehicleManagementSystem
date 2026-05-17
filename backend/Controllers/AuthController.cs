@@ -67,7 +67,8 @@ public class AuthController(
     {
         HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken);
         HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
-        if(accessToken is null || refreshToken is null) return Unauthorized("Missing or Invalid Tokens");
+        if(accessToken is null || refreshToken is null) return Unauthorized("Missing or Invalid Tokens " +
+            "Test");
 
         var principal = jwtTokenService.GetPrincipalFromToken(accessToken);
         if(principal is null) return Unauthorized("Invalid Token");

@@ -16,6 +16,7 @@ public class SaleController(ISaleService saleService) : ControllerBase
     public async Task<IActionResult> CreateSale([FromBody] CreateSaleRequest request)
     {
         try
+
         {
             var staffId = GetCurrentUserId();
             var result  = await saleService.CreateSaleAsync(request, staffId);

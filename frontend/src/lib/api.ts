@@ -1,106 +1,120 @@
-const BASE_URL = import.meta.env.VITE_API as string
-
-type ProblemDetails = {
-  title?: string
-  status?: number
-  detail?: string
-  errors?: Record<string, string[]>
-  message?: string
-  success?: boolean
-}
+import { createIsomorphicFn } from '@tanstack/react-start'
+import { getRequestHeaders } from '@tanstack/react-start/server'
 
 export class ApiError extends Error {
   constructor(
     public status: number,
     message: string,
-    public detail?: string,
-    public errors?: Record<string, string[]>,
+    public errors?: string[],
   ) {
     super(message)
+    this.name = 'ApiError'
   }
 }
 
-function parseError(status: number, data: unknown): ApiError {
-  if (typeof data === 'object' && data !== null) {
-    const p = data as ProblemDetails
-    const message =
-      p.title ||
-      p.message ||
-      (Array.isArray(p.errors) ? p.errors[0] : undefined) ||
-      `HTTP ${status}`
-    return new ApiError(status, message, p.detail, p.errors)
-  }
+const getBaseUrl = () =>
+  typeof window === 'undefined'
+    ? (process.env.API_URL as string) // server
+    : (import.meta.env.VITE_API as string) // client
 
-  return new ApiError(
-    status,
-    typeof data === 'string' ? data : `HTTP ${status}`,
-  )
-}
-
-type ApiRequestInit = Omit<RequestInit, 'body'> & {
-  body?: unknown
-}
-async function request(path: string, init?: ApiRequestInit): Promise<Response> {
-  const headers = new Headers(init?.headers)
-
-  let body: BodyInit | undefined
-  if (init?.body != null) {
-    if (
-      init.body instanceof FormData ||
-      init.body instanceof URLSearchParams ||
-      typeof init.body === 'string'
-    ) {
-      body = init.body
-    } else {
-      body = JSON.stringify(init.body)
-      headers.set('Content-Type', 'application/json')
+const getForwardHeaders = createIsomorphicFn()
+  .client(() => new Headers())
+  .server(async () => {
+    const cookie = getRequestHeaders().get('cookie')
+    const headers = new Headers()
+    if (cookie) {
+      headers.set('cookie', cookie)
     }
-  }
-
-  return fetch(`${BASE_URL}${path}`, {
-    ...init,
-    body,
-    headers,
-    credentials: 'include',
+    return headers
   })
+
+let refreshPromise: Promise<void> | null = null
+
+async function attemptRefresh(): Promise<void> {
+  if (refreshPromise) {
+    return refreshPromise
+  }
+  refreshPromise = doRefresh().finally(() => {
+    refreshPromise = null
+  })
+  return refreshPromise
 }
 
-async function parseResponse<T>(res: Response): Promise<T> {
-  const contentType = res.headers.get('content-type')
+export async function doRefresh(): Promise<void> {
+  const extraHeaders = await getForwardHeaders()
+  const headers = new Headers(extraHeaders)
 
-  const data = contentType?.includes('json')
-    ? await res.json()
-    : await res.text()
+  // for (const [key, value] of extraHeaders.entries()) {
+  //   headers.set(key, value)
+  // }
+  const res = await fetch(`${getBaseUrl()}/api/auth/refresh-token`, {
+    method: 'POST',
+    credentials: 'include',
+    headers,
+  })
 
-  if (!res.ok) throw parseError(res.status, data)
-
-  return data as T
-}
-
-async function refreshToken(): Promise<boolean> {
-  try {
-    const res = await fetch(`${BASE_URL}/auth/refresh-token`, {
-      method: 'POST',
-      credentials: 'include',
-    })
-    return res.ok
-  } catch {
-    return false
+  if (!res.ok) {
+    throw new ApiError(res.status, 'Session expired. Please log in again.')
   }
 }
 
 export async function apiFetch<T>(
   path: string,
-  init?: ApiRequestInit,
+  requestInit?: Omit<RequestInit, 'body'> & { body?: unknown },
+  _isRetry = false,
 ): Promise<T> {
-  let res = await request(path, init)
+  const extraHeaders = await getForwardHeaders()
+  const headers = new Headers(requestInit?.headers)
 
-  if (res.status === 401) {
-    const ok = await refreshToken()
-    if (ok) {
-      res = await request(path, init)
+  for (const [key, value] of extraHeaders.entries()) {
+    headers.set(key, value)
+  }
+
+  let body: BodyInit | undefined
+  if (requestInit?.body != null) {
+    if (
+      requestInit.body instanceof FormData ||
+      requestInit.body instanceof URLSearchParams ||
+      typeof requestInit.body === 'string'
+    ) {
+      body = requestInit.body
+    } else {
+      body = JSON.stringify(requestInit.body)
+      headers.set('Content-Type', 'application/json')
     }
   }
 
-  return parseResponse<T>(res)
+  const res = await fetch(`${getBaseUrl()}${path}`, {
+    ...requestInit,
+    body,
+    headers,
+    credentials: 'include',
+  })
+
+  if (res.status === 401 && !_isRetry) {
+    try {
+      await attemptRefresh()
+      return apiFetch<T>(path, requestInit, true)
+    } catch {
+      throw new ApiError(res.status, 'Session expired. Please log in again.')
+    }
+  }
+  const contentType = res.headers.get('content-type')
+  const data = contentType?.includes('json')
+    ? await res.json()
+    : await res.text()
+
+  if (!res.ok) {
+    const errors: string[] | undefined =
+      Array.isArray(data?.errors) && data.errors.length > 0
+        ? data.errors
+        : undefined
+
+    const message =
+      errors?.[0] ?? data?.title ?? data?.message ?? `HTTP ${res.status}`
+
+    throw new ApiError(res.status, message, errors)
+  }
+
+  return data as T
 }
