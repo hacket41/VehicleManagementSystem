@@ -18,8 +18,13 @@ export default function PartCard({ part }: { part: Part }) {
 
   return (
     <div className="relative max-w-sm  ">
-      <div className="flex h-60 items-center justify-center">
-        <img src="/spark-plug.jpg" alt="Shoes" className="w-75" />
+      <div className="flex h-48 items-center justify-center">
+        <img
+          src={part.imageUrl}
+          alt="Shoes"
+          className="h-full w-full object-cover"
+          fetchPriority="auto"
+        />
       </div>
       <Button
         size="icon"

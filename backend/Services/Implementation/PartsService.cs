@@ -31,6 +31,8 @@ public class PartsService(AppDbContext db) : IPartsService
                 CostPrice = p.CostPrice,
                 SellingPrice = p.SellingPrice,
                 StockQuantity = p.StockQuantity,
+
+                ImageUrl = p.ImageUrl,
                 IsActive = p.IsActive,
                 UpdatedAt = p.UpdatedAt
             }).ToListAsync();
@@ -53,6 +55,8 @@ public class PartsService(AppDbContext db) : IPartsService
                 CompatibleVehicle = p.CompatibleVehicles,
                 SellingPrice = p.SellingPrice,
                 StockQuantity = p.StockQuantity,
+
+                ImageUrl = p.ImageUrl,
                 UpdatedAt = p.UpdatedAt
             }).FirstOrDefaultAsync();
     }
@@ -116,6 +120,7 @@ public class PartsService(AppDbContext db) : IPartsService
         updatedPart.SellingPrice = part.SellingPrice;
         updatedPart.StockQuantity = part.StockQuantity;
         updatedPart.StockQuantity = part.StockQuantity;
+        updatedPart.ImageUrl = part.ImageUrl;
         updatedPart.IsActive = part.IsActive;
         updatedPart.UpdatedAt = DateTime.UtcNow;
 

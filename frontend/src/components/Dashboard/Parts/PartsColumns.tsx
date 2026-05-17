@@ -27,6 +27,17 @@ import AddEditPartsDialog from './AddEditPartsDialog'
 
 export const PartsColumns: ColumnDef<Part>[] = [
   {
+    accessorKey: 'imageUrl',
+    header: 'Image',
+    cell: ({ row }) => (
+      <img
+        src={row.original.imageUrl}
+        alt="Part"
+        className="h-12 w-12 object-cover"
+      />
+    ),
+  },
+  {
     accessorKey: 'name',
     header: 'Name',
   },
@@ -78,8 +89,7 @@ interface PartActionsProps {
 
 function PartActions({ part }: PartActionsProps) {
   const [open, setOpen] = useState(false)
-    const [deleteOpen, setDeleteOpen] = useState(false)
-    
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
   const queryClient = useQueryClient()
 

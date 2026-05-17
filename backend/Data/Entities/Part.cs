@@ -39,6 +39,7 @@ public class Part
 
     public int LowStockThreshold { get; set; } = 10;
 
+    [Url]
     public string ImageUrl { get; set; } = string.Empty;
 
     public bool IsActive { get; set; } = true;

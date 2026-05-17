@@ -16,6 +16,8 @@ public class PartsWithDetailsResponse
     public decimal SellingPrice { get; set; }
     public int StockQuantity { get; set; }
 
+    public string ImageUrl { get; set; } = string.Empty;
+
     public bool IsActive { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
