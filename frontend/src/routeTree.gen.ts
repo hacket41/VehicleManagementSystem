@@ -20,6 +20,7 @@ import { Route as MainTestingRouteImport } from './routes/_main/testing'
 import { Route as MainSignupRouteImport } from './routes/_main/signup'
 import { Route as MainPartsRouteImport } from './routes/_main/parts'
 import { Route as MainLoginRouteImport } from './routes/_main/login'
+import { Route as MainFinancialreportRouteImport } from './routes/_main/financialreport'
 import { Route as MainAboutRouteImport } from './routes/_main/about'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
@@ -76,6 +77,11 @@ const MainLoginRoute = MainLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => MainRouteRoute,
 } as any)
+const MainFinancialreportRoute = MainFinancialreportRouteImport.update({
+  id: '/financialreport',
+  path: '/financialreport',
+  getParentRoute: () => MainRouteRoute,
+} as any)
 const MainAboutRoute = MainAboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/about': typeof MainAboutRoute
+  '/financialreport': typeof MainFinancialreportRoute
   '/login': typeof MainLoginRoute
   '/parts': typeof MainPartsRoute
   '/signup': typeof MainSignupRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/about': typeof MainAboutRoute
+  '/financialreport': typeof MainFinancialreportRoute
   '/login': typeof MainLoginRoute
   '/parts': typeof MainPartsRoute
   '/signup': typeof MainSignupRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/_main': typeof MainRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/_main/about': typeof MainAboutRoute
+  '/_main/financialreport': typeof MainFinancialreportRoute
   '/_main/login': typeof MainLoginRoute
   '/_main/parts': typeof MainPartsRoute
   '/_main/signup': typeof MainSignupRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/about'
+    | '/financialreport'
     | '/login'
     | '/parts'
     | '/signup'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
+    | '/financialreport'
     | '/login'
     | '/parts'
     | '/signup'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/_main'
     | '/dashboard'
     | '/_main/about'
+    | '/_main/financialreport'
     | '/_main/login'
     | '/_main/parts'
     | '/_main/signup'
@@ -249,6 +261,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainLoginRouteImport
       parentRoute: typeof MainRouteRoute
     }
+    '/_main/financialreport': {
+      id: '/_main/financialreport'
+      path: '/financialreport'
+      fullPath: '/financialreport'
+      preLoaderRoute: typeof MainFinancialreportRouteImport
+      parentRoute: typeof MainRouteRoute
+    }
     '/_main/about': {
       id: '/_main/about'
       path: '/about'
@@ -261,6 +280,7 @@ declare module '@tanstack/react-router' {
 
 interface MainRouteRouteChildren {
   MainAboutRoute: typeof MainAboutRoute
+  MainFinancialreportRoute: typeof MainFinancialreportRoute
   MainLoginRoute: typeof MainLoginRoute
   MainPartsRoute: typeof MainPartsRoute
   MainSignupRoute: typeof MainSignupRoute
@@ -270,6 +290,7 @@ interface MainRouteRouteChildren {
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
   MainAboutRoute: MainAboutRoute,
+  MainFinancialreportRoute: MainFinancialreportRoute,
   MainLoginRoute: MainLoginRoute,
   MainPartsRoute: MainPartsRoute,
   MainSignupRoute: MainSignupRoute,
