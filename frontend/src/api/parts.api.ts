@@ -1,6 +1,8 @@
 import { queryOptions } from '@tanstack/react-query'
+import { createServerFn } from '@tanstack/react-start'
 import { apiFetch } from '#/lib/api'
 import type { Part, PartCategory } from '#/types/parts.types'
+import { utapi } from './server/uploadthing'
 
 export const getParts = () => {
   return queryOptions({
@@ -70,3 +72,10 @@ export const deleteCategory = async (id: string) => {
     method: 'DELETE',
   })
 }
+
+export const deleteImage = createServerFn({ method: 'POST' })
+  .inputValidator((imageId: string) => imageId)
+  .handler(async ({ data: imageId }) => {
+    const res = await utapi.deleteFiles(imageId)
+    return res.success
+  })

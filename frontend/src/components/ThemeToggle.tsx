@@ -1,6 +1,5 @@
 import { MoonStar, SunIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { FieldLabel } from './ui/field'
 import { Label } from './ui/label'
 import { Switch } from './ui/switch'
 
@@ -40,20 +39,18 @@ export default function ThemeToggle() {
   }
 
   return (
-    <FieldLabel>
-      <Label htmlFor="theme-toggle">
-        {mode === 'dark' ? (
-          <MoonStar className="text-primary" size={'20'} />
-        ) : (
-          <SunIcon className="text-primary" size={'20'} />
-        )}
-        <Switch
-          role="switch"
-          id="theme-toggle"
-          checked={mode === 'dark'}
-          onCheckedChange={toggleMode}
-        />
-      </Label>
-    </FieldLabel>
+    <Label htmlFor="theme-toggle">
+      {mode === 'dark' ? (
+        <MoonStar className="text-primary" size={'20'} />
+      ) : (
+        <SunIcon className="text-primary" size={'20'} />
+      )}
+      <Switch
+        role="switch"
+        id="theme-toggle"
+        checked={mode === 'dark'}
+        onCheckedChange={toggleMode}
+      />
+    </Label>
   )
 }

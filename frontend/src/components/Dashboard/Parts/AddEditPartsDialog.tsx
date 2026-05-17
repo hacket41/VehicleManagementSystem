@@ -4,11 +4,17 @@ import { PlusCircle, X } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { getPartsCategories, postPart, putPart } from '#/api/parts.api'
+import {
+  deleteImage,
+  getPartsCategories,
+  postPart,
+  putPart,
+} from '#/api/parts.api'
 import { getVendors } from '#/api/vendor.api'
 import { Button } from '#/components/ui/button'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -40,7 +46,7 @@ import { Spinner } from '#/components/ui/spinner'
 import { Switch } from '#/components/ui/switch'
 import { Textarea } from '#/components/ui/textarea'
 import type { Part } from '#/types/parts.types'
-import { UploadDropzone } from '#/utils/uploadthing'
+import { useUploadThing } from '#/utils/uploadthing'
 
 interface AddEditPartsDialogProps {
   initialData?: Part
@@ -53,10 +59,20 @@ export default function AddEditPartsDialog({
   open: controlledOpen,
   setOpen: controlledSetOpen,
 }: AddEditPartsDialogProps) {
-  const [isUploading, setIsUploading] = useState(false)
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    initialData?.imageUrl ?? null,
+  )
 
   const [internalOpen, setInternalOpen] = useState(false)
   const queryClient = useQueryClient()
+
+  const { startUpload, isUploading } = useUploadThing('imageUploader', {
+    onClientUploadComplete: () => {},
+    onUploadError: (error) => {
+      toast.error(error.message)
+    },
+  })
 
   const isControlled = controlledOpen !== undefined
   const open = isControlled ? controlledOpen : internalOpen
@@ -135,14 +151,47 @@ export default function AddEditPartsDialog({
   })
   const isSubmitting = isAddPartPending || isEditPartPending || isUploading
 
-  function onSubmit(data: Part) {
+  async function onSubmit(data: Part) {
     console.log(data)
+    let imageUrl = data.imageUrl
+
+    if (selectedImage) {
+      try {
+        const result = await startUpload([selectedImage])
+        // const result = await utapi.uploadFiles(selectedImage)
+        if (!result) {
+          toast.error('Failed to upload image')
+          return
+        }
+
+        if (initialData?.imageUrl) {
+          const imageId = initialData.imageUrl.split('/f/')[1]
+          console.log(imageId)
+          if (!imageId) return
+          // const response = useServerFn(?deleteImage())
+          try {
+            await deleteImage({ data: imageId })
+            console.log('Deleting ', imageId)
+          } catch {
+            toast.error('Failed to delete old image')
+          }
+        }
+        imageUrl = result[0].url
+        console.log(imageUrl)
+      } catch {
+        toast.error('Failed to upload image')
+        return
+      }
+    }
+
+    const payload = { ...data, imageUrl }
     if (initialData) {
-      editPartMutation(data)
+      editPartMutation(payload)
     } else {
-      addPartMutation(data)
+      addPartMutation(payload)
     }
   }
+
   function handleOpenChange(newOpen: boolean) {
     if (setOpen) setOpen(newOpen)
   }
@@ -409,58 +458,57 @@ export default function AddEditPartsDialog({
                   )}
                 </Field>
               </FieldGroup>
-              <Controller
-                control={control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <Field>
-                    <FieldLabel>Part Image</FieldLabel>
-                    {field.value ? (
-                      <div className="relative w-full rounded-md border overflow-hidden">
-                        <img
-                          src={field.value}
-                          alt="Part preview"
-                          className="w-full h-48 object-contain bg-muted"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="absolute top-2 right-2 size-7"
-                          onClick={() => field.onChange('')}
-                        >
-                          <X className="size-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <UploadDropzone
-                        endpoint="imageUploader"
-                        onUploadBegin={() => setIsUploading(true)}
-                        onClientUploadComplete={(res) => {
-                          setIsUploading(false)
-                          const url = res[0]?.ufsUrl
-                          if (url) {
-                            field.onChange(url)
-                            toast.success('Image uploaded successfully')
-                          }
-                        }}
-                        onUploadError={(error) => {
-                          setIsUploading(false)
-                          toast.error(`Upload failed: ${error.message}`)
-                        }}
-                      />
-                    )}
-                  </Field>
+
+              <Field>
+                <FieldLabel>Part Image</FieldLabel>
+                {previewUrl !== null ? (
+                  <div className="relative w-full rounded-md border overflow-hidden">
+                    <img
+                      src={previewUrl}
+                      alt="Part preview"
+                      className="w-full h-48 object-contain bg-muted"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="absolute top-2 right-2 size-7"
+                      onClick={() => {
+                        if (previewUrl && selectedImage) {
+                          URL.revokeObjectURL(previewUrl)
+                        }
+                        setSelectedImage(null)
+                        setPreviewUrl(null)
+                      }}
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] ?? null
+
+                      setSelectedImage(file)
+                      setPreviewUrl(file ? URL.createObjectURL(file) : null)
+                    }}
+                  />
                 )}
-              />
+              </Field>
             </FieldSet>
             <DialogFooter>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? <Spinner /> : 'Submit'}
               </Button>
-              <Button variant="outline" type="button" disabled={isSubmitting}>
-                Cancel
-              </Button>
+              <DialogClose
+                render={
+                  <Button disabled={isSubmitting} variant={'secondary'}>
+                    Cancel
+                  </Button>
+                }
+              ></DialogClose>
             </DialogFooter>
           </FieldGroup>
         </form>

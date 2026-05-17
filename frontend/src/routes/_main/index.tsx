@@ -6,7 +6,7 @@ export const Route = createFileRoute('/_main/')({
 
 function App() {
   return (
-    <main className="container mx-auto p-8 space-y-6">
+    <main className="container mx-auto  p-8 space-y-6">
       {/*<Button onClick={() => mutate()}>Refresh Token</Button>*/}
       {/*<UploadButton
         endpoint={'imageUploader'}

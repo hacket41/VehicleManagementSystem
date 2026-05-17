@@ -1,5 +1,5 @@
 import type { FileRouter } from 'uploadthing/server'
-import { createUploadthing, UploadThingError } from 'uploadthing/server'
+import { createUploadthing, UploadThingError, UTApi } from 'uploadthing/server'
 
 const f = createUploadthing()
 
@@ -41,3 +41,8 @@ export const uploadRouter = {
 } satisfies FileRouter
 
 export type UploadRouter = typeof uploadRouter
+
+export const utapi = new UTApi({
+  token: process.env.UPLOADTHING_TOKEN,
+  defaultKeyType: 'fileKey',
+})
