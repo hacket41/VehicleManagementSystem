@@ -7,6 +7,7 @@ import { ReportList } from "#/components/FinancialReports/ReportList";
 import { ReportDetailsDialog } from "#/components/FinancialReports/ReportDetailsDialog";
 
 import { getFinancialReport } from "#/api/financialreport.api";
+import { Button } from "#/components/ui/button";
 
 export const Route = createFileRoute("/_main/financialreport")({
   component: RouteComponent,

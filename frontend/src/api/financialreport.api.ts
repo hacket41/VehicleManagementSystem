@@ -36,3 +36,9 @@ export const getFinancialReportById = (id: number) => {
       }),
   });
 };
+
+export const deleteFinancialReport = async (id: number) => {
+  return apiFetch(`/api/FinancialReport/${id}`, {
+    method: "DELETE",
+  });
+};
