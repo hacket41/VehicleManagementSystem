@@ -74,24 +74,23 @@ public class FinancialReportService(AppDbContext db) : IFinancialReportService
         return reports.Select(MapToDto).ToList();
     }
 
-    private static (DateTime start, DateTime end) GetPeriodBounds(ReportType type, DateTime date) =>
-        type switch
-        {
-            ReportType.Daily => (
-                date.Date,
-                date.Date.AddDays(1).AddTicks(-1)
-            ),
-            ReportType.Monthly => (
-                new DateTime(date.Year, date.Month, 1),
-                new DateTime(date.Year, date.Month, 1).AddMonths(1).AddTicks(-1)
-            ),
-            ReportType.Yearly => (
-                new DateTime(date.Year, 1, 1),
-                new DateTime(date.Year, 12, 31, 23, 59, 59, 999)
-            ),
-            _ => throw new ArgumentOutOfRangeException(nameof(type))
-        };
-
+ private static (DateTime start, DateTime end) GetPeriodBounds(ReportType type, DateOnly date) =>
+    type switch
+    {
+        ReportType.Daily => (
+            date.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc),
+            date.ToDateTime(TimeOnly.MaxValue, DateTimeKind.Utc)
+        ),
+        ReportType.Monthly => (
+            new DateTime(date.Year, date.Month, 1, 0, 0, 0, DateTimeKind.Utc),
+            new DateTime(date.Year, date.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(1).AddTicks(-1)
+        ),
+        ReportType.Yearly => (
+            new DateTime(date.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+            new DateTime(date.Year, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc)
+        ),
+        _ => throw new ArgumentOutOfRangeException(nameof(type))
+    }; 
     private static FinancialReportDto MapToDto(FinancialReport r) => new()
     {
         Id                     = r.Id,

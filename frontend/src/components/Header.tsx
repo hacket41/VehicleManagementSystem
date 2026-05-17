@@ -1,6 +1,6 @@
-import { Link } from '@tanstack/react-router'
-import AuthButtons from './Navbar/AuthButtons'
-import ThemeToggle from './ThemeToggle'
+import { Link } from "@tanstack/react-router";
+import AuthButtons from "./Navbar/AuthButtons";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header() {
   return (
@@ -16,11 +16,12 @@ export default function Header() {
         <Link to="/about">About</Link>
         <Link to="/test">Test</Link>
         <Link to="/parts">Parts</Link>
+        <Link to="/financialreport">Financial Report</Link>
       </div>
       <div className="flex gap-8">
         <AuthButtons />
         <ThemeToggle />
       </div>
     </nav>
-  )
+  );
 }
