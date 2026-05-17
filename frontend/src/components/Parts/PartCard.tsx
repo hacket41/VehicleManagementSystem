@@ -21,7 +21,7 @@ export default function PartCard({ part }: { part: Part }) {
       <div className="flex h-48 items-center justify-center">
         <img
           src={part.imageUrl}
-          alt="Shoes"
+          alt={part.name}
           className="h-full w-full object-cover"
           fetchPriority="auto"
         />
