@@ -15,6 +15,7 @@ public class PartsService(AppDbContext db) : IPartsService
     public async Task<List<PartsWithDetailsResponse>> GetAllParts()
     {
         return await db.Parts
+            .OrderByDescending(p => p.UpdatedAt)
             .Select(p => new PartsWithDetailsResponse
             {
                 Id = p.Id,
@@ -147,6 +148,28 @@ public class PartsService(AppDbContext db) : IPartsService
             .ExecuteDeleteAsync();
 
         return result > 0;
+    }
+
+    public async Task<int> RestockPart(RestockPartDto request)
+    {
+        if (request.Id <= 0) return 0;
+
+        var affectedRows =await db.Parts
+            .Where(p => p.Id == request.Id)
+            .ExecuteUpdateAsync(setters  => setters
+                .SetProperty(
+                    p  => p.StockQuantity,
+                    p => p.StockQuantity + request.StockQuantity)
+            );
+
+        if(affectedRows == 0) return 0;
+
+        var updatedStockQuantity = await db.Parts
+            .Where(p => p.Id == request.Id)
+            .Select(p => p.StockQuantity)
+            .FirstAsync();
+
+        return updatedStockQuantity;
     }
 
     public async Task<List<PartCategory>> GetPartsCategories()

@@ -33,3 +33,8 @@ export interface PartCategory {
   id?: string
   name: string
 }
+
+export interface RestockPartRequest {
+  id: string
+  stockQuantity: number
+}

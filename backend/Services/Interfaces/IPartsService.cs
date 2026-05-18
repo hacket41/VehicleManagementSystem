@@ -16,6 +16,8 @@ public interface IPartsService
 
     Task<bool> DeletePart(int id);
 
+    Task<int> RestockPart(RestockPartDto request);
+
     Task<List<PartCategory>> GetPartsCategories();
 
     Task<string> AddPartsCategory(PartCategoryRequest categoryName);

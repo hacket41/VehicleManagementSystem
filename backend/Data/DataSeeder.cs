@@ -153,7 +153,8 @@ public static class DataSeeder
                     CostPrice=800, SellingPrice=1200,
                     StockQuantity=3, LowStockThreshold=10,
                     CompatibleVehicles="Toyota,Honda",
-                    Description="Front brake pads"
+                    Description="Front brake pads",
+                    ImageUrl = "https://2azty9bk8m.ufs.sh/f/1shMHs8Plx65pgSpPRViI9qejw5NOZT3XnoEMPFBtdzWyc86"
                 },
 
                 new() {
@@ -162,7 +163,8 @@ public static class DataSeeder
                     CostPrice=150, SellingPrice=250,
                     StockQuantity=5, LowStockThreshold=10,
                     CompatibleVehicles="All",
-                    Description="Standard oil filter"
+                    Description="Standard oil filter",
+                    ImageUrl = "https://2azty9bk8m.ufs.sh/f/1shMHs8Plx65JdcGd4IATtOwbN5vcXLfEFZhlkSQyoMxJP8j"
                 },
 
                 // Normal stock
@@ -172,7 +174,8 @@ public static class DataSeeder
                     CostPrice=200, SellingPrice=400,
                     StockQuantity=50, LowStockThreshold=10,
                     CompatibleVehicles="All",
-                    Description="Engine air filter"
+                    Description="Engine air filter",
+                    ImageUrl = "https://2azty9bk8m.ufs.sh/f/1shMHs8Plx65OggR61TRmQZxdy0jV71LghPzUBYSWNpMcDut"
                 },
 
                 new() {
@@ -181,7 +184,8 @@ public static class DataSeeder
                     CostPrice=500, SellingPrice=900,
                     StockQuantity=30, LowStockThreshold=10,
                     CompatibleVehicles="Petrol engines",
-                    Description="NGK spark plugs"
+                    Description="NGK spark plugs",
+                    ImageUrl = "https://2azty9bk8m.ufs.sh/f/1shMHs8Plx65VockkCZRhIkHXUn9NE8QmcGLKSMtCJri0Ooj"
                 },
 
                 new() {
@@ -190,7 +194,8 @@ public static class DataSeeder
                     CostPrice=2000, SellingPrice=3500,
                     StockQuantity=20, LowStockThreshold=10,
                     CompatibleVehicles="Sedans",
-                    Description="Front shock absorber"
+                    Description="Front shock absorber",
+                    ImageUrl = "https://2azty9bk8m.ufs.sh/f/1shMHs8Plx65alxBMjSG2kthzCmOKP5EWe41XcsfNFivo3gI"
                 },
 
                 new() {
@@ -199,7 +204,8 @@ public static class DataSeeder
                     CostPrice=600, SellingPrice=1100,
                     StockQuantity=15, LowStockThreshold=10,
                     CompatibleVehicles="Honda,Suzuki",
-                    Description="Timing belt kit"
+                    Description="Timing belt kit",
+                    ImageUrl = "https://2azty9bk8m.ufs.sh/f/1shMHs8Plx65MaCaRdKA2T7dx4bFUvDlCtOiJE1ue6YgKPwX"
                 },
 
                 new() {
@@ -208,7 +214,8 @@ public static class DataSeeder
                     CostPrice=3500, SellingPrice=5500,
                     StockQuantity=8, LowStockThreshold=10,
                     CompatibleVehicles="Toyota",
-                    Description="Aluminium radiator"
+                    Description="Aluminium radiator",
+                    ImageUrl = "https://2azty9bk8m.ufs.sh/f/1shMHs8Plx6515xsvd8Plx65FuyIvRCAG0JgNzXUW8rYanEp"
                 },
 
                 new() {
@@ -217,7 +224,8 @@ public static class DataSeeder
                     CostPrice=2500, SellingPrice=4000,
                     StockQuantity=12, LowStockThreshold=10,
                     CompatibleVehicles="All",
-                    Description="Maintenance-free battery"
+                    Description="Maintenance-free battery",
+                    ImageUrl = "https://2azty9bk8m.ufs.sh/f/1shMHs8Plx65gie6eTaVAekau52m7TW1KirwlbFcNp8ohPsD"
                 },
             };
 

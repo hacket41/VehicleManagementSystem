@@ -31,20 +31,12 @@ public class PartController(IPartsService parts) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> PurchasePart([FromBody] PartsPurchaseRequest part)
     {
-        try
-        {
             var newPart = await parts.PurchasePart(part);
             return CreatedAtAction(nameof(GetPartWithDetails), new {id = newPart.Id}, newPart);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
     }
 
     [Authorize(Roles = "Admin, Staff" )]
-    [HttpPut]
-    [Route("{id:int}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> EditPart(int id, [FromBody] PartsPurchaseRequest part)
     {
         var result = await parts.EditPart(id, part);
@@ -52,12 +44,19 @@ public class PartController(IPartsService parts) : ControllerBase
     }
 
     [Authorize(Roles = "Admin, Staff" )]
-    [HttpDelete]
-    [Route("{id:int}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeletePart(int id)
     {
         var partToDelete = await parts.DeletePart(id);
         return !partToDelete ? NoContent() : Ok(partToDelete);
+    }
+
+    [Authorize(Roles = "Admin, Staff")]
+    [HttpPost("restock")]
+    public async Task<IActionResult> RestockPart([FromBody] RestockPartDto request)
+    {
+        var result = await parts.RestockPart(request);
+        return Ok(result);
     }
 
     //Parts Categories Section
