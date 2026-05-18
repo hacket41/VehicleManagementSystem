@@ -208,14 +208,14 @@ export default function AddEditPartsDialog({
           render={
             <Button size={'lg'}>
               <PlusCircle className="size-4 mr-2" />
-              Add Part
+              Purchase New Part
             </Button>
           }
         />
       )}
       <DialogContent className="max-w-4xl!">
         <DialogHeader>
-          <DialogTitle>Add Part</DialogTitle>
+          <DialogTitle>Purchase New Part</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>

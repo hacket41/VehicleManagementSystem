@@ -13,6 +13,7 @@ import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as MainRouteRouteImport } from './routes/_main/route'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
+import { Route as DashboardVendorsRouteImport } from './routes/dashboard/vendors'
 import { Route as DashboardVehiclesRouteImport } from './routes/dashboard/vehicles'
 import { Route as DashboardPartsRouteImport } from './routes/dashboard/parts'
 import { Route as ApiUploadthingRouteImport } from './routes/api/uploadthing'
@@ -40,6 +41,11 @@ const MainIndexRoute = MainIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MainRouteRoute,
+} as any)
+const DashboardVendorsRoute = DashboardVendorsRouteImport.update({
+  id: '/vendors',
+  path: '/vendors',
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardVehiclesRoute = DashboardVehiclesRouteImport.update({
   id: '/vehicles',
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/api/uploadthing': typeof ApiUploadthingRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
+  '/dashboard/vendors': typeof DashboardVendorsRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/api/uploadthing': typeof ApiUploadthingRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
+  '/dashboard/vendors': typeof DashboardVendorsRoute
   '/': typeof MainIndexRoute
   '/dashboard': typeof DashboardIndexRoute
 }
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/api/uploadthing': typeof ApiUploadthingRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
+  '/dashboard/vendors': typeof DashboardVendorsRoute
   '/_main/': typeof MainIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/api/uploadthing'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
+    | '/dashboard/vendors'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -146,6 +156,7 @@ export interface FileRouteTypes {
     | '/api/uploadthing'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
+    | '/dashboard/vendors'
     | '/'
     | '/dashboard'
   id:
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/api/uploadthing'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
+    | '/dashboard/vendors'
     | '/_main/'
     | '/dashboard/'
   fileRoutesById: FileRoutesById
@@ -199,6 +211,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRouteRoute
+    }
+    '/dashboard/vendors': {
+      id: '/dashboard/vendors'
+      path: '/vendors'
+      fullPath: '/dashboard/vendors'
+      preLoaderRoute: typeof DashboardVendorsRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/vehicles': {
       id: '/dashboard/vehicles'
@@ -284,12 +303,14 @@ const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(
 interface DashboardRouteRouteChildren {
   DashboardPartsRoute: typeof DashboardPartsRoute
   DashboardVehiclesRoute: typeof DashboardVehiclesRoute
+  DashboardVendorsRoute: typeof DashboardVendorsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardPartsRoute: DashboardPartsRoute,
   DashboardVehiclesRoute: DashboardVehiclesRoute,
+  DashboardVendorsRoute: DashboardVendorsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
