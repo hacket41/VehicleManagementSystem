@@ -57,6 +57,7 @@ builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddScoped<ICustomerReportService, CustomerReportService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<ICustomerSearchService, CustomerSearchService>(); 
 
 builder.Services.AddScoped<IPdfService, PdfService>();
 
