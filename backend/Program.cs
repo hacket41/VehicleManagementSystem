@@ -54,6 +54,7 @@ builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddScoped<ICustomerReportService, CustomerReportService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<ICustomerSearchService, CustomerSearchService>(); 
 
 //Yo Email ko configuration ho:
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
