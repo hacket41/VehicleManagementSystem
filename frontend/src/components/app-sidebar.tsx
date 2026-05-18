@@ -1,8 +1,10 @@
 import {
   Bolt,
+  BookUser,
   CarFrontIcon,
   CommandIcon,
   FileChartColumnIcon,
+  FileUser,
   Home,
   Mail,
   Settings2Icon,
@@ -57,7 +59,7 @@ const data = {
     {
       title: "Customers Reports",
       url: "/dashboard/customerreport",
-      icon: <FileChartColumnIcon />,
+      icon: <BookUser />,
     },
   ],
 
