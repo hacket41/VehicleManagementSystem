@@ -1,7 +1,11 @@
 import { queryOptions } from '@tanstack/react-query'
 import { createServerFn } from '@tanstack/react-start'
 import { apiFetch } from '#/lib/api'
-import type { Part, PartCategory } from '#/types/parts.types'
+import type {
+  Part,
+  PartCategory,
+  RestockPartRequest,
+} from '#/types/parts.types'
 import { utapi } from './server/uploadthing'
 
 export const getParts = () => {
@@ -40,6 +44,13 @@ export const putPart = async (id: string, data: Part) => {
 export const deletePart = async (id: string) => {
   await apiFetch(`/api/part/${id}`, {
     method: 'DELETE',
+  })
+}
+
+export const restockPart = async (payload: RestockPartRequest) => {
+  return await apiFetch(`/api/part/restock`, {
+    method: 'POST',
+    body: payload,
   })
 }
 

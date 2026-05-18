@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
-import { Copy, Edit, MoreVerticalIcon, Trash2 } from 'lucide-react'
+import { Copy, Edit, MoreVerticalIcon, Trash2, Truck } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { deleteImage, deletePart } from '#/api/parts.api'
@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu'
 import AddEditPartsDialog from './AddEditPartsDialog'
+import RestockPartDialog from './RestockPartDialog'
 
 export const PartsColumns: ColumnDef<Part>[] = [
   {
@@ -90,7 +91,7 @@ interface PartActionsProps {
 function PartActions({ part }: PartActionsProps) {
   const [open, setOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
-
+  const [restockOpen, setRestockOpen] = useState(false)
   const queryClient = useQueryClient()
 
   const { mutate: deletePartMutate, isPending: isDeleting } = useMutation({
@@ -122,6 +123,12 @@ function PartActions({ part }: PartActionsProps) {
   return (
     <>
       <AddEditPartsDialog initialData={part} open={open} setOpen={setOpen} />
+      <RestockPartDialog
+        id={part.id}
+        currentStock={part.stockQuantity}
+        open={restockOpen}
+        setOpen={setRestockOpen}
+      />
 
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
@@ -173,6 +180,11 @@ function PartActions({ part }: PartActionsProps) {
             <DropdownMenuItem onClick={() => setOpen(true)}>
               <Edit />
               Edit Part
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setRestockOpen(true)}>
+              <Truck />
+              Restock Part
             </DropdownMenuItem>
 
             <DropdownMenuItem onClick={() => setDeleteOpen(true)}>
