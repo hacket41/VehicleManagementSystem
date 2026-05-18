@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using QuestPDF.Infrastructure;
 using Scalar.AspNetCore;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -42,6 +43,8 @@ builder.Services.Configure<MvcOptions>(options =>
 
 builder.Services.AddOpenApi();
 
+QuestPDF.Settings.License = LicenseType.Community;
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"))
 );
@@ -54,6 +57,8 @@ builder.Services.AddScoped<IFinancialReportService, FinancialReportService>();
 builder.Services.AddScoped<ICustomerReportService, CustomerReportService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
+
+builder.Services.AddScoped<IPdfService, PdfService>();
 
 //Yo Email ko configuration ho:
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
