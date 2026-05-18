@@ -15,7 +15,7 @@ function RouteComponent() {
   return (
     <div>
       <div className="flex justify-center items-center p-8">
-        <h1 className='font-semibold text-2xl'>All Parts</h1>
+        <h1 className="font-semibold text-2xl">All Parts</h1>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">

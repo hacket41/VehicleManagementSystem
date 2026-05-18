@@ -24,7 +24,9 @@ public static class DataSeeder
         await SeedVendors(db);
         await SeedCategory(db);
         await SeedParts(db);
+        await SeedVehicles(db);
         await SeedSales(db);
+
     }
     
     private static async Task SeedUsers(UserManager<User> userManager)
@@ -131,7 +133,7 @@ public static class DataSeeder
         await db.SaveChangesAsync();
     }
 
-        private static async Task SeedParts(AppDbContext db)
+    private static async Task SeedParts(AppDbContext db)
         {
             if (await db.Parts.AnyAsync()) return;
             var engine     = await db.PartCategories.FirstAsync(c => c.Name == "Engine");
@@ -302,6 +304,86 @@ public static class DataSeeder
         db.Sales.AddRange(sales);
         await db.SaveChangesAsync();
     }
+
+    private static async Task SeedVehicles(AppDbContext db)
+{
+    if (await db.Vehicles.AnyAsync()) return;
+
+    var vehicles = new List<Vehicle>
+    {
+        new()
+        {
+            CustomerId    = Customer1Id,
+            VehicleNumber = "BA 1 CHA 1234",
+            Make          = "Toyota",
+            Model         = "Hilux",
+            Year          = 2019,
+            VIN           = "JTFBT9530K0050001",
+            Mileage       = 42000,
+            ImageUrl      = "https://placehold.co/400x300?text=Toyota+Hilux",
+            CreatedAt     = DateTime.UtcNow,
+            UpdatedAt     = DateTime.UtcNow,
+        },
+        new()
+        {
+            CustomerId    = Customer1Id,
+            VehicleNumber = "BA 1 JA 5678",
+            Make          = "Honda",
+            Model         = "City",
+            Year          = 2021,
+            VIN           = "MRHGM185XMP000001",
+            Mileage       = 18500,
+            ImageUrl      = "https://placehold.co/400x300?text=Honda+City",
+            CreatedAt     = DateTime.UtcNow,
+            UpdatedAt     = DateTime.UtcNow,
+        },
+
+        // Bob's vehicle
+        new()
+        {
+            CustomerId    = Customer2Id,
+            VehicleNumber = "BA 2 KHA 9101",
+            Make          = "Suzuki",
+            Model         = "Swift",
+            Year          = 2020,
+            VIN           = "MA3FJEB1S00200001",
+            Mileage       = 31000,
+            ImageUrl      = "https://placehold.co/400x300?text=Suzuki+Swift",
+            CreatedAt     = DateTime.UtcNow,
+            UpdatedAt     = DateTime.UtcNow,
+        },
+        new()
+        {
+            CustomerId    = Customer2Id,
+            VehicleNumber = "BA 2 GA 3456",
+            Make          = "Toyota",
+            Model         = "Fortuner",
+            Year          = 2018,
+            VIN           = "MR0GX3FW2J4200001",
+            Mileage       = 67000,
+            ImageUrl      = "https://placehold.co/400x300?text=Toyota+Fortuner",
+            CreatedAt     = DateTime.UtcNow,
+            UpdatedAt     = DateTime.UtcNow,
+        },
+
+        new()
+        {
+            CustomerId    = Customer3Id,
+            VehicleNumber = "GA 1 CHA 7890",
+            Make          = "Hyundai",
+            Model         = "i20",
+            Year          = 2022,
+            VIN           = "MALBB51BLNM000001",
+            Mileage       = 9800,
+            ImageUrl      = "https://placehold.co/400x300?text=Hyundai+i20",
+            CreatedAt     = DateTime.UtcNow,
+            UpdatedAt     = DateTime.UtcNow,
+        },
+    };
+
+    await db.Vehicles.AddRangeAsync(vehicles);
+    await db.SaveChangesAsync();
+}
 
     private static Sale MakeSale(
         string invoiceNumber,
