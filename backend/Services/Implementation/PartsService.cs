@@ -15,6 +15,7 @@ public class PartsService(AppDbContext db) : IPartsService
     public async Task<List<PartsWithDetailsResponse>> GetAllParts()
     {
         return await db.Parts
+            .OrderByDescending(p => p.UpdatedAt)
             .Select(p => new PartsWithDetailsResponse
             {
                 Id = p.Id,
