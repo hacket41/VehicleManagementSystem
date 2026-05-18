@@ -2,14 +2,16 @@ import type { FinancialReport } from "#/types/financialreports.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "#/lib/queryClient";
 import { deleteFinancialReport } from "#/api/financialreport.api";
+import { QueryClient } from "@tanstack/react-query";
+
 interface Props {
   reports: FinancialReport[];
   onSelect: (id: number) => void;
 }
 
 export function ReportList({ reports, onSelect }: Props) {
+  const queryClient = new QueryClient();
   const deleteMutation = useMutation({
     mutationFn: deleteFinancialReport,
 
