@@ -15,13 +15,13 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as MainIndexRouteImport } from './routes/_main/index'
 import { Route as DashboardVehiclesRouteImport } from './routes/dashboard/vehicles'
 import { Route as DashboardPartsRouteImport } from './routes/dashboard/parts'
+import { Route as DashboardFinancialreportRouteImport } from './routes/dashboard/financialreport'
+import { Route as DashboardCustomerreportRouteImport } from './routes/dashboard/customerreport'
 import { Route as ApiUploadthingRouteImport } from './routes/api/uploadthing'
 import { Route as MainTestingRouteImport } from './routes/_main/testing'
 import { Route as MainSignupRouteImport } from './routes/_main/signup'
 import { Route as MainPartsRouteImport } from './routes/_main/parts'
 import { Route as MainLoginRouteImport } from './routes/_main/login'
-import { Route as MainFinancialreportRouteImport } from './routes/_main/financialreport'
-import { Route as MainCustomerreportRouteImport } from './routes/_main/customerreport'
 import { Route as MainAboutRouteImport } from './routes/_main/about'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
@@ -53,6 +53,17 @@ const DashboardPartsRoute = DashboardPartsRouteImport.update({
   path: '/parts',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const DashboardFinancialreportRoute =
+  DashboardFinancialreportRouteImport.update({
+    id: '/financialreport',
+    path: '/financialreport',
+    getParentRoute: () => DashboardRouteRoute,
+  } as any)
+const DashboardCustomerreportRoute = DashboardCustomerreportRouteImport.update({
+  id: '/customerreport',
+  path: '/customerreport',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 const ApiUploadthingRoute = ApiUploadthingRouteImport.update({
   id: '/api/uploadthing',
   path: '/api/uploadthing',
@@ -78,16 +89,6 @@ const MainLoginRoute = MainLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => MainRouteRoute,
 } as any)
-const MainFinancialreportRoute = MainFinancialreportRouteImport.update({
-  id: '/financialreport',
-  path: '/financialreport',
-  getParentRoute: () => MainRouteRoute,
-} as any)
-const MainCustomerreportRoute = MainCustomerreportRouteImport.update({
-  id: '/customerreport',
-  path: '/customerreport',
-  getParentRoute: () => MainRouteRoute,
-} as any)
 const MainAboutRoute = MainAboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -98,26 +99,26 @@ export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/about': typeof MainAboutRoute
-  '/customerreport': typeof MainCustomerreportRoute
-  '/financialreport': typeof MainFinancialreportRoute
   '/login': typeof MainLoginRoute
   '/parts': typeof MainPartsRoute
   '/signup': typeof MainSignupRoute
   '/testing': typeof MainTestingRoute
   '/api/uploadthing': typeof ApiUploadthingRoute
+  '/dashboard/customerreport': typeof DashboardCustomerreportRoute
+  '/dashboard/financialreport': typeof DashboardFinancialreportRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof MainAboutRoute
-  '/customerreport': typeof MainCustomerreportRoute
-  '/financialreport': typeof MainFinancialreportRoute
   '/login': typeof MainLoginRoute
   '/parts': typeof MainPartsRoute
   '/signup': typeof MainSignupRoute
   '/testing': typeof MainTestingRoute
   '/api/uploadthing': typeof ApiUploadthingRoute
+  '/dashboard/customerreport': typeof DashboardCustomerreportRoute
+  '/dashboard/financialreport': typeof DashboardFinancialreportRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/': typeof MainIndexRoute
@@ -128,13 +129,13 @@ export interface FileRoutesById {
   '/_main': typeof MainRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/_main/about': typeof MainAboutRoute
-  '/_main/customerreport': typeof MainCustomerreportRoute
-  '/_main/financialreport': typeof MainFinancialreportRoute
   '/_main/login': typeof MainLoginRoute
   '/_main/parts': typeof MainPartsRoute
   '/_main/signup': typeof MainSignupRoute
   '/_main/testing': typeof MainTestingRoute
   '/api/uploadthing': typeof ApiUploadthingRoute
+  '/dashboard/customerreport': typeof DashboardCustomerreportRoute
+  '/dashboard/financialreport': typeof DashboardFinancialreportRoute
   '/dashboard/parts': typeof DashboardPartsRoute
   '/dashboard/vehicles': typeof DashboardVehiclesRoute
   '/_main/': typeof MainIndexRoute
@@ -146,26 +147,26 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/about'
-    | '/customerreport'
-    | '/financialreport'
     | '/login'
     | '/parts'
     | '/signup'
     | '/testing'
     | '/api/uploadthing'
+    | '/dashboard/customerreport'
+    | '/dashboard/financialreport'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
-    | '/customerreport'
-    | '/financialreport'
     | '/login'
     | '/parts'
     | '/signup'
     | '/testing'
     | '/api/uploadthing'
+    | '/dashboard/customerreport'
+    | '/dashboard/financialreport'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
     | '/'
@@ -175,13 +176,13 @@ export interface FileRouteTypes {
     | '/_main'
     | '/dashboard'
     | '/_main/about'
-    | '/_main/customerreport'
-    | '/_main/financialreport'
     | '/_main/login'
     | '/_main/parts'
     | '/_main/signup'
     | '/_main/testing'
     | '/api/uploadthing'
+    | '/dashboard/customerreport'
+    | '/dashboard/financialreport'
     | '/dashboard/parts'
     | '/dashboard/vehicles'
     | '/_main/'
@@ -238,6 +239,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPartsRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/dashboard/financialreport': {
+      id: '/dashboard/financialreport'
+      path: '/financialreport'
+      fullPath: '/dashboard/financialreport'
+      preLoaderRoute: typeof DashboardFinancialreportRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/customerreport': {
+      id: '/dashboard/customerreport'
+      path: '/customerreport'
+      fullPath: '/dashboard/customerreport'
+      preLoaderRoute: typeof DashboardCustomerreportRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
     '/api/uploadthing': {
       id: '/api/uploadthing'
       path: '/api/uploadthing'
@@ -273,20 +288,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainLoginRouteImport
       parentRoute: typeof MainRouteRoute
     }
-    '/_main/financialreport': {
-      id: '/_main/financialreport'
-      path: '/financialreport'
-      fullPath: '/financialreport'
-      preLoaderRoute: typeof MainFinancialreportRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
-    '/_main/customerreport': {
-      id: '/_main/customerreport'
-      path: '/customerreport'
-      fullPath: '/customerreport'
-      preLoaderRoute: typeof MainCustomerreportRouteImport
-      parentRoute: typeof MainRouteRoute
-    }
     '/_main/about': {
       id: '/_main/about'
       path: '/about'
@@ -299,8 +300,6 @@ declare module '@tanstack/react-router' {
 
 interface MainRouteRouteChildren {
   MainAboutRoute: typeof MainAboutRoute
-  MainCustomerreportRoute: typeof MainCustomerreportRoute
-  MainFinancialreportRoute: typeof MainFinancialreportRoute
   MainLoginRoute: typeof MainLoginRoute
   MainPartsRoute: typeof MainPartsRoute
   MainSignupRoute: typeof MainSignupRoute
@@ -310,8 +309,6 @@ interface MainRouteRouteChildren {
 
 const MainRouteRouteChildren: MainRouteRouteChildren = {
   MainAboutRoute: MainAboutRoute,
-  MainCustomerreportRoute: MainCustomerreportRoute,
-  MainFinancialreportRoute: MainFinancialreportRoute,
   MainLoginRoute: MainLoginRoute,
   MainPartsRoute: MainPartsRoute,
   MainSignupRoute: MainSignupRoute,
@@ -324,12 +321,16 @@ const MainRouteRouteWithChildren = MainRouteRoute._addFileChildren(
 )
 
 interface DashboardRouteRouteChildren {
+  DashboardCustomerreportRoute: typeof DashboardCustomerreportRoute
+  DashboardFinancialreportRoute: typeof DashboardFinancialreportRoute
   DashboardPartsRoute: typeof DashboardPartsRoute
   DashboardVehiclesRoute: typeof DashboardVehiclesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardCustomerreportRoute: DashboardCustomerreportRoute,
+  DashboardFinancialreportRoute: DashboardFinancialreportRoute,
   DashboardPartsRoute: DashboardPartsRoute,
   DashboardVehiclesRoute: DashboardVehiclesRoute,
   DashboardIndexRoute: DashboardIndexRoute,

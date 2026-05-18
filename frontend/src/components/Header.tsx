@@ -16,8 +16,8 @@ export default function Header() {
         <DashboardLink />
         <Link to="/about">About</Link>
         <Link to="/parts">Parts</Link>
-        <Link to="/financialreport">Financial Report</Link>
-        <Link to="/customerreport">Customer Report</Link>
+        {/*<Link to="/financialreport">Financial Report</Link>
+        <Link to="/customerreport">Customer Report</Link>*/}
       </div>
       <div className="flex gap-8">
         <AuthButtons />

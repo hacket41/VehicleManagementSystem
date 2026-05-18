@@ -7,12 +7,12 @@ import {
   Mail,
   Settings2Icon,
   UserStarIcon,
-} from 'lucide-react'
-import type * as React from 'react'
-import { NavDocuments } from '#/components/nav-documents'
-import { NavMain } from '#/components/nav-main'
-import { NavSecondary } from '#/components/nav-secondary'
-import { NavUser } from '#/components/nav-user'
+} from "lucide-react";
+import type * as React from "react";
+import { NavDocuments } from "#/components/nav-documents";
+import { NavMain } from "#/components/nav-main";
+import { NavSecondary } from "#/components/nav-secondary";
+import { NavUser } from "#/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -20,57 +20,67 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-} from '#/components/ui/sidebar'
+} from "#/components/ui/sidebar";
 
 const data = {
   user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
     {
-      title: 'Home',
-      url: '/dashboard',
+      title: "Home",
+      url: "/dashboard",
       icon: <Home />,
     },
     {
-      title: 'Parts Management',
-      url: '/dashboard/parts',
+      title: "Parts Management",
+      url: "/dashboard/parts",
       icon: <Bolt />,
     },
     {
-      title: 'Vehicle Management',
-      url: '/dashboard/vehicles',
+      title: "Vehicle Management",
+      url: "/dashboard/vehicles",
       icon: <CarFrontIcon />,
     },
     {
-      title: 'Vendor Management',
-      url: '/dashboard/vendors',
+      title: "Vendor Management",
+      url: "/dashboard/vendors",
       icon: <UserStarIcon />,
+    },
+    {
+      title: "Financial Reports",
+      url: "/dashboard/financialreport",
+      icon: <FileChartColumnIcon />,
+    },
+    {
+      title: "Customers Reports",
+      url: "/dashboard/customerreport",
+      icon: <FileChartColumnIcon />,
     },
   ],
 
   navSecondary: [
     {
-      title: 'Settings',
-      url: '#',
+      title: "Settings",
+      url: "#",
       icon: <Settings2Icon />,
     },
   ],
   documents: [
     {
-      name: 'Notifications',
-      url: '/dashboard/notifications',
+      name: "Notifications",
+      url: "/dashboard/notifications",
       icon: <Mail />,
     },
     {
-      name: 'Reports',
-      url: '#',
+      name: "Reports",
+      url: "#",
       icon: <FileChartColumnIcon />,
     },
   ],
-}
+};
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -93,5 +103,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

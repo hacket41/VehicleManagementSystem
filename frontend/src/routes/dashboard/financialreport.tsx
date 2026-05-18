@@ -9,7 +9,7 @@ import { ReportDetailsDialog } from "#/components/FinancialReports/ReportDetails
 import { getFinancialReport } from "#/api/financialreport.api";
 import { Button } from "#/components/ui/button";
 
-export const Route = createFileRoute("/_main/financialreport")({
+export const Route = createFileRoute("/dashboard/financialreport")({
   component: RouteComponent,
   loader: async () => await queryClient.ensureQueryData(getFinancialReport()),
 });

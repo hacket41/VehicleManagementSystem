@@ -8,7 +8,7 @@ import type { CustomerReportDto } from "#/types/customerreport.types";
 import { CustomerReportListPanel } from "#/components/CustomerReports/CustomerReportListPanel";
 import { CustomerReportDetailPanel } from "#/components/CustomerReports/CustomerReportDetailPanel";
 
-export const Route = createFileRoute("/_main/customerreport")({
+export const Route = createFileRoute("/dashboard/customerreport")({
   component: CustomerReportPage,
   loader: async () => await queryClient.ensureQueryData(getCustomerReports()),
 });
