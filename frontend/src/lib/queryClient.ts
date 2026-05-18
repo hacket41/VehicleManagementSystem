@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from "@tanstack/react-query";
 
 // single QueryClient instance for the entire app (!! do not change here every backend call depedns on this !!)
 export const queryClient = new QueryClient({
@@ -14,4 +14,4 @@ export const queryClient = new QueryClient({
       retry: false,
     },
   },
-})
+});
