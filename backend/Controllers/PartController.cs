@@ -1,4 +1,5 @@
 using backend.Data.DTO.Request;
+using backend.Data.DTO.Response;
 using backend.Data.Entities;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,11 @@ namespace backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PartController(IPartsService parts) : ControllerBase
+public class PartController(
+    IPartsService parts,
+    IPdfService pdfService,
+    IVendorService vendorService
+    ) : ControllerBase
 
 {
     //Parts  Section
@@ -31,8 +36,30 @@ public class PartController(IPartsService parts) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> PurchasePart([FromBody] PartsPurchaseRequest part)
     {
-            var newPart = await parts.PurchasePart(part);
-            return CreatedAtAction(nameof(GetPartWithDetails), new {id = newPart.Id}, newPart);
+        var newPart = await parts.PurchasePart(part);
+        var rawVendor = await vendorService.GetVendorById(part.VendorId);
+        if (rawVendor == null)
+            return BadRequest($"Vendor with ID {newPart.VendorId} not found");
+        var vendor = new VendorInfoForInvoice
+        {
+            Name = rawVendor!.Name,
+            Email = rawVendor.Email,
+            ContactPerson = rawVendor.ContactPerson,
+            Address = rawVendor.Address,
+            Phone = rawVendor.Phone,
+        };
+        var invoice = new PurchaseInvoice
+        {
+            InvoiceNumber = $"INV-{DateTime.UtcNow.Ticks}",
+            IssueDate = DateTime.UtcNow,
+            Vendor = vendor,
+            Part = newPart,
+        };
+        var pdfBytes = pdfService.GeneratePurchaseInvoice(invoice);
+
+        return File(pdfBytes, "application/pdf", $"{invoice.InvoiceNumber}.pdf");
+
+
     }
 
     [Authorize(Roles = "Admin, Staff" )]
@@ -91,8 +118,5 @@ public class PartController(IPartsService parts) : ControllerBase
         var result = await parts.DeletePartsCategory(id);
         return !result? NotFound() : NoContent();
     }
-
-
-
 
 }
