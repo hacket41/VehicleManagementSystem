@@ -69,7 +69,7 @@ public class PurchaseInvoiceTemplate(PurchaseInvoice model) : IDocument
             });
             column.Item().Element(ComposeTable);
 
-            var totalPrice = Invoice?.Parts?.Sum(p => p.CostPrice * p.StockQuantity);
+            var totalPrice = Invoice?.Part.CostPrice * Invoice?.Part.StockQuantity;
             column.Item().AlignRight().Text($"Grand total: {totalPrice}$").FontSize(14).SemiBold();
 
 
@@ -103,23 +103,19 @@ public class PurchaseInvoiceTemplate(PurchaseInvoice model) : IDocument
                 }
             });
 
-            if (Invoice.Parts != null)
-            {
-                foreach (var item in Invoice.Parts)
-                {
-                    table.Cell().Element(CellStyle).Text(Invoice.Parts.IndexOf(item) + 1);
-                    table.Cell().Element(CellStyle).Text(item.Name);
-                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.CostPrice}$");
-                    table.Cell().Element(CellStyle).AlignRight().Text(item.StockQuantity);
-                    table.Cell().Element(CellStyle).AlignRight().Text($"{item.CostPrice * item.StockQuantity}$");
+
+                    table.Cell().Element(CellStyle).Text("1");
+                    table.Cell().Element(CellStyle).Text(Invoice.Part.Name);
+                    table.Cell().Element(CellStyle).AlignRight().Text($"{Invoice.Part.CostPrice}$");
+                    table.Cell().Element(CellStyle).AlignRight().Text(Invoice.Part.StockQuantity);
+                    table.Cell().Element(CellStyle).AlignRight().Text($"{Invoice.Part.CostPrice * Invoice.Part.StockQuantity}$");
 
                     static IContainer CellStyle(IContainer container)
                     {
                         return container.BorderBottom(1).BorderColor(Colors.Grey.Lighten2)
                             .PaddingVertical(5);
                     }
-                }
-            }
+
         });
     }
 
