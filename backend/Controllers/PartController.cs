@@ -92,7 +92,4 @@ public class PartController(IPartsService parts) : ControllerBase
         return !result? NotFound() : NoContent();
     }
 
-
-
-
 }
