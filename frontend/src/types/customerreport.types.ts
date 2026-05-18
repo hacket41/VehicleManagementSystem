@@ -24,3 +24,9 @@ export interface CustomerReportDto {
   generatedBy: string;
   rows: CustomerReportRowDto[];
 }
+
+export interface GenerateCustomerReportRequest {
+  type: CustomerReportType;
+  periodStart?: string;
+  periodEnd?: string;
+}
