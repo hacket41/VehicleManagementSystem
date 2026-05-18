@@ -11,6 +11,9 @@ export const generateCustomerReport = async (
 ) => {
   return apiFetch<CustomerReportDto>("/api/CustomerReport/generate", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(payload),
   });
 };

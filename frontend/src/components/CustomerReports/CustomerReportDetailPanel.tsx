@@ -77,8 +77,6 @@ export function CustomerReportDetailPanel({
   return <ReportDetail report={report} />;
 }
 
-// ─── Detail view ────────────────────────────────────────────────────────────
-
 function ReportDetail({ report }: { report: CustomerReportDto }) {
   const resolvedType = resolveReportType(report.type);
 
@@ -166,8 +164,6 @@ function ReportDetail({ report }: { report: CustomerReportDto }) {
   );
 }
 
-// ─── Table ───────────────────────────────────────────────────────────────────
-
 function ReportTable({
   rows,
   type,
@@ -227,7 +223,9 @@ function ReportTable({
               <TableCell className="text-right text-sm font-medium">
                 <div className="flex items-center justify-end gap-1">
                   <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
-                  {row.totalPurchase.toLocaleString()}
+                  {row.totalPurchase != null
+                    ? row.totalPurchase.toLocaleString()
+                    : "—"}
                 </div>
               </TableCell>
               {isTopSpenders && (
@@ -270,8 +268,6 @@ function ReportTable({
   );
 }
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────
-
 function DetailSkeleton() {
   return (
     <div className="flex-1 p-6 space-y-6 max-w-5xl mx-auto">
@@ -280,8 +276,6 @@ function DetailSkeleton() {
     </div>
   );
 }
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function resolveReportType(type: string): CustomerReportType | null {
   const entry = Object.entries(CustomerReportType).find(
