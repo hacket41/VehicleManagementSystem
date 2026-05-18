@@ -4,19 +4,19 @@ import {
   CustomerReportType,
   type CustomerReportDto,
   type GenerateCustomerReportRequest,
-} from "#/types/customerreport.types.ts";
+} from "#/types/customerreport.types";
 
 export const generateCustomerReport = async (
   payload: GenerateCustomerReportRequest,
 ) => {
   return apiFetch<CustomerReportDto>("/api/CustomerReport/generate", {
     method: "POST",
-    body: "payload",
+    body: JSON.stringify(payload),
   });
 };
 
 export const getCustomerReports = (type?: CustomerReportType) => {
-  const query = type !== undefined ? `?type=$(type` : "";
+  const query = type !== undefined ? `?type=${type}` : "";
   return queryOptions({
     queryKey: ["customer-reports", type],
     queryFn: async () =>
