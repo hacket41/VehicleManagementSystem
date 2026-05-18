@@ -1,42 +1,35 @@
 import { useState } from "react";
-import { Separator } from "#/components/ui/separator";
-import { Card, CardContent } from "#/components/ui/card";
-import { type CustomerReportDto } from "#/types/customerreport.types";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+
+import { queryClient } from "#/lib/queryClient";
+import { getCustomerReports } from "#/api/customerreport.api";
+import type { CustomerReportDto } from "#/types/customerreport.types";
 import { CustomerReportListPanel } from "#/components/CustomerReports/CustomerReportListPanel";
 import { CustomerReportDetailPanel } from "#/components/CustomerReports/CustomerReportDetailPanel";
 
-export default function CustomerReportPage() {
+export const Route = createFileRoute("/_main/customerreport")({
+  component: CustomerReportPage,
+  loader: async () => await queryClient.ensureQueryData(getCustomerReports()),
+});
+
+function CustomerReportPage() {
   const [selectedReport, setSelectedReport] =
     useState<CustomerReportDto | null>(null);
 
+  const { data: reports } = useQuery(getCustomerReports());
+  if (!reports) return null;
+
   return (
-    <div className="flex h-full flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Customer Reports
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Browse and inspect generated customer reports.
-        </p>
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="w-80 shrink-0 flex flex-col overflow-hidden">
+        <CustomerReportListPanel
+          selectedId={selectedReport?.id ?? null}
+          onSelect={setSelectedReport}
+        />
       </div>
-
-      <Separator />
-
-      <div className="grid flex-1 grid-cols-1 gap-6 overflow-hidden md:grid-cols-[300px_1fr]">
-        <Card className="flex flex-col overflow-hidden">
-          <CardContent className="flex flex-1 flex-col overflow-hidden p-4">
-            <CustomerReportListPanel
-              selectedId={selectedReport?.id ?? null}
-              onSelect={setSelectedReport}
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="flex flex-col overflow-hidden">
-          <CardContent className="flex flex-1 flex-col overflow-hidden p-4">
-            <CustomerReportDetailPanel report={selectedReport} />
-          </CardContent>
-        </Card>
+      <div className="flex-1 flex flex-col overflow-hidden bg-muted/30">
+        <CustomerReportDetailPanel reportId={selectedReport?.id ?? null} />
       </div>
     </div>
   );

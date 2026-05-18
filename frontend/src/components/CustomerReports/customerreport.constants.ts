@@ -1,40 +1,40 @@
-import { TrendingUp, Users, CreditCard } from "lucide-react";
 import { CustomerReportType } from "#/types/customerreport.types";
 
-export const FILTER_OPTIONS = [
-  { value: "all", label: "All Types" },
-  { value: String(CustomerReportType.TopSpenders), label: "Top Spenders" },
-  {
-    value: String(CustomerReportType.RegularCustomers),
-    label: "Regular Customers",
-  },
-  {
-    value: String(CustomerReportType.PendingCredits),
-    label: "Pending Credits",
-  },
-];
+export const REPORT_TYPE_LABELS: Record<CustomerReportType, string> = {
+  [CustomerReportType.TopSpenders]: "Top Spenders",
+  [CustomerReportType.RegularCustomers]: "Regular Customers",
+  [CustomerReportType.PendingCredits]: "Pending Credits",
+};
 
-export const REPORT_TYPE_META: Record<
+export const REPORT_TYPE_DESCRIPTIONS: Record<CustomerReportType, string> = {
+  [CustomerReportType.TopSpenders]:
+    "Customers ranked by total amount spent within the period.",
+  [CustomerReportType.RegularCustomers]:
+    "Customers with the highest number of purchases within the period.",
+  [CustomerReportType.PendingCredits]:
+    "Customers with outstanding unpaid credits, sorted by oldest due date.",
+};
+
+export const REPORT_TYPE_COLORS: Record<
   CustomerReportType,
-  {
-    label: string;
-    variant: "default" | "secondary" | "destructive" | "outline";
-    icon: React.ElementType;
-  }
+  { badge: string; accent: string }
 > = {
   [CustomerReportType.TopSpenders]: {
-    label: "Top Spenders",
-    variant: "default",
-    icon: TrendingUp,
+    badge: "bg-amber-100 text-amber-800 border-amber-200",
+    accent: "text-amber-600",
   },
   [CustomerReportType.RegularCustomers]: {
-    label: "Regular Customers",
-    variant: "secondary",
-    icon: Users,
+    badge: "bg-blue-100 text-blue-800 border-blue-200",
+    accent: "text-blue-600",
   },
   [CustomerReportType.PendingCredits]: {
-    label: "Pending Credits",
-    variant: "destructive",
-    icon: CreditCard,
+    badge: "bg-rose-100 text-rose-800 border-rose-200",
+    accent: "text-rose-600",
   },
 };
+
+export const ALL_REPORT_TYPES = [
+  CustomerReportType.TopSpenders,
+  CustomerReportType.RegularCustomers,
+  CustomerReportType.PendingCredits,
+] as const;
