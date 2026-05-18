@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { CalendarDays, ChevronRight, Search } from "lucide-react";
-
 import { Input } from "#/components/ui/input";
 import { ScrollArea } from "#/components/ui/scroll-area";
 import { Skeleton } from "#/components/ui/skeleton";
@@ -56,9 +55,9 @@ export function CustomerReportListPanel({
   });
 
   return (
-    <div className="flex flex-col h-full border-r bg-background">
+    <div className="flex flex-col h-full overflow-hidden border-r bg-background">
       {/* Header */}
-      <div className="p-4 border-b space-y-3">
+      <div className="p-4 border-b space-y-3 shrink-0">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold tracking-tight">
             Customer Reports
@@ -101,7 +100,7 @@ export function CustomerReportListPanel({
       </div>
 
       {/* List */}
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 min-h-0">
         {isLoading ? (
           <div className="p-3 space-y-2">
             {Array.from({ length: 5 }).map((_, i) => (
